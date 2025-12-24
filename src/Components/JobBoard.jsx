@@ -321,11 +321,25 @@
 
 
 import React, { useState } from 'react';
+
 import { 
   Building2, MoreHorizontal, Bookmark, Ban, Send, 
-  Search, MapPin, MessageSquare, Bell, User 
+  Search, MapPin, MessageSquare, Bell, User, ArrowUp 
 } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import '../Styles/JobBoard.css';
+
+
+import submit from "../assets/submit.png";
+import send from "../assets/send.png";
+
+import menu from "../assets/menu.svg";
+import menu_active from "../assets/menu_active.svg";
+
+import PrimeStackLogo from "../assets/PrimeStackLogo"; 
+
+
+
 
 // --- DATA ---
 const jobData = [
@@ -385,6 +399,34 @@ const jobData = [
 
 const JobBoard = () => {
   const [selectedJob, setSelectedJob] = useState(jobData[0]);
+  const [showTopBtn, setShowTopBtn] = useState(false);
+  const navigate = useNavigate()
+
+  const handleGetstarted = () => {
+    navigate("/GetStarted")
+  }
+
+  const handleContactus = () => {
+    navigate("/contact")
+}
+
+//  const handleScroll = () => {
+//             if (window.scrollY > 400) {
+//                 setShowTopBtn(true);
+//             } else {
+//                 setShowTopBtn(false);
+//             }
+//         };
+
+ const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    };
+
+
+
 
   return (
     <div className="job-board-container">
@@ -393,7 +435,11 @@ const JobBoard = () => {
       <nav className="navbar">
         <div className="nav-left">
           {/* Logo (Text representation) */}
+         
           <a href="#" className="nav-logo">indeed</a>
+
+           <img src={menu} alt="" className='menu-logo'/>
+          <img src={menu_active} alt="" className='menu-logo'/>
           <div className="nav-links">
             <a href="#" className="nav-link active">Page d'accueil</a>
             <a href="#" className="nav-link">Avis sur les entreprises</a>
@@ -404,7 +450,7 @@ const JobBoard = () => {
           <div className="nav-icon-group">
             <MessageSquare size={24} className="nav-icon" />
             <Bell size={24} className="nav-icon" />
-            <User size={24} className="nav-icon" />
+            <User size={24} className="nav-icon" onClick={handleGetstarted}/>
           </div>
           <a href="#" className="nav-post-job">Entreprises / Publier une offre d'emploi</a>
         </div>
@@ -511,6 +557,72 @@ const JobBoard = () => {
 
         </div>
       </div>
+
+      <footer className="footer">
+                    <div className="footer-top">
+                        <h1 className="footer-title">Let's Connect</h1>
+                        <img src={send} className="footer-connect-img" onClick={handleContactus}/>
+                    </div>
+
+                    <div className="footer-content">
+                        <div className="footer-col">
+                             <PrimeStackLogo onClick={scrollToTop}/> 
+                            <p className="footer-text">
+                                {/* Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                Consequuntur cupiditate ipsum nulla. */}
+                                Where innovation meets reliable service.
+                            </p>
+                            {/* <ul className="social-list">
+                                <li>Facebook</li>
+                                <li>Youtube</li>
+                                <li>Twitter</li>
+                                <li>Whatsapp</li>
+                                <li>Instagram</li>
+                            </ul> */}
+                        </div>
+                        <div className="footer-col">
+                            <h2 className="footer-heading">Navigation</h2>
+                            <ul className="footer-list">
+                                <Link className="footer-list-links-about" onClick={scrollToTop}>Home</Link>
+                                <Link className="footer-list-links-about" to="/about_us">About us</Link>
+                                <Link className="footer-list-links-about" to="/Package_services">services</Link>
+                                <Link className="footer-list-links-about" to="/resume">resume</Link>
+                               
+                                <Link  className="footer-list-links-about" to="/more_projects">Projects</Link>
+                                
+                            </ul>
+                        </div>
+                        <div className="footer-col">
+                            <h2 className="footer-heading">Contact</h2>
+                            <ul className="footer-list">
+                                <li>+212714230427</li>
+                                <li>anasstantane.inbox@gmail.com</li>
+                                {/* <li>fazwiuiux.com</li> */}
+                            </ul>
+                        </div>
+                        <div className="footer-col">
+                            <h2 className="footer-heading">Stay Updated</h2>
+                            <form className="subscribe">
+                                <input type="email" placeholder="Your email" className="subscribe-input" />
+                                <img src={submit} className="subscribe-btn" title="subscribe!"/>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div className="footer-bottom">
+                        <p>Copyright © 2024 PrimeStack. All Rights Reserved.</p>
+                        <p>User Terms & Conditions | Privacy Policy</p>
+                    </div>
+                </footer>
+
+                {/* Scroll To Top Button */}
+                <button 
+                    className={`scroll-top-btn ${showTopBtn ? "show" : ""}`} 
+                    onClick={scrollToTop}
+                >
+                    <ArrowUp size={24} color="white" strokeWidth={3} />
+                </button>
+
     </div>
   );
 };
