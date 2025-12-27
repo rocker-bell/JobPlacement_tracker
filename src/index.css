@@ -6,21 +6,21 @@
 
 html, body {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 #root {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border: 3px solid red;
+  /* border: 1px solid red; */
  
 }

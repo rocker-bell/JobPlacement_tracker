@@ -1,0 +1,372 @@
+.EntrepriseDashboard_wrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    border: 5px solid yellow;
+    /* overflow-y: hidden;   */
+}
+
+.EntrepiriseDashboard_container {
+    width: 95%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    border: 1px dashed black;
+
+}
+
+.EntrepiriseDashboard_sideNav {
+     width: 15%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    border: 4px dashed green;
+}
+
+nav {
+    width: 100%;
+    height: 50%;
+    /* display: flex;
+    flex-wrap: wrap; */
+    border: 1px solid red;
+}
+
+.dropdown_menu_logo {
+    display: none;
+    width: 35px;
+    height: 35px;
+    
+}
+
+.dropdown_menu_logo.mobile {
+    display: block;
+}
+
+.EntrepiriseDashboard_navLists.Active {
+    display: flex;
+}
+
+/* .EntrepiriseDashboard_navLists.deactive {
+    display: none;
+} */
+
+
+.EntrepiriseDashboard_navLists {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    list-style: none;
+    
+}
+
+.mobile {
+    display: none;
+}
+
+.menu_active {
+    display: none;
+    width: 35px;
+    height: 35px;
+}
+
+
+
+.dropdown_menu_logo.Active {
+    display: none;
+}
+
+
+.menu_active.Active {
+    display: block;
+}
+
+
+
+
+.EntrepiriseDashboard_nav_list {
+        width: 100%;
+        border: 1px solid black;
+        padding: 5px 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+}
+
+.EntrepiriseDashboard_NavContentSlider {
+     width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid grey;
+}
+
+.EntrepiriseDashboard_contentAbout {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    border: 3px dashed black;
+    padding: 10px 10px;
+}
+
+.Active {
+    display: flex;
+}
+
+/* Add Stage content slider */
+
+/* .ED_stage_form_wrapper {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: grey;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.ED_stage_form {
+     width: 50%;
+    height: 50%;
+    background-color: white;
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.ED_stage_form_formGroupe {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.ED_stage_form_label, .ED_stage_form_control {
+   height: 20px;
+    display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 5px 5px;
+}
+
+.ED_stage_form_control {
+    width: 70%;
+   
+}
+
+.ED_stage_form_label {
+    width: 20%;
+} */
+
+
+
+
+
+
+/* 
+.ED_stage_form_wrapper {
+    background-color: #4caf50;
+  width: 100%;
+  height: 100%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+
+.ED_stage_form {
+  width: 100%; 
+  max-width: 600px; 
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+.ED_stage_form_formGroupe {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.ED_stage_form_label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.ED_stage_form_control {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.ED_stage_form_btn_group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+button[type="button"] {
+  background-color: #f44336; 
+}
+
+
+button:hover {
+  opacity: 0.9;
+}
+
+
+
+
+.Active {
+  display: block;
+} */
+
+
+.ED_stage_form_wrapper {
+  position: absolute; /* Fix it on the screen */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+   /* Optional: Apply blur to the background */
+  /* backdrop-filter: blur(2px); Optional: Use backdrop-filter for smoother blur effect */
+}
+
+/* The actual form */
+.ED_stage_form {
+  width: 100%; /* Take full width of the parent container */
+  max-width: 600px; /* Max width for larger screens */
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Form group style */
+.ED_stage_form_formGroupe {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Input and textarea fields */
+.ED_stage_form_label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.ED_stage_form_control {
+  max-width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Button group for submit and cancel buttons */
+.ED_stage_form_btn_group {
+    width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Style the buttons */
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+button[type="button"] {
+  background-color: #f44336; /* Red for cancel */
+}
+
+/* Add a simple hover effect */
+button:hover {
+  opacity: 0.9;
+}
+
+.ED_stage_form_wrapper.cancel {
+    display: none;
+}
+
+
+
+footer {
+    width:  95%;
+    border: 1px solid black;
+    height: 10%;
+}
+
+@media screen and (max-width: 768px) {
+    .EntrepiriseDashboard_container {
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .EntrepiriseDashboard_sideNav {
+        width: 100%;
+        height: auto;
+        display: flex;
+    }
+
+    nav {
+        min-width: 100%;
+        min-height: auto;
+        
+        /* max-height: 300px; */
+        z-index: 1000;
+    }
+}
