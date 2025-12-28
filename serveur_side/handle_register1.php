@@ -25,49 +25,52 @@ $phonenumber = trim($data['registerPhoneNumber'] ?? '');
 $password = $data['password'] ?? '';
 $role = $data['role'] ?? 'Stagiaire';
 
-if (!$username || !$email || !$password || !$phonenumber) {
+if (!$username || !$email || !$password) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
     exit;
 }
 
-/* ---- Uniqueness checks ---- */
+
+
 
 // Check if the email is already taken
-$checkEmail = $db->prepare("SELECT 1 FROM Utilisateurs WHERE email=:email");
-$checkEmail->bindValue(':email', $email, PDO::PARAM_STR);
-$checkEmail->execute();
-if ($checkEmail->fetch()) {
+$check = $db->prepare("SELECT 1 FROM Utilisateurs WHERE email=:email");
+$check->bindValue(':email', $email, PDO::PARAM_STR);
+$check->execute();  // Execute the query
+
+// Instead of calling fetch() on the result of execute(), call fetch() on the query result
+if ($check->fetch()) {
     echo json_encode(['success' => false, 'message' => 'Email already registered']);
     exit;
 }
 
 // Check if the username is already taken
-$checkUsername = $db->prepare("SELECT 1 FROM Utilisateurs WHERE username=:username");
-$checkUsername->bindValue(':username', $username, PDO::PARAM_STR);
-$checkUsername->execute();
-if ($checkUsername->fetch()) {
+$checkUser = $db->prepare("SELECT 1 FROM Utilisateurs WHERE username=:username");
+$checkUser->bindValue(':username', $username, PDO::PARAM_STR);
+$checkUser->execute();  // Execute the query
+
+// Same as above: call fetch() on the result of the query
+if ($checkUser->fetch()) {
     echo json_encode(['success' => false, 'message' => 'Username already taken']);
     exit;
 }
 
-/* ---- Create user ---- */
+/* ---- create user ---- */
 $user_id = uuidv4();  // Generate UUID manually
 $createdAt = date('Y-m-d H:i:s');
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 $stmt = $db->prepare("
     INSERT INTO Utilisateurs (
-        user_id, email, username, password_hash, telephone, role, account_status, created_at, updated_at
+        user_id, email, password_hash, telephone, role, account_status, created_at, updated_at
     )
     VALUES (
-        :user_id, :email, :username, :password_hash, :telephone, :role, :account_status, :created_at, :updated_at
+        :user_id, :email, :password_hash, :telephone, :role, :account_status, :created_at, :updated_at
     )
 ");
 
 $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);  // Insert UUID manually
 $stmt->bindValue(':email', $email, PDO::PARAM_STR);
- 
-$stmt->bindValue(':username', $username, PDO::PARAM_STR);
 $stmt->bindValue(':password_hash', $hash, PDO::PARAM_STR);
 $stmt->bindValue(':telephone', $phonenumber, PDO::PARAM_STR);
 $stmt->bindValue(':role', $role, PDO::PARAM_STR);

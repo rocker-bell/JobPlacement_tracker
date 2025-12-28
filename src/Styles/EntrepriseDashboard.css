@@ -277,6 +277,7 @@ button:hover {
 
 /* The actual form */
 .ED_stage_form {
+  overflow-y: scroll;
   width: 100%; /* Take full width of the parent container */
   max-width: 600px; /* Max width for larger screens */
   background-color: white;

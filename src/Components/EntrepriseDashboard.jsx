@@ -107,13 +107,60 @@ const Entreprise_dashboard = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("user_id");
     navigate("/JobBoard")
   }
 
-  const handleSubmitStage = (e) => {
-    e.preventDefault()
-    
+ const handleSubmitStage = async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+  const typeStage = form.elements["type_stage"].value.trim();
+  const categorieStage = form.elements["categorie_stage"].value.trim();
+  const emplacement = form.elements["emplacement"].value.trim();
+  const nombrePlace = form.elements["nombre_place"].value.trim();
+  const debutStage = form.elements["debut_stage"].value.trim();
+  const dureeStage = form.elements["durre_stage"].value.trim();
+  const titreStage = form.elements["titre_stage"].value.trim();
+  const descriptionStage = form.elements["description_stage"].value.trim();
+  const competencesRequises = form.elements["competence_requise"].value.trim();
+
+  // Validate form fields
+  if (!typeStage || !categorieStage || !emplacement || !nombrePlace || !debutStage || !dureeStage || !titreStage || !descriptionStage || !competencesRequises) {
+    return alert("All fields are required!");
   }
+
+  try {
+    const res = await fetch("http://localhost:8000/handle_stage.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        type_stage: typeStage,
+        categorie_stage: categorieStage,
+        emplacement: emplacement,
+        nombre_place: nombrePlace,
+        debut_stage: debutStage,
+        durre_stage: dureeStage,
+        titre_stage: titreStage,
+        description_stage: descriptionStage,
+        competence_requise: competencesRequises,
+        entreprise_id: "your_entreprise_id", // Pass entreprise_id (or fetch dynamically)
+      }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("Stage added successfully!");
+      // Optionally, clear the form or redirect
+    } else {
+      alert(data.message);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong. Please try again.");
+  }
+};
+
 
   const handleCancel = () => {
     setCancelAddStage(true)
@@ -195,6 +242,10 @@ const Entreprise_dashboard = () => {
                             <form  method="POST" className="ED_stage_form" onSubmit={handleSubmitStage}>
                                              <div className="ED_stage_form_formGroupe">
                                                 <label htmlFor="" className="ED_stage_form_label">type de stage</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div>
+                                             <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">categorie</label>
                                                 <textarea type="text" className="ED_stage_form_control" > </textarea>
                                             </div>
                                              <div className="ED_stage_form_formGroupe">

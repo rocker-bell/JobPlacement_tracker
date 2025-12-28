@@ -3,6 +3,9 @@ import LandingPage from "./Components/Landing_page";
 import JobBoard from "./Components/JobBoard";
 import GetStarted from "./Components/getStarted";
 import Entreprise_dashboard from "./Components/EntrepriseDashboard.jsx";
+import UserJobBoard from "./Components/UserJobBoard.jsx";
+import EncadrantDashboard from "./Components/EncadrantDashboard.jsx";
+
 const App = () => {
   return (
     <>
@@ -11,7 +14,10 @@ const App = () => {
             <Route path="/" element={<LandingPage/>} />
             <Route path="/JobBoard" element={<JobBoard/>} />
             <Route path="/GetStarted" element={<GetStarted/>}/>
-            <Route path="/entreprise_dashboard" element={<Entreprise_dashboard/>}/>
+            <Route path="/jobboard_Entreprise" element={<Entreprise_dashboard/>}/>
+            <Route path="/Jobboard_Stagiaire" element={<UserJobBoard/>} />
+            <Route path="/jobboard_Encadrant"  element={<EncadrantDashboard/>}/>
+            
       </Routes>
 
     </>

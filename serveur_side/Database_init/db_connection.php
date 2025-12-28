@@ -22,7 +22,7 @@ try {
     $db = new PDO($dsnDb, $username, $password);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    echo "Database created and connected successfully.";
+    // echo "Database created and connected successfully.";
 
 } catch (PDOException $e) {
     die("DATABASE ERROR: " . $e->getMessage());
