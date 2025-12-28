@@ -91,13 +91,14 @@ const Entreprise_dashboard = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       setShowmenu(true);
+      if (!mobile) setShowmenu(false)
     };
 
     window.addEventListener("resize", handleResize);
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-    setShowmenu(false)
+    
   }, []);
 
   // Function to handle the slider change
@@ -191,7 +192,27 @@ const Entreprise_dashboard = () => {
             Content 2: Ajouter Stage
 
                     <div className={`ED_stage_form_wrapper ${CancelAddStage ? "cancel" : ""}`}>
-                            <form  method="POST" className="ED_stage_form" onSubmit={handleSubmitStage}>  
+                            <form  method="POST" className="ED_stage_form" onSubmit={handleSubmitStage}>
+                                             <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">type de stage</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div>
+                                             <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">emplacement</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div>
+                                             <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">nombre place demande</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div>
+                                             <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">debut de stagee</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div>
+                                             <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">duree du stage</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div>
                                             <div className="ED_stage_form_formGroupe">
                                                 <label htmlFor="" className="ED_stage_form_label">stage title</label>
                                                 <input type="text" className="ED_stage_form_control" />
@@ -201,9 +222,13 @@ const Entreprise_dashboard = () => {
                                                 <textarea type="text" className="ED_stage_form_control" > </textarea>
                                             </div>
                                               <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">stage requirements</label>
+                                                <label htmlFor="" className="ED_stage_form_label">competences requises</label>
                                                 <textarea type="text" className="ED_stage_form_control" > </textarea>
                                             </div>
+                                             {/* <div className="ED_stage_form_formGroupe">
+                                                <label htmlFor="" className="ED_stage_form_label">stage requirements</label>
+                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
+                                            </div> */}
                                                 <div className="ED_stage_form_btn_group">
                                                      <button type="submit">submit</button>
                                                      <button type="cancel" onClick={handleCancel}>cancel</button>

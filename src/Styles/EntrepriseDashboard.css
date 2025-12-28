@@ -364,7 +364,7 @@ footer {
 
     nav {
         min-width: 100%;
-        min-height: auto;
+        min-height: 100%;
         
         /* max-height: 300px; */
         z-index: 1000;
