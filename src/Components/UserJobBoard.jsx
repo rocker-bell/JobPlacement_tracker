@@ -69,7 +69,7 @@
 // export default UserJobBoard;
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import "../Styles/UserJobBoard.css";
@@ -84,6 +84,7 @@ const UserJobBoard = () => {
   stage_search_querry: ""
 });
 const [submittedQuery, setSubmittedQuery] = useState("");
+const [FetchedQuery, setFetchedQuery] = useState([]);
 
   const [UserId, setUserId] = useState(null);
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
@@ -119,6 +120,10 @@ const [submittedQuery, setSubmittedQuery] = useState("");
     localStorage.removeItem("user_id");
     navigate("/JobBoard")
   }
+
+  
+
+
 
 //  const handleSubmitStage = async (e) => {
 //   e.preventDefault();
@@ -210,6 +215,66 @@ const handleChange = (e) => {
         console.error("Fetch error:", err);
       }
     }
+
+    // async function FetchSearchedStage(submittedQuery) {
+    //   try {
+    //   const response = await fetch(`${BASE_URL}/fetchStagebyQuerry.php`, {
+    //      method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+    //       },
+    //       body: new URLSearchParams({ query: submittedQuery }), // send user_id
+    //     });
+        
+    //      if (!response.ok) {
+    //       console.error("HTTP error:", response.status);
+    //       return;
+    //     }
+  
+    //     const query = await response.json();
+    //     if (query.success) {
+    //       setFetchedQuery(query.query_data);
+    //     } else {
+    //       console.error("Error from API:", data.message);
+    //     }
+
+    //   }
+    //   catch (err) {
+    //       console.error("Fetch error:", err)
+    //   }
+      
+    // }
+
+
+    async function FetchSearchedStage(submittedQuery) {
+  try {
+    const response = await fetch(`${BASE_URL}/fetchStagebyQuerry.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        query: submittedQuery, // ✅ FIXED key
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("HTTP error:", response.status);
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      setFetchedQuery(data.query_data); // ✅ FIXED key
+    } else {
+      console.error("API error:", data.message);
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
   
     useEffect(() => {
       const user_id = localStorage.getItem("user_id");
@@ -218,6 +283,9 @@ const handleChange = (e) => {
   
       if (user_id) {
         FetchuserData(user_id); // actually call the function
+      }
+      if(submittedQuery) {
+        FetchSearchedStage(submittedQuery)
       }
     }, []);
 
@@ -268,7 +336,7 @@ const handleChange = (e) => {
   <Search
     size={35}
     color="#333"
-    onClick={() =>{ SliderContentHandler("ED_CB_addStage"),   setSubmittedQuery(Query.stage_search_querry);}}
+    onClick={() =>{ SliderContentHandler("ED_CB_addStage"),   setSubmittedQuery(Query.stage_search_querry),  FetchSearchedStage(Query.stage_search_querry)}}
     style={{ cursor: "pointer" }}
   />
 </li>
@@ -314,9 +382,55 @@ const handleChange = (e) => {
   }`}
 >
   Content 2:  stage content :
-  {submittedQuery && (
-    <strong> {submittedQuery}</strong>
-  )}
+  {/* {FetchedQuery.length > 0 ? (
+  FetchedQuery.map((stage) => (
+    <div key={stage.offre_id} className="stage_card">
+      <h3>{stage.titre}</h3>
+      <p>{stage.description}</p>
+      <small>{stage.stage_categorie}</small>
+    </div>
+  ))
+) : (
+  <p>No results found</p>
+)} */}
+
+{Array.isArray(FetchedQuery) && FetchedQuery.length > 0 ? (
+  FetchedQuery.map((stage) => (
+    <div key={stage.offre_id} className="stage_card">
+      
+      <h2>{stage.titre}</h2>
+
+      <p><strong>Type:</strong> {stage.type_de_stage}</p>
+      <p><strong>Category:</strong> {stage.stage_categorie}</p>
+      <p><strong>Description:</strong> {stage.description}</p>
+
+      <p><strong>Skills Required:</strong> {stage.competences_requises}</p>
+
+      <p><strong>Start Date:</strong> {stage.date_debut}</p>
+      <p><strong>Duration (weeks):</strong> {stage.duree_semaines}</p>
+
+      <p><strong>Available Places:</strong> {stage.nombre_places}</p>
+      <p><strong>Location:</strong> {stage.emplacement}</p>
+
+      <p>
+        <strong>Status:</strong>{" "}
+        <span className={`status ${stage.statut}`}>
+          {stage.statut}
+        </span>
+      </p>
+
+      <small>
+        <strong>Created:</strong> {stage.created_at} <br />
+        <strong>Updated:</strong> {stage.updated_at}
+      </small>
+
+    </div>
+  ))
+) : (
+  <p>No results found</p>
+)}
+
+
 </span>
 
           <span
