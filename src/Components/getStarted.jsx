@@ -89,7 +89,9 @@ const handleLogin = async () => {
         navigate("/Jobboard_Stagiaire");
         break;
       case "Entreprise":
+        
         navigate("/jobboard_Entreprise");
+
         break;
       case "Encadrant":
         navigate("/jobboard_Encadrant");

@@ -336,7 +336,8 @@ import send from "../assets/send.png";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
 
-import PrimeStackLogo from "../assets/PrimeStackLogo"; 
+// import Logo1 from "../assets/Logo1";
+import Logo1 from "../assets/Logo1.svg"; 
 
 
 
@@ -436,7 +437,7 @@ const JobBoard = () => {
         <div className="nav-left">
           {/* Logo (Text representation) */}
          
-          <a href="#" className="nav-logo">indeed</a>
+          <img src={Logo1} alt="" className='jobconnectlogo'/>
 
            <img src={menu} alt="" className='menu-logo'/>
           <img src={menu_active} alt="" className='menu-logo'/>
@@ -566,7 +567,7 @@ const JobBoard = () => {
 
                     <div className="footer-content">
                         <div className="footer-col">
-                             <PrimeStackLogo onClick={scrollToTop}/> 
+                             <img src={Logo1} alt="" onClick={scrollToTop} className='jobconnectlogo'/>
                             <p className="footer-text">
                                 {/* Lorem ipsum dolor sit amet consectetur adipisicing elit.
                                 Consequuntur cupiditate ipsum nulla. */}

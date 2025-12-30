@@ -1,4 +1,4 @@
-.EntrepriseDashboard_wrapper {
+.EncadrantDashboard_wrapper {
     width: 100%;
     height: 100vh;
     display: flex;
@@ -9,50 +9,37 @@
     /* overflow-y: hidden;   */
 }
 
-.EntrepiriseDashboard_container {
+.EncadrantDashboard_container {
     width: 95%;
     height: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
     border: 1px dashed black;
 
 }
 
-.jobconnectlogo {
-  width: 150px;
-  height: 150px;
-  cursor: pointer;
-}
-
-.EntrepiriseDashboard_sideNav {
-     width: 15%;
-    height: 100%;
+.EncadrantDashboard_sideNav {
+    width: 100%;
+    height: 10%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     border: 4px dashed green;
 }
-
-/* .jobconnectlogo {
-  width: 35px;
- background-color: #4caf50;
-  cursor: pointer;
-  border: 1px solid black;
-} */
 
 nav {
     width: 100%;
     height: 100%;
     /* display: flex;
     flex-wrap: wrap; */
-    border: 4px solid red;
+    border: 1px solid red;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .dropdown_menu_logo {
@@ -66,24 +53,30 @@ nav {
     display: block;
 }
 
-.EntrepiriseDashboard_navLists.Active {
+.EncadrantDashboard_navLists.Active {
     display: flex;
 }
 
-/* .EntrepiriseDashboard_navLists.deactive {
+/* .EncadrantDashboard_navLists.deactive {
     display: none;
 } */
 
+.jobconnectlogo {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+}
 
-.EntrepiriseDashboard_navLists {
-  border: 1px solid black;
-    width: 100%;
-    height: 50%;
-    padding: 10px;
+.EncadrantDashboard_navLists {
+    border: 1px solid black;
+    min-width: 50%;
+    max-width: 100%;
+    height: 100%;
+    /* padding: 10px; */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     list-style: none;
     
 }
@@ -112,8 +105,8 @@ nav {
 
 
 
-.EntrepiriseDashboard_nav_list {
-        width: 100%;
+.EncadrantDashboard_nav_list {
+        min-width: 100px;
         border: 1px solid black;
         padding: 5px 5px;
         display: flex;
@@ -122,7 +115,7 @@ nav {
         cursor: pointer;
 }
 
-.EntrepiriseDashboard_NavContentSlider {
+.EncadrantDashboard_NavContentSlider {
      width: 100%;
     height: 100%;
     display: flex;
@@ -132,7 +125,7 @@ nav {
     border: 1px solid grey;
 }
 
-.EntrepiriseDashboard_contentAbout {
+.EncadrantDashboard_contentAbout {
     display: none;
     width: 100%;
     height: 100%;
@@ -388,33 +381,8 @@ footer {
     height: 10%;
 }
 
-/* @media screen and (max-width: 768px) {
-    .EntrepiriseDashboard_container {
-        
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .EntrepiriseDashboard_sideNav {
-        width: 100%;
-        height: auto;
-        display: flex;
-    }
-
-    nav {
-        min-width: 100%;
-        min-height: 100%;
-        
-        
-        z-index: 1000;
-    }
-} */
-
-
 @media screen and (max-width: 768px) {
-  .EntrepiriseDashboard_sideNav {
+  .EncadrantDashboard_sideNav {
     min-width: 100%;
     border: 3px solid black;
     /* min-height: 15%; */
@@ -422,7 +390,7 @@ footer {
     display: flex;
     flex-wrap: wrap;
   }
-    .EntrepiriseDashboard_container {
+    .EncadrantDashboard_container {
         
         display: flex;
         justify-content: center;
@@ -438,7 +406,7 @@ footer {
       flex-direction: row;
     }
 
-    .EntrepiriseDashboard_navLists {
+    .EncadrantDashboard_navLists {
     border: 1px solid black;
     width: 100%;
     height: 100%;
@@ -452,7 +420,7 @@ footer {
     
 }
 
-    .EntrepiriseDashboard_sideNav {
+    .EncadrantDashboard_sideNav {
         width: 100%;
         height: auto;
         display: flex;

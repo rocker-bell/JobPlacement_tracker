@@ -74,9 +74,15 @@ import { useNavigate } from "react-router-dom";
 import "../Styles/EntrepriseDashboard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
+import Logo1 from "../assets/Logo1.svg"
 
 const Entreprise_dashboard = () => {
   // State for active slider and mobile screen size
+  const [Fetchuser, setFetchuser] = useState(null)
+  const [stages, setStages] = useState([]);
+  const [UserId, setUserId] = useState(null);
+  const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
+
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
@@ -85,7 +91,81 @@ const Entreprise_dashboard = () => {
   const [Showmenu, setShowmenu] = useState(false);
   const navigate = useNavigate()
 
+  const [formData, setFormData] = useState({
+    entreprise_id: localStorage.getItem("user_id") || "",
+    nom_entreprise: "",
+    description: "",
+    adresse: "",
+    // logo_path: "",
+    site_web: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("Form submitted:", formData);
+  //   // send formData to backend
+  // };
+
+  // async function InsertEnterprise() {
+  //   const response = await fetch(`${BASE_URL}/add_entreprise.php`, {
+  //     method: "POST",
+  //     headers: {
+  //         "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+  //       },
+  //       body : formData
+  //   })
+
+  //    if (!response.ok) {
+  //       console.error("HTTP error:", response.status);
+  //       return;
+  //     }
+
+  // }
+
+
+  const handleSubmit = (e) => {
+  e.preventDefault();
+  console.log("Form submitted:", formData);
+  InsertEnterprise();
+};
+
+async function InsertEnterprise() {
+  try {
+    const response = await fetch(`${BASE_URL}/add_entreprise.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(formData) // <-- encode formData
+    });
+
+    if (!response.ok) {
+      console.error("HTTP error:", response.status);
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Server response:", data);
+
+    if (data.success) {
+      alert("Entreprise added successfully!");
+    } else {
+      alert("Error: " + data.message);
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
+
   // Handle screen resizing to adjust the mobile state
+
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -101,6 +181,46 @@ const Entreprise_dashboard = () => {
     
   }, []);
 
+
+  // fetch user
+  const BASE_URL = "http://localhost:8000"
+   async function FetchuserData(userId) {
+    try {
+      const response = await fetch(`${BASE_URL}/fetch_profile.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+        },
+        body: new URLSearchParams({ user_id: userId }), // send user_id
+      });
+
+      if (!response.ok) {
+        console.error("HTTP error:", response.status);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setFetchuser(data.user_data);
+      } else {
+        console.error("Error from API:", data.message);
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  }
+
+  useEffect(() => {
+    const user_id = localStorage.getItem("user_id");
+    setUserId(user_id);
+    setenterpriseId(user_id)
+
+    if (user_id) {
+      FetchuserData(user_id); // actually call the function
+    }
+  }, []);
+
+
   // Function to handle the slider change
   const SliderContentHandler = (sliderName) => {
     setActiveSlider(sliderName);
@@ -110,6 +230,53 @@ const Entreprise_dashboard = () => {
     localStorage.removeItem("user_id");
     navigate("/JobBoard")
   }
+
+// fetch all stages
+// useEffect(() => {
+//     async function fetchStages() {
+//       try {
+//         const response = await fetch(`${BASE_URL}/fetch_stage.php`);
+//         const data = await response.json();
+//         if (data.success) {
+//           setStages(data.stages);
+//         } else {
+//           console.error(data.message);
+//         }
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     }
+
+//     fetchStages();
+//   }, []);
+
+useEffect(() => {
+  async function fetchStages() {
+    if (!enterpriseId) return; // safety check
+
+    try {
+      const response = await fetch(`${BASE_URL}/stage_fetch.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ entreprise_id: enterpriseId }) // MUST match PHP
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setStages(data.stages);
+      } else {
+        console.error("Fetch stages error:", data.message);
+      }
+    } catch (err) {
+      console.error("Network or parsing error:", err);
+    }
+  }
+
+  fetchStages();
+}, [enterpriseId]);
+
 
  const handleSubmitStage = async (e) => {
   e.preventDefault();
@@ -125,6 +292,23 @@ const Entreprise_dashboard = () => {
   const descriptionStage = form.elements["description_stage"].value.trim();
   const competencesRequises = form.elements["competence_requise"].value.trim();
 
+
+    const entreprise_id = localStorage.getItem("user_id")
+  const stageInfo = {
+     entreprise_id: entreprise_id,
+      typeStage,
+      categorieStage,
+      emplacement,
+      nombrePlace,
+      debutStage,
+      dureeStage,
+      titreStage,
+      descriptionStage,
+      competencesRequises
+  }
+
+  console.log(stageInfo)
+
   // Validate form fields
   if (!typeStage || !categorieStage || !emplacement || !nombrePlace || !debutStage || !dureeStage || !titreStage || !descriptionStage || !competencesRequises) {
     return alert("All fields are required!");
@@ -135,19 +319,24 @@ const Entreprise_dashboard = () => {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
+        entreprise_id:  entreprise_id,
         type_stage: typeStage,
-        categorie_stage: categorieStage,
-        emplacement: emplacement,
-        nombre_place: nombrePlace,
-        debut_stage: debutStage,
-        durre_stage: dureeStage,
         titre_stage: titreStage,
+        categorie_stage: categorieStage,
         description_stage: descriptionStage,
         competence_requise: competencesRequises,
-        entreprise_id: "your_entreprise_id", // Pass entreprise_id (or fetch dynamically)
+        debut_stage: debutStage,
+        durre_stage: dureeStage,
+        emplacement: emplacement,
+        nombre_place: nombrePlace,
+        
+        
+        
+       // Pass entreprise_id (or fetch dynamically)
       }),
     });
 
+    
     const data = await res.json();
     if (data.success) {
       alert("Stage added successfully!");
@@ -189,8 +378,12 @@ const Entreprise_dashboard = () => {
       <div className="EntrepiriseDashboard_container">
         <div className="EntrepiriseDashboard_sideNav">
           <nav >
-            <img src={menu} alt="" className={`dropdown_menu_logo ${Showmenu ? "mobile" : ""} ${menuActive ? "Active" : ""}`} onClick={handleClickMenu}/>
-            <img src={menu_active} alt="" className={`menu_active ${menuActive ? "Active" : ""}`} />
+              <div className="logo_actions_group">
+                           
+                            <img src={Logo1} alt="" className="jobconnectlogo" />
+                            <img src={menu} alt="" className={`dropdown_menu_logo ${Showmenu ? "mobile" : ""} ${menuActive ? "Active" : ""}`} onClick={handleClickMenu}/>
+                            <img src={menu_active} alt="" className={`menu_active ${menuActive ? "Active" : ""}`} />
+                        </div>
             <ul className={`EntrepiriseDashboard_navLists ${IsMobile ? "mobile" : ""} ${menuActive ? "Active" : ""}`}>
               {/* On click of each nav item, change the active slider */}
               <li
@@ -239,54 +432,60 @@ const Entreprise_dashboard = () => {
             Content 2: Ajouter Stage
 
                     <div className={`ED_stage_form_wrapper ${CancelAddStage ? "cancel" : ""}`}>
-                            <form  method="POST" className="ED_stage_form" onSubmit={handleSubmitStage}>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">type de stage</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">categorie</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">emplacement</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">nombre place demande</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">debut de stagee</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">duree du stage</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                            <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">stage title</label>
-                                                <input type="text" className="ED_stage_form_control" />
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">stage description</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                              <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">competences requises</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             {/* <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">stage requirements</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div> */}
-                                                <div className="ED_stage_form_btn_group">
-                                                     <button type="submit">submit</button>
-                                                     <button type="cancel" onClick={handleCancel}>cancel</button>
-                                                </div>
-                                           
-                            </form>
-                    </div>
+  <form className="ED_stage_form" onSubmit={handleSubmitStage}>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Type de stage</label>
+      <textarea name="type_stage" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Catégorie</label>
+      <textarea name="categorie_stage" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Emplacement</label>
+      <input name="emplacement" type="text" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Nombre de places</label>
+      <input name="nombre_place" type="number" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Début du stage</label>
+      <input name="debut_stage" type="date" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Durée du stage</label>
+      <input name="durre_stage" type="text" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Titre du stage</label>
+      <input name="titre_stage" type="text" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Description</label>
+      <textarea name="description_stage" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_formGroupe">
+      <label className="ED_stage_form_label">Compétences requises</label>
+      <textarea name="competence_requise" className="ED_stage_form_control" />
+    </div>
+
+    <div className="ED_stage_form_btn_group">
+      <button type="submit">Submit</button>
+      <button type="button" onClick={handleCancel}>Cancel</button>
+    </div>
+
+  </form>
+</div>
 
           </span>
           <span
@@ -295,6 +494,54 @@ const Entreprise_dashboard = () => {
             }`}
           >
             Content 3: Stages
+
+
+                  <div className="stage-section">
+      {stages.map((stage) => (
+        <form key={stage.offre_id} className="stage-form">
+          <div>
+            <label>Type de Stage:</label>
+            <input type="text" value={stage.type_de_stage} readOnly />
+          </div>
+          <div>
+            <label>Catégorie:</label>
+            <input type="text" value={stage.stage_categorie} readOnly />
+          </div>
+          <div>
+            <label>Titre:</label>
+            <input type="text" value={stage.titre} readOnly />
+          </div>
+          <div>
+            <label>Description:</label>
+            <textarea value={stage.description} readOnly />
+          </div>
+          <div>
+            <label>Compétences requises:</label>
+            <textarea value={stage.competences_requises} readOnly />
+          </div>
+          <div>
+            <label>Début:</label>
+            <input type="date" value={stage.date_debut} readOnly />
+          </div>
+          <div>
+            <label>Durée (semaines):</label>
+            <input type="number" value={stage.duree_semaines} readOnly />
+          </div>
+          <div>
+            <label>Nombre de places:</label>
+            <input type="number" value={stage.nombre_places} readOnly />
+          </div>
+          <div>
+            <label>Emplacement:</label>
+            <input type="text" value={stage.emplacement} readOnly />
+          </div>
+          <div>
+            <label>Statut:</label>
+            <input type="text" value={stage.statut} readOnly />
+          </div>
+        </form>
+      ))}
+    </div>
           </span>
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_profile ${
@@ -302,6 +549,89 @@ const Entreprise_dashboard = () => {
             }`}
           >
             Content 4: Profile
+             <div>
+                {Fetchuser ? (
+                  // <pre>{JSON.stringify(Fetchuser, null, 2)}</pre>
+                    <form onSubmit={handleSubmit}>
+      {/* User Info (read-only) */}
+      <div>
+        <strong>User ID:</strong> {Fetchuser?.user_id} <br />
+        <strong>Email:</strong> {Fetchuser?.email} <br />
+        <strong>Telephone:</strong> {Fetchuser?.telephone} <br />
+        <strong>Role:</strong> {Fetchuser?.role} <br />
+        <strong>Account Status:</strong> {Fetchuser?.account_status} <br />
+        <strong>Created At:</strong> {Fetchuser?.created_at} <br />
+        <strong>Updated At:</strong> {Fetchuser?.updated_at} <br />
+        <strong>Username:</strong> {Fetchuser?.username} <br />
+      </div>
+
+      {/* Editable Entreprise Info */}
+      <div>
+        <label>Entreprise ID:</label>
+        <input
+          type="text"
+          name="entreprise_id"
+          value={formData.entreprise_id}
+          readOnly
+          placeholder={`${UserId}`}
+        />
+      </div>
+
+      <div>
+        <label>Nom Entreprise:</label>
+        <input
+          type="text"
+          name="nom_entreprise"
+          value={formData.nom_entreprise}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <label>Description:</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <label>Adresse:</label>
+        <input
+          type="text"
+          name="adresse"
+          value={formData.adresse}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* <div>
+        <label>Logo Path:</label>
+        <input
+          type="text"
+          name="logo_path"
+          value={formData.logo_path}
+          onChange={handleChange}
+        />
+      </div> */}
+
+      <div>
+        <label>Site Web:</label>
+        <input
+          type="text"
+          name="site_web"
+          value={formData.site_web}
+          onChange={handleChange}
+        />
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+                ) : (
+                  <p>Loading user data...</p>
+                )}
+            </div>
           </span>
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_statistiques ${
