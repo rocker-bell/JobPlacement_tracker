@@ -46,6 +46,31 @@ $Entreprises = "
     );
 ";
 
+
+
+// $Entreprises = "
+// CREATE TABLE IF NOT EXISTS Entreprises (
+//     entreprise_id CHAR(36) NOT NULL PRIMARY KEY,
+    
+//     -- User-related fields
+//     email VARCHAR(255) NOT NULL UNIQUE,
+//     password_hash VARCHAR(255) NOT NULL,
+//     telephone VARCHAR(20),
+//     role ENUM('Entreprise') NOT NULL DEFAULT 'Entreprise',
+//     account_status ENUM('Pending', 'Active', 'Verified', 'Blocked') DEFAULT 'Pending',
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+//     -- Enterprise-specific fields
+//     nom_entreprise VARCHAR(150) NOT NULL UNIQUE,
+//     description TEXT,
+//     adresse VARCHAR(255),
+//     logo_path VARCHAR(255),
+//     site_web VARCHAR(255)
+// );
+// ";
+
+
 // 4. Table Encadrants
 // - PK is CHAR(36)
 // - agence_id must be CHAR(36) to reference Entreprises

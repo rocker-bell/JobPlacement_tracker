@@ -4,6 +4,10 @@ require "./Database_init/db_connection.php"; // Assuming this file contains the 
 header("Access-Control-Allow-Origin: http://localhost:5173");  // Allow React app URL
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header("Content-Type: application/json");
 
 // Generate a UUID v4

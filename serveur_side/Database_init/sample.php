@@ -1,7 +1,6 @@
 <?php
 
 
-
 CREATE TABLE IF NOT EXISTS Utilisateurs (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     uuid CHAR(36) NOT NULL DEFAULT (UUID()), -- Identifiant unique public

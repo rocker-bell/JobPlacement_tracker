@@ -1,0 +1,131 @@
+table ->
+
+CREATE TABLE IF NOT EXISTS Entreprise_Full (
+    user_id VARCHAR(36),
+    email TEXT,
+    password TEXT,
+    telephone TEXT,
+    role TEXT,
+    account_status TEXT,
+    entreprise_id VARCHAR(36),
+    nom_entreprise TEXT,
+    description TEXT,
+    adresse TEXT,
+    logopath TEXT,
+    siteweb TEXT
+);
+
+
+procedure : DROP PROCEDURE IF EXISTS create_general_entreprise;
+DELIMITER //
+
+CREATE PROCEDURE create_general_entreprise(IN p_user_id VARCHAR(36), IN logo_path varchar(500))
+BEGIN
+    INSERT INTO Entreprise_Full (
+        user_id,
+        email,
+        password,
+        telephone,
+        role,
+        account_status,
+        entreprise_id,
+        nom_entreprise,
+        description,
+        adresse,
+        logopath,
+        siteweb
+    )
+    SELECT
+        u.user_id,
+        u.email,
+        u.password,
+        u.telephone,
+        u.role,
+        u.account_status,
+        e.entreprise_id,
+        e.nom_entreprise,
+        e.description,
+        e.adresse,
+        logo_path,
+        e.siteweb
+    FROM Utilisateurs u
+    JOIN Entreprises e
+        ON e.entreprise_id = u.user_id
+    WHERE u.user_id = p_user_id
+      AND u.role = 'Entreprise';
+END//
+
+DELIMITER ;
+
+call : CALL create_general_entreprise(
+    'user-id-here',
+    '/uploads/logos/company.png'
+);
+ |  $stmt = $pdo->prepare("CALL create_general_entreprise(:uid, :logo)");
+$stmt->execute([
+    ':uid'  => $userId,
+    ':logo' => $logoPath
+]);
+$stmt->closeCursor();
+
+
+trigger : 
+
+DELIMITER //
+
+CREATE TRIGGER trg_create_entreprise_full
+AFTER INSERT ON Utilisateurs
+FOR EACH ROW
+BEGIN
+    IF NEW.role = 'Entreprise' THEN
+        INSERT INTO Entreprise_Full (
+            user_id, email, password, telephone, role, account_status,
+            entreprise_id, nom_entreprise, description, adresse, logopath, siteweb
+        )
+        SELECT
+            NEW.user_id,
+            NEW.email,
+            NEW.password,
+            NEW.telephone,
+            NEW.role,
+            NEW.account_status,
+            e.entreprise_id,
+            e.nom_entreprise,
+            e.description,
+            e.adresse,
+            e.logopath,
+            e.siteweb
+        FROM Entreprises e
+        WHERE e.entreprise_id = NEW.user_id;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+
+php call : 
+1 _
+
+$stmt = $pdo->prepare("SELECT * FROM Entreprise_Full WHERE user_id = :user_id");
+$stmt->execute([
+    ':user_id' => $userId
+]);
+
+$entreprise = $stmt->fetch(PDO::FETCH_ASSOC);
+
+2_ 
+
+$stmt = $pdo->prepare("CALL create_general_entreprise(:user_id)");
+$stmt->execute([
+    ':user_id' => $userId
+]);
+
+$stmt->closeCursor();
+
+fetch | $stmt = $pdo->query("SELECT * FROM Entreprise_Full WHERE user_id = '$userId'");
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+3_
+

@@ -2,6 +2,8 @@
 
 require "./db_connection.php";
 
+// stagoaire country and city [stage country, stage city, address]
+
 $Utilisateurs = "
     CREATE TABLE IF NOT EXISTS Utilisateurs (
         user_id INT AUTO_INCREMENT PRIMARY KEY,
