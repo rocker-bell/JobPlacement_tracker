@@ -15,7 +15,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
     border: 1px dashed black;
 
 }
@@ -27,8 +27,8 @@
 }
 
 .EntrepiriseDashboard_sideNav {
-     width: 15%;
-    height: 100%;
+     width: 100%;
+    height: auto;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -77,13 +77,13 @@ nav {
 
 .EntrepiriseDashboard_navLists {
   border: 1px solid black;
-    width: 100%;
+    min-width: 50%;
     height: 50%;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     list-style: none;
     
 }
@@ -113,9 +113,9 @@ nav {
 
 
 .EntrepiriseDashboard_nav_list {
-        width: 100%;
+        min-width: 100px;
         border: 1px solid black;
-        padding: 5px 5px;
+        /* padding: 5px 5px; */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -378,6 +378,189 @@ button:hover {
 
 .ED_stage_form_wrapper.cancel {
     display: none;
+}
+
+
+/* submitted stage form */
+
+/* .stage-section {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+
+}
+
+.stage-form {
+  min-height: 300px;
+  max-height: 300px;
+  border: 3px dashed black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+
+.stage_actions {
+  display: none;
+  position: absolute; 
+  top: 40px; 
+  left: 0; 
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.stage_actions.show {
+  display: block; 
+}
+
+.stage_actions.hidden {
+  display: none; 
+}
+
+.stage_action_dropdown {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+*/
+
+/* Container to manage the hover effect */
+.stage-section {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+
+}
+
+.stage-form {
+  min-width: 100%;
+
+  min-height: 300px;
+  max-height: 300px;
+  border: 3px dashed black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+/* .dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.stage_action_dropdown {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: black;
+  border-radius: 4px;
+}
+
+.stage_actions {
+  flex-direction: row;
+  display: none;
+  position: relative;
+  top: 40px; 
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  min-width: 150px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10; 
+}
+
+.stage_actions.show {
+  display: block;
+}
+
+.stage_actions.hidden {
+  display: none; 
+}
+
+.stage_actions button {
+  padding: 8px 12px;
+  margin: 4px 0;
+  background-color: black;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.stage_actions button:hover {
+  background-color: #e0e0e0;
+}
+
+.stage_action_dropdown:hover {
+  background-color: #e0e0e0;
+} */
+/* Container to manage the hover effect */
+.dropdown-container {
+  position: relative;  /* Make the container the reference point for absolute positioning */
+  display: inline-block;  /* Keeps the container from resizing */
+}
+
+.stage_action_dropdown {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.stage_actions {
+  display: none;  /* Hidden by default */
+  position: absolute;  /* Positioned relative to the parent container */
+  top: 0;  /* Position below the button */
+  left: 0;  /* Align the left side of the dropdown with the button */
+  background-color: black;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  min-width: 150px;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0s 0.3s; /* Smooth fade-in and out */
+  z-index: 999;  /* Make sure it is above other elements */
+}
+
+.stage_actions.show {
+  display: block;  /* Show dropdown when hovered */
+  opacity: 1;  /* Make it visible */
+  visibility: visible;  /* Ensure it's fully visible */
+  transition: opacity 0.3s ease, visibility 0s 0s; /* Reset visibility transition for smoothness */
+}
+
+.stage_actions.hidden {
+  visibility: hidden; /* Make dropdown invisible but keep space reserved */
+  opacity: 0; /* Fully hide it */
+}
+
+.stage_actions button {
+  padding: 8px 12px;
+  margin: 4px 0;
+  background-color: black;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.stage_actions button:hover {
+  background-color: black;
+}
+
+.stage_action_dropdown:hover {
+  background-color: black;
 }
 
 

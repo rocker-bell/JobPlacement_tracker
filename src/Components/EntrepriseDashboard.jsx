@@ -82,6 +82,7 @@ const Entreprise_dashboard = () => {
   const [stages, setStages] = useState([]);
   const [UserId, setUserId] = useState(null);
   const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
+  const [ActiveStageAction, setActiveStageAction] = useState(false);
 
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -370,6 +371,15 @@ useEffect(() => {
 
   }
 
+   const handleMouseEnter = () => {
+    setActiveStageAction(true);  // Show dropdown
+  };
+
+  const handleMouseLeave = () => {
+    setActiveStageAction(false); // Hide dropdown
+  };
+
+
 
 
 
@@ -539,8 +549,27 @@ useEffect(() => {
             <label>Statut:</label>
             <input type="text" value={stage.statut} readOnly />
           </div>
+         <div 
+      className="dropdown-container"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button className={`stage_action_dropdown ${ActiveStageAction ? "ActiveStageAction" : ""}`}>
+        Actions
+      </button>
+
+      <div className={`stage_actions ${ActiveStageAction ? "show" : "hidden"}`}>
+        <button className="modifier">Modifier</button>
+        <button className="delete">Remove</button>
+        <button className="candidature">Candidature</button>
+        <button className="encadrant">Encadrants</button>
+        <button className="rapport">Rapport</button>
+      </div>
+    </div>
         </form>
+        
       ))}
+      
     </div>
           </span>
           <span
