@@ -377,7 +377,10 @@ useEffect(() => {
   };
 
   const handleMouseLeave = () => {
-    setActiveStageAction(false); // Hide dropdown
+    setTimeout(() => {
+      setActiveStageId(false);  
+    }, 3000);
+     // Hide dropdown
   };
 
 
