@@ -82,7 +82,8 @@ const Entreprise_dashboard = () => {
   const [stages, setStages] = useState([]);
   const [UserId, setUserId] = useState(null);
   const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
-  const [ActiveStageAction, setActiveStageAction] = useState(false);
+  // const [ActiveStageAction, setActiveStageAction] = useState(false);
+  const [activeStageId, setActiveStageId] = useState(null);
 
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -371,8 +372,8 @@ useEffect(() => {
 
   }
 
-   const handleMouseEnter = () => {
-    setActiveStageAction(true);  // Show dropdown
+   const handleMouseEnter = (id) => {
+    setActiveStageId(id);  // Show dropdown
   };
 
   const handleMouseLeave = () => {
@@ -381,6 +382,39 @@ useEffect(() => {
 
 
 
+  const actions = [
+    { name: "Modifier", className: "modifier" },
+    { name: "Remove", className: "delete" },
+    { name: "Candidature", className: "candidature" },
+    { name: "Encadrants", className: "encadrant" },
+    { name: "Rapport", className: "rapport" }
+  ];
+
+
+  const handleModifier = (id, e) => {
+  e.preventDefault();
+  alert("Modifier " + id);
+};
+
+const handleCandidature = (id, e) => {
+  e.preventDefault();
+  alert("Candidature " + id);
+};
+
+const handleRapport = (id, e) => {
+  e.preventDefault();
+  alert("Rapport " + id);
+};
+
+const handleEncadrants = (id, e) => {
+  e.preventDefault();
+  alert("Encadrant " + id);
+};
+
+const handleSupprimer = (id, e) => {
+  e.preventDefault();
+  alert("Supprimer " + id);
+};
 
 
   return (
@@ -549,7 +583,7 @@ useEffect(() => {
             <label>Statut:</label>
             <input type="text" value={stage.statut} readOnly />
           </div>
-         <div 
+         {/* <div 
       className="dropdown-container"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -565,7 +599,44 @@ useEffect(() => {
         <button className="encadrant">Encadrants</button>
         <button className="rapport">Rapport</button>
       </div>
-    </div>
+    </div> */}
+
+     <div
+            className="dropdown-container"
+            onMouseEnter={() => handleMouseEnter(stage.offre_id)}
+            onMouseLeave={handleMouseLeave}
+          >
+            <button
+              className={`stage_action_dropdown ${
+                activeStageId === stage.offre_id ? "ActiveStageAction" : ""
+              }`}
+            >
+              Actions
+            </button>
+
+            <div
+              className={`stage_actions ${
+                activeStageId === stage.offre_id ? "show" : "hidden"
+              }`}
+            >
+              {/* {actions.map((action, index) => (
+                <button key={index} className={action.className}>
+                  {action.name}
+                </button>
+              ))} */}
+              {/* <button className="modifier" onClick={() => handleModifier(stage.offre_id)}>Modifier </button>
+            <button className="delete" onClick={() => handleSupprimer(stage.offre_id)}>supprimer</button>
+            <button className="candidature" onClick={() => handleCandidature(stage.offre_id)}>Candidature</button>
+            <button className="encadrant" onClick={() => handleEncadrants(stage.offre_id)}>Encadrants</button>
+            <button className="rapport" onClick={() => handleRapport(stage.offre_id)}>Rapport</button> */}
+            <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
+            <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, e)}>Supprimer</button>
+            <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
+            <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
+            <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
+
+            </div>
+          </div>
         </form>
         
       ))}

@@ -297,8 +297,13 @@ const handleChange = (e) => {
     }, 3000)
     
 
+
+    
   }
 
+  const handeleposutler = (id) => {
+      alert("stage id = " + id)
+  }
 
 
 
@@ -423,6 +428,7 @@ const handleChange = (e) => {
         <strong>Created:</strong> {stage.created_at} <br />
         <strong>Updated:</strong> {stage.updated_at}
       </small>
+      <button className="Cancdidatstage_btn_actions" onClick={() => handeleposutler(stage.offre_id)}>postuler</button>
 
     </div>
   ))
@@ -456,6 +462,10 @@ const handleChange = (e) => {
     <strong>Created At:</strong> {Fetchuser.created_at} <br />
     <strong>Updated At:</strong> {Fetchuser.updated_at} <br />
     <strong>Username:</strong> {Fetchuser.username} <br />
+      <div className="Candidatprofile_btn_actions">
+              <button className="modifier">modifier</button>
+              <button className="delete">delete account</button>
+      </div>
   </div>
 )}
 
