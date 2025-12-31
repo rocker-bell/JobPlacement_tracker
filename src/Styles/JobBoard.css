@@ -436,6 +436,9 @@
 
 /* --- MAIN GRID LAYOUT --- */
 .main-grid {
+  border: 3px solid black;
+  padding: 10px;
+  margin: 5px;
   display: grid;
   grid-template-columns: 440px 1fr; /* Fixed width for list, rest for detail */
   gap: 24px;

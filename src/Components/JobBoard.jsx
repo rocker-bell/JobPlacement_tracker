@@ -320,7 +320,7 @@
 // export default JobBoard;
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { 
   Building2, MoreHorizontal, Bookmark, Ban, Send, 
@@ -399,6 +399,23 @@ const jobData = [
 ];
 
 const JobBoard = () => {
+//   const [Searchquery, setSearchquery] = useState({
+//     home_page_search_query: ""
+    
+// })
+//   const [submittedQuery, setSubmitedquery] = useState({
+//      home_page_search_query: ""
+// })
+
+//   const [searchQuery, setSearchQuery] = useState("");
+// const [submittedQuery, setSubmittedQuery] = useState("");
+
+const [jobQuery, setJobQuery] = useState("");
+const [locationQuery, setLocationQuery] = useState("");
+const [submittedQuery, setSubmittedQuery] = useState({
+  job: "",
+  location: "",
+});
   const [selectedJob, setSelectedJob] = useState(jobData[0]);
   const [showTopBtn, setShowTopBtn] = useState(false);
   const navigate = useNavigate()
@@ -425,6 +442,16 @@ const JobBoard = () => {
             behavior: "smooth",
         });
     };
+
+    const handleChange = (e) => {
+      const {name, value} = e.target;
+      setSearchquery((prev) => ({...prev, [name]: value}))
+
+    }
+
+   useEffect(() => {
+  console.log("submitted query:", submittedQuery);
+}, [submittedQuery]);
 
 
 
@@ -461,7 +488,7 @@ const JobBoard = () => {
         
         {/* --- 2. SEARCH BAR --- */}
         <div className="search-container">
-          <div className="search-wrapper">
+          {/* <div className="search-wrapper">
             <div className="input-group divider">
               <Search size={20} className="input-icon" strokeWidth={2.5} />
               <input 
@@ -471,15 +498,62 @@ const JobBoard = () => {
               />
             </div>
             <div className="input-group">
-              <MapPin size={20} className="input-icon" strokeWidth={2.5} />
-              <input 
-                type="text" 
-                defaultValue="Rabat" 
-                className="search-input"
-              />
+              <MapPin size={20} className="input-icon" strokeWidth={2.5}  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)} />
+              
+               <input
+              className="search-input"
+              value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+              /> 
             </div>
-            <button className="btn-search-main">Lancer la recherche</button>
-          </div>
+            
+           <button className="btn-search-main" onClick={() => setSubmittedQuery(searchQuery)}>
+  Lancer la recherche
+</button>
+
+          </div> */}
+
+
+          <div className="search-wrapper">
+
+  {/* Job title input */}
+  <div className="input-group divider">
+    <Search size={20} className="input-icon" strokeWidth={2.5} />
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Intitulé de poste, mots-clés..."
+      value={jobQuery}
+      onChange={(e) => setJobQuery(e.target.value)}
+    />
+  </div>
+
+  {/* Location input (replaces MapPin) */}
+  <div className="input-group">
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Ville, région..."
+      value={locationQuery}
+      onChange={(e) => setLocationQuery(e.target.value)}
+    />
+  </div>
+
+  <button
+    className="btn-search-main"
+    onClick={() =>
+      setSubmittedQuery({
+        job: jobQuery,
+        location: locationQuery,
+      })
+    }
+  >
+    Lancer la recherche
+  </button>
+
+</div>
+
         </div>
 
 
