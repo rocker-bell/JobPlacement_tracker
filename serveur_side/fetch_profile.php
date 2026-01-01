@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
+// $input = json_decode(file_get_contents("php://input"), true);
 // ✅ Validate input
 if (!isset($_POST["user_id"]) || empty($_POST["user_id"])) {
     echo json_encode([
@@ -29,6 +30,8 @@ if (!isset($_POST["user_id"]) || empty($_POST["user_id"])) {
 }
 
 $user_id = $_POST["user_id"];
+
+
 
 try {
     // ✅ Correct SQL

@@ -81,7 +81,25 @@ const Entreprise_dashboard = () => {
   const [Fetchuser, setFetchuser] = useState(null)
   const [stages, setStages] = useState([]);
   const [UserId, setUserId] = useState(null);
+  const [editingStageId, setEditingStageId] = useState(null);
+const [editedStage, setEditedStage] = useState({});
+
   const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
+  // const [stageform, setstageform] = useState({
+  //   offre_id: "",
+  //   entreprise_id: entreprise_id,
+  //   type_de_stage: "",
+  //   titre: "",
+  //   stage_categorie: "",
+  //   description: "",
+  //   competences_requises: "",
+  //   date_debut: "",
+  //   duree_semaines: "",
+  //   nombre_places: "",
+  //   emplacement: "",
+  //   statut: "",
+
+  // })
   // const [ActiveStageAction, setActiveStageAction] = useState(false);
   const [activeStageId, setActiveStageId] = useState(null);
 
@@ -135,6 +153,76 @@ const Entreprise_dashboard = () => {
   console.log("Form submitted:", formData);
   InsertEnterprise();
 };
+
+const handleModifier = (stageId, e) => {
+  e.preventDefault();
+  setEditingStageId(stageId);
+
+  // Find the stage in the state and set it for editing
+  const stageToEdit = stages.find(stage => stage.offre_id === stageId);
+  setEditedStage(stageToEdit);
+};
+
+const handleEditChange = (e) => {
+  const { name, value } = e.target;
+  setEditedStage(prev => ({
+    ...prev,
+    [name]: value
+  }));
+};
+
+const handleCancelEditStage = (offre_id, e) => {
+  e.preventDefault();
+
+  // Exit edit mode
+  setEditingStageId(null);
+
+  // Reset editedStage (optional but recommended)
+  // setEditedStage({
+  //   type_de_stage: "",
+  //   titre: "",
+  //   stage_categorie: "",
+  //   description: "",
+  //   competences_requises: "",
+  //   date_debut: "",
+  //   duree_semaines: "",
+  //   nombre_places: "",
+  //   emplacement: "",
+  //   statut: "Ouverte"
+  // });
+};
+
+
+const handleSaveStage = async (stageId, e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`${BASE_URL}/update_stage.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...editedStage,
+        offre_id: stageId,
+        entreprise_id: editedStage.entreprise_id
+      })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert("Stage mis à jour !");
+      setStages(prev =>
+        prev.map(stage => stage.offre_id === stageId ? editedStage : stage)
+      );
+      setEditingStageId(null);
+    } else {
+      alert("Erreur: " + result.message);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors de la mise à jour.");
+  }
+};
+
+
 
 async function InsertEnterprise() {
   try {
@@ -283,13 +371,13 @@ useEffect(() => {
  const handleSubmitStage = async (e) => {
   e.preventDefault();
 
-  const form = e.target;
+  const form = e.currentTarget;
   const typeStage = form.elements["type_stage"].value.trim();
   const categorieStage = form.elements["categorie_stage"].value.trim();
   const emplacement = form.elements["emplacement"].value.trim();
   const nombrePlace = form.elements["nombre_place"].value.trim();
   const debutStage = form.elements["debut_stage"].value.trim();
-  const dureeStage = form.elements["durre_stage"].value.trim();
+  const dureeStage = form.elements["duree_semaines"].value.trim();
   const titreStage = form.elements["titre_stage"].value.trim();
   const descriptionStage = form.elements["description_stage"].value.trim();
   const competencesRequises = form.elements["competence_requise"].value.trim();
@@ -328,7 +416,7 @@ useEffect(() => {
         description_stage: descriptionStage,
         competence_requise: competencesRequises,
         debut_stage: debutStage,
-        durre_stage: dureeStage,
+        duree_semaines: dureeStage,
         emplacement: emplacement,
         nombre_place: nombrePlace,
         
@@ -343,6 +431,11 @@ useEffect(() => {
     if (data.success) {
       alert("Stage added successfully!");
       // Optionally, clear the form or redirect
+      setCancelAddStage(true)
+
+      SliderContentHandler("ED_CB_Stages");
+
+
     } else {
       alert(data.message);
     }
@@ -394,10 +487,11 @@ useEffect(() => {
   ];
 
 
-  const handleModifier = (id, e) => {
-  e.preventDefault();
-  alert("Modifier " + id);
-};
+//   const handleModifier = (id, e) => {
+//   e.preventDefault();
+//   alert("Modifier " + id);
+
+// };
 
 const handleCandidature = (id, e) => {
   e.preventDefault();
@@ -408,6 +502,7 @@ const handleCandidature = (id, e) => {
 const handleRapport = (id, e) => {
   e.preventDefault();
   alert("Rapport " + id);
+  navigate(`/Rapports/${id}`)
 };
 
 const handleEncadrants = (id, e) => {
@@ -580,7 +675,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
 
     <div className="ED_stage_form_formGroupe">
       <label className="ED_stage_form_label">Durée du stage</label>
-      <input name="durre_stage" type="text" className="ED_stage_form_control" />
+      <input name="duree_semaines" type="text" className="ED_stage_form_control" />
     </div>
 
     <div className="ED_stage_form_formGroupe">
@@ -616,7 +711,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
 
 
                   <div className="stage-section">
-      {stages.map((stage) => (
+      {/* {stages.map((stage) => (
         <form key={stage.offre_id} className="stage-form">
           <div>
             <label>Type de Stage:</label>
@@ -658,23 +753,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
             <label>Statut:</label>
             <input type="text" value={stage.statut} readOnly />
           </div>
-         {/* <div 
-      className="dropdown-container"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button className={`stage_action_dropdown ${ActiveStageAction ? "ActiveStageAction" : ""}`}>
-        Actions
-      </button>
-
-      <div className={`stage_actions ${ActiveStageAction ? "show" : "hidden"}`}>
-        <button className="modifier">Modifier</button>
-        <button className="delete">Remove</button>
-        <button className="candidature">Candidature</button>
-        <button className="encadrant">Encadrants</button>
-        <button className="rapport">Rapport</button>
-      </div>
-    </div> */}
+        
 
      <div
             className="dropdown-container"
@@ -694,16 +773,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
                 activeStageId === stage.offre_id ? "show" : "hidden"
               }`}
             >
-              {/* {actions.map((action, index) => (
-                <button key={index} className={action.className}>
-                  {action.name}
-                </button>
-              ))} */}
-              {/* <button className="modifier" onClick={() => handleModifier(stage.offre_id)}>Modifier </button>
-            <button className="delete" onClick={() => handleSupprimer(stage.offre_id)}>supprimer</button>
-            <button className="candidature" onClick={() => handleCandidature(stage.offre_id)}>Candidature</button>
-            <button className="encadrant" onClick={() => handleEncadrants(stage.offre_id)}>Encadrants</button>
-            <button className="rapport" onClick={() => handleRapport(stage.offre_id)}>Rapport</button> */}
+             
             <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
                 <button
   type="button"
@@ -721,7 +791,157 @@ const handleSupprimer = async (id, enterpriseId, e) => {
           </div>
         </form>
         
-      ))}
+      ))} */} 
+          {stages.map(stage => (
+    <form key={stage.offre_id} className="stage-form">
+      <div>
+        <label>Type de Stage:</label>
+        <input
+          type="text"
+          name="type_de_stage"
+          value={editingStageId === stage.offre_id ? editedStage.type_de_stage : stage.type_de_stage}
+          readOnly={editingStageId !== stage.offre_id}
+          onChange={handleEditChange}
+        />
+      </div>
+
+      <div>
+        <label>Catégorie:</label>
+        <input
+          type="text"
+          name="stage_categorie"
+          value={editingStageId === stage.offre_id ? editedStage.stage_categorie : stage.stage_categorie}
+          readOnly={editingStageId !== stage.offre_id}
+          onChange={handleEditChange}
+        />
+      </div>
+
+      <div>
+        <label>Titre:</label>
+        <input
+          type="text"
+          name="titre"
+          value={editingStageId === stage.offre_id ? editedStage.titre : stage.titre}
+          readOnly={editingStageId !== stage.offre_id}
+          onChange={handleEditChange}
+        />
+      </div>
+
+      <div>
+        <label>Description:</label>
+        <textarea
+          name="description"
+          value={editingStageId === stage.offre_id ? editedStage.description : stage.description}
+          readOnly={editingStageId !== stage.offre_id}
+          onChange={handleEditChange}
+        />
+      </div>
+
+      <div>
+  <label>Compétences requises:</label>
+  <textarea
+    name="competences_requises"
+    value={editingStageId === stage.offre_id ? editedStage.competences_requises : stage.competences_requises}
+    readOnly={editingStageId !== stage.offre_id}
+    onChange={handleEditChange}
+  />
+</div>
+
+<div>
+  <label>Date début:</label>
+  <input
+    type="date"
+    name="date_debut"
+    value={editingStageId === stage.offre_id ? editedStage.date_debut : stage.date_debut}
+    readOnly={editingStageId !== stage.offre_id}
+    onChange={handleEditChange}
+  />
+</div>
+<div>
+  <label>duree_semaines:</label>
+  <input
+    type="date"
+    name="dduree_semaines"
+    value={editingStageId === stage.offre_id ? editedStage.duree_semaines : stage.duree_semaines}
+    readOnly={editingStageId !== stage.offre_id}
+    onChange={handleEditChange}
+  />
+</div>
+
+<div>
+  <label>nombre_places:</label>
+  <input
+    type="number"
+    name="nombre_places"
+    value={editingStageId === stage.offre_id ? editedStage.nombre_places : stage.nombre_places}
+    readOnly={editingStageId !== stage.offre_id}
+    onChange={handleEditChange}
+  />
+</div>
+
+<div>
+  <label>emplacement:</label>
+  <input
+    type="text"
+    name="emplacement"
+    value={editingStageId === stage.offre_id ? editedStage.emplacement  : stage.emplacement }
+    readOnly={editingStageId !== stage.offre_id}
+    onChange={handleEditChange}
+  />
+</div>
+
+<div>
+  <label>Statut:</label>
+  <select
+    name="statut"
+    value={editingStageId === stage.offre_id ? editedStage.statut : stage.statut}
+    disabled={editingStageId !== stage.offre_id}
+    onChange={handleEditChange}
+  >
+    <option value="Ouverte">Ouverte</option>
+    <option value="Fermée">Fermée</option>
+    <option value="Expirée">Expirée</option>
+  </select>
+</div>
+
+            {editingStageId === stage.offre_id && (
+  <>
+    <button
+      type="button"
+      onClick={(e) => handleSaveStage(stage.offre_id, e)}
+    >
+      Sauvegarder
+    </button>
+
+    <button
+      type="button"
+      onClick={(e) => handleCancelEditStage(stage.offre_id, e)}
+    >
+      Annuler
+    </button>
+  </>
+)}
+
+
+      <div className="dropdown-container">
+        <button
+          type="button"
+          className={`stage_action_dropdown ${activeStageId === stage.offre_id ? "ActiveStageAction" : ""}`}
+          onMouseEnter={() => handleMouseEnter(stage.offre_id)}
+          onMouseLeave={handleMouseLeave}
+        >
+          Actions
+        </button>
+        <div className={`stage_actions ${activeStageId === stage.offre_id ? "show" : "hidden"}`}>
+          <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
+          <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}>Supprimer</button>
+          <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
+          <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
+          <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
+        </div>
+      </div>
+    </form>
+  ))}
 
       <div className="page_navigation">page navigation</div>
       

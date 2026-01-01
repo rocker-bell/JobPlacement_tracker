@@ -7,7 +7,9 @@ import UserJobBoard from "./Components/UserJobBoard.jsx";
 import EncadrantDashboard from "./Components/EncadrantDashboard.jsx";
 import Encadrant from "./Components/Encadrant.jsx";
 import Candidatures from "./Components/Candidatures.jsx";
-
+import Rapports from "./Components/Rapports.jsx";
+import Postuler from "./Components/Postuler.jsx";
+// import Entreprise_dashboard  from "./Components/Empty.jsx";
 const App = () => {
   return (
     <>
@@ -21,7 +23,9 @@ const App = () => {
             <Route path="/jobboard_Encadrant"  element={<EncadrantDashboard/>}/>
             <Route path="/Encadrant/:id" element={<Encadrant/>}/>
             <Route path="/Candidatures/:id" element={<Candidatures/>}/>
-            
+             <Route path="/Rapports/:id" element={<Rapports/>}/>
+              {/* <Route path="/empty" element={<Entreprise_dashboard />} /> */}
+              <Route path="/Postuler/:id" element={<Postuler/>} />
       </Routes>
 
     </>

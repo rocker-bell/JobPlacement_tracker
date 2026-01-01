@@ -83,8 +83,19 @@ const UserJobBoard = () => {
   const [Query, setQuery] = useState({
   stage_search_querry: ""
 });
+
+const [cvFile, setCvFile] = useState(null);
+const [photoFile, setPhotoFile] = useState(null);
+
 const [submittedQuery, setSubmittedQuery] = useState("");
 const [FetchedQuery, setFetchedQuery] = useState([]);
+const [FetchStagiaire, setFetchStagiaire] = useState({
+  nom: "",
+  prenom: "",
+  cv_path: "",
+  photo_path: ""
+});
+
 
   const [UserId, setUserId] = useState(null);
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
@@ -122,8 +133,33 @@ const [FetchedQuery, setFetchedQuery] = useState([]);
   }
 
   
-
-
+ async function FetchStagiairefunction(user_id) {
+  console.log("user id = " + user_id)
+      try {
+        const response = await fetch(`${BASE_URL}/Stagiairefetch.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+          },
+          body: new URLSearchParams({ user_id: user_id }), // send user_id
+        });
+  
+        if (!response.ok) {
+          console.error("HTTP error:", response.status);
+          return;
+        }
+  
+        const data = await response.json();
+        console.log(data)
+        if (data.success) {
+          setFetchStagiaire(data.user_data);
+        } else {
+          console.error("Error from API:", data.message);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    }
 
 //  const handleSubmitStage = async (e) => {
 //   e.preventDefault();
@@ -283,7 +319,10 @@ const handleChange = (e) => {
   
       if (user_id) {
         FetchuserData(user_id); // actually call the function
+        FetchStagiairefunction(user_id)
       }
+
+
       if(submittedQuery) {
         FetchSearchedStage(submittedQuery)
       }
@@ -302,8 +341,97 @@ const handleChange = (e) => {
   }
 
   const handeleposutler = (id) => {
+
       alert("stage id = " + id)
+      navigate(`/Postuler/${id}`)
   }
+
+
+// async function updateStagiairedata(id) {
+//   console.log(id)
+//   try {
+//     const response = await fetch(`${BASE_URL}/stagiaire_update.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: new URLSearchParams({
+//         stagiaire_id: id, // make sure this is the correct ID
+//         nom: FetchStagiaire.nom,
+//         prenom: FetchStagiaire.prenom,
+//         cv_path: FetchStagiaire.cv_path,
+//         photo_path: FetchStagiaire.photo_path
+//       }),
+//     });
+
+//     const data = await response.json();
+//     if (data.success) {
+//       alert("Stagiaire updated successfully!");
+//     } else {
+//       console.error(data.message);
+//       alert("Failed to update stagiaire: " + data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
+// async function updateStagiairedata(id, cvFile = null, photoFile = null) {
+//   try {
+//     const formData = new FormData();
+//     formData.append("stagiaire_id", id);
+//     formData.append("nom", FetchStagiaire.nom);
+//     formData.append("prenom", FetchStagiaire.prenom);
+    
+//     if (cvFile) formData.append("cv_file", cvFile);
+//     if (photoFile) formData.append("photo_file", photoFile);
+
+//     const response = await fetch(`${BASE_URL}/stagiaire_update.php`, {
+//       method: "POST",
+//       body: formData, // FormData automatically sets the right multipart/form-data headers
+//     });
+
+//     const data = await response.json();
+//     if (data.success) {
+//       alert("Stagiaire updated successfully!");
+//     } else {
+//       console.error(data.message);
+//       alert("Failed to update stagiaire: " + data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
+
+async function updateStagiairedata(id) {
+  try {
+    const formData = new FormData();
+    formData.append("stagiaire_id", id);
+    formData.append("nom", FetchStagiaire.nom);
+    formData.append("prenom", FetchStagiaire.prenom);
+
+    if (cvFile) formData.append("cv_file", cvFile);
+    if (photoFile) formData.append("photo_file", photoFile);
+
+    const response = await fetch(`${BASE_URL}/stagiaire_update.php`, {
+      method: "POST",
+      body: formData, // no need for headers, fetch sets multipart automatically
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      alert("Stagiaire updated successfully!");
+    } else {
+      alert("Failed to update stagiaire: " + data.message);
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
 
 
 
@@ -468,6 +596,91 @@ const handleChange = (e) => {
       </div>
   </div>
 )}
+
+
+        {/* <div>
+  <label>Nom:</label>
+  <input
+    type="text"
+    value={FetchStagiaire.nom || ""}
+    placeholder="Entrez votre nom"
+    onChange={(e) =>
+      setFetchStagiaire(prev => ({ ...prev, nom: e.target.value }))
+    }
+  />
+</div> */}
+
+{FetchStagiaire && (
+  <>
+    <div>
+      <label>Nom:</label>
+      <input
+        type="text"
+        value={FetchStagiaire.nom || ""}
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, nom: e.target.value }))
+        }
+      />
+    </div>
+
+    <div>
+      <label>Prénom:</label>
+      <input
+        type="text"
+        value={FetchStagiaire.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, prenom: e.target.value }))
+        }
+      />
+    </div>
+
+    {/* <div>
+      <label>CV:</label>
+      <input
+        type="file"
+        value={FetchStagiaire.cv_path || ""}
+        placeholder="Ajouter votre CV"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, cv_path: e.target.value }))
+        }
+      />
+    </div>
+
+    <div>
+      <label>Photo:</label>
+      <input
+        type="file"
+        value={FetchStagiaire.photo_path || ""}
+        placeholder="Ajouter votre photo"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, photo_path: e.target.value }))
+        }
+      />
+     
+    </div> */}
+
+    <div>
+  <label>CV:</label>
+  <input
+    type="file"
+    onChange={(e) => setCvFile(e.target.files[0])} // store actual file
+  />
+</div>
+
+<div>
+  <label>Photo:</label>
+  <input
+    type="file"
+    onChange={(e) => setPhotoFile(e.target.files[0])} // store actual file
+  />
+</div>
+
+     <button className="submit" onClick={() => updateStagiairedata(UserId)}>update stagiaire data</button>
+  </>
+)}
+
 
 
           </span>

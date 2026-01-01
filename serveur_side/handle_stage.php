@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $DescriptionStage = $_POST["description_stage"];
     $CompetenceStage = $_POST["competence_requise"];
     $DebutStage = $_POST["debut_stage"];
-    $DurreStage = $_POST['durre_stage'];
+    $DurreStage = $_POST['duree_semaines'];
     $Emplacement = $_POST["emplacement"];
     $NombredePlace = $_POST["nombre_place"];
 
