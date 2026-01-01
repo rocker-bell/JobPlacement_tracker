@@ -343,60 +343,60 @@ import Logo1 from "../assets/Logo1.svg";
 
 
 // --- DATA ---
-const jobData = [
-  {
-    id: 1,
-    title: "Stage PFE - Ingénieur Cloud Native Full Stack (Python / AWS / DevOps)",
-    company: "CapitaleTech",
-    location: "Rabat",
-    type: "Stage",
-    tags: ["nouveau", "Candidature simplifiée"],
-    posted: "Posted just now",
-    description: `Description du poste :
-      Nous recherchons un(e) stagiaire PFE pour renforcer notre équipe technique sur la conception et le développement cloud.
+// const jobData = [
+//   {
+//     id: 1,
+//     title: "Stage PFE - Ingénieur Cloud Native Full Stack (Python / AWS / DevOps)",
+//     company: "CapitaleTech",
+//     location: "Rabat",
+//     type: "Stage",
+//     tags: ["nouveau", "Candidature simplifiée"],
+//     posted: "Posted just now",
+//     description: `Description du poste :
+//       Nous recherchons un(e) stagiaire PFE pour renforcer notre équipe technique sur la conception et le développement cloud.
       
-      Alors que l'offre précédente se concentrait sur l'interface utilisateur, ce rôle est axé sur la "salle des machines".
-      Vous serez responsable de construire des services backend robustes, évolutifs et sécurisés en Python, de définir l'infrastructure cloud sur AWS via du code (Terraform), et d'automatiser les processus de déploiement (CI/CD).
+//       Alors que l'offre précédente se concentrait sur l'interface utilisateur, ce rôle est axé sur la "salle des machines".
+//       Vous serez responsable de construire des services backend robustes, évolutifs et sécurisés en Python, de définir l'infrastructure cloud sur AWS via du code (Terraform), et d'automatiser les processus de déploiement (CI/CD).
       
-      Compétences requises :
-      - Python (Flask/Django/FastAPI)
-      - AWS (EC2, Lambda, S3)
-      - Docker & Kubernetes`
-  },
-  {
-    id: 2,
-    title: "Stage développement avec React et Python",
-    company: "ONEE branche Eau",
-    location: "Rabat",
-    type: "Stage",
-    tags: ["Candidature simplifiée"],
-    posted: "Posted 2 days ago",
-    description: `Description du poste :
-      L'Office National de l'Électricité et de l'Eau Potable (Branche Eau) recherche un stagiaire passionné pour participer à la digitalisation de nos services internes.
+//       Compétences requises :
+//       - Python (Flask/Django/FastAPI)
+//       - AWS (EC2, Lambda, S3)
+//       - Docker & Kubernetes`
+//   },
+//   {
+//     id: 2,
+//     title: "Stage développement avec React et Python",
+//     company: "ONEE branche Eau",
+//     location: "Rabat",
+//     type: "Stage",
+//     tags: ["Candidature simplifiée"],
+//     posted: "Posted 2 days ago",
+//     description: `Description du poste :
+//       L'Office National de l'Électricité et de l'Eau Potable (Branche Eau) recherche un stagiaire passionné pour participer à la digitalisation de nos services internes.
       
-      Vos missions :
-      - Développement d'interfaces web dynamiques avec React.js.
-      - Création d'API RESTful avec Python.
+//       Vos missions :
+//       - Développement d'interfaces web dynamiques avec React.js.
+//       - Création d'API RESTful avec Python.
       
-      Profil recherché :
-      - Etudiant en dernière année d'école d'ingénieur ou master.`
-  },
-  {
-    id: 3,
-    title: "Stage PFE – Ingénieur Sharepoint / Data",
-    company: "ORANGE BUSINESS",
-    location: "Rabat",
-    type: "Intérim",
-    tags: [],
-    posted: "Posted 5 days ago",
-    description: `Description du poste :
-      Orange Business Maroc recrute son futur stagiaire PFE pour travailler sur des solutions collaboratives et l'analyse de données.
+//       Profil recherché :
+//       - Etudiant en dernière année d'école d'ingénieur ou master.`
+//   },
+//   {
+//     id: 3,
+//     title: "Stage PFE – Ingénieur Sharepoint / Data",
+//     company: "ORANGE BUSINESS",
+//     location: "Rabat",
+//     type: "Intérim",
+//     tags: [],
+//     posted: "Posted 5 days ago",
+//     description: `Description du poste :
+//       Orange Business Maroc recrute son futur stagiaire PFE pour travailler sur des solutions collaboratives et l'analyse de données.
       
-      Missions :
-      - Configuration et personnalisation de l'environnement SharePoint.
-      - Création de workflows d'automatisation (Power Automate).`
-  }
-];
+//       Missions :
+//       - Configuration et personnalisation de l'environnement SharePoint.
+//       - Création de workflows d'automatisation (Power Automate).`
+//   }
+// ];
 
 const JobBoard = () => {
 //   const [Searchquery, setSearchquery] = useState({
@@ -411,14 +411,19 @@ const JobBoard = () => {
 // const [submittedQuery, setSubmittedQuery] = useState("");
 
 const [jobQuery, setJobQuery] = useState("");
+const [selectedJob, setSelectedJob] = useState(null);
 const [locationQuery, setLocationQuery] = useState("");
 const [submittedQuery, setSubmittedQuery] = useState({
   job: "",
   location: "",
 });
-  const [selectedJob, setSelectedJob] = useState(jobData[0]);
+  const [FetchedStages, setFetchedStages] = useState([])
+  // const [selectedJob, setSelectedJob] = useState(jobData[0]);
   const [showTopBtn, setShowTopBtn] = useState(false);
   const navigate = useNavigate()
+
+
+  const BASE_URL = "http://localhost:8000"
 
   const handleGetstarted = () => {
     navigate("/GetStarted")
@@ -449,9 +454,94 @@ const [submittedQuery, setSubmittedQuery] = useState({
 
     }
 
-   useEffect(() => {
-  console.log("submitted query:", submittedQuery);
-}, [submittedQuery]);
+//      async function FetchSearchedStage(submittedQuery) {
+//   try {
+//     const response = await fetch(`${BASE_URL}/fetchStagebyQuerry.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: new URLSearchParams({
+//         query: submittedQuery, // ✅ FIXED key
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log(data)
+
+//     if (data.success) {
+//       setFetchedStages(data.query_data); // ✅ FIXED key
+//     } else {
+//       console.error("API error:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
+async function FetchSearchedStage(submittedQuery) {
+  try {
+    const response = await fetch(`${BASE_URL}/FetchStagesByJObboardQuery.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        job: submittedQuery.job,
+        location: submittedQuery.location,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("HTTP error:", response.status);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+
+    if (data.success) {
+      setFetchedStages(data.query_data);
+ if (data.query_data.length > 0) {
+    setSelectedJob(data.query_data);
+  } } else {
+      console.error("API error:", data.message);
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
+
+//    useEffect(() => {
+//   console.log("submitted query:", submittedQuery);
+//   FetchSearchedStage(submittedQuery.query_data)
+//   if (submittedQuery.query_data.length > 0) {
+//   setSelectedJob(data.query_data[0]); // select first only once
+// }
+// }, [submittedQuery]);
+
+
+const jobData = FetchedStages.map((stage) => ({
+  id: stage.id,
+  title: stage.titre,
+  company: stage.entreprise_id,
+  location: stage.emplacement,
+  type: stage.type_de_stage,
+  stage_categories: stage.stage_categorie,
+  posted: stage.created_at,
+  description: stage.description,
+}));
+
+const handleapply = (id) => {
+  alert("apply click = " + id)
+}
 
 
 
@@ -542,12 +632,15 @@ const [submittedQuery, setSubmittedQuery] = useState({
 
   <button
     className="btn-search-main"
-    onClick={() =>
-      setSubmittedQuery({
-        job: jobQuery,
-        location: locationQuery,
-      })
-    }
+onClick={() => {
+    const query = {
+      job: jobQuery,
+      location: locationQuery,
+    };
+
+    setSubmittedQuery(query);
+    FetchSearchedStage(query); // ✅ THIS WAS MISSING
+  }}
   >
     Lancer la recherche
   </button>
@@ -561,7 +654,7 @@ const [submittedQuery, setSubmittedQuery] = useState({
         <div className="main-grid">
           
           {/* Left Column (List) */}
-          <div className="feed-header">
+          {/* <div className="feed-header">
             <h2>Emplois recommandés</h2>
             <p className="feed-subtitle">Emplois basés sur votre activité sur Indeed</p>
             
@@ -598,10 +691,53 @@ const [submittedQuery, setSubmittedQuery] = useState({
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
+          <div className="feed-header">
+  <h2>Emplois recommandés</h2>
+  <p className="feed-subtitle">
+    Emplois basés sur votre activité
+  </p>
+
+  {FetchedStages.length === 0 && (
+    <p style={{ color: "#6f6f6f" }}>
+      Aucun stage trouvé
+    </p>
+  )}
+
+  {FetchedStages.map((job) => (
+    <div
+      key={job.id}
+      onClick={() => setSelectedJob(job)}
+      className={`job-card ${
+        selectedJob?.id === job.id ? "active" : ""
+      }`}
+    >
+      <div className="card-top">
+        <div>
+          <h3 className="job-title">{job.titre}</h3>
+          <div className="company-name">{job.entreprise_id}</div>
+          <div className="job-location">{job.emplacement}</div>
+        </div>
+
+        <button
+          style={{ background: "transparent", border: "none" }}
+        >
+          <MoreHorizontal size={24} />
+        </button>
+      </div>
+
+      <div className="job-badges">
+        <span className="badge-gray">
+          <Building2 size={12} /> {job.type_de_stage}
+        </span>
+      </div>
+    </div>
+  ))}
+</div>
+
 
           {/* Right Column (Detail) */}
-          <div className="detail-panel">
+          {/* <div className="detail-panel">
             <div className="detail-header">
               <h2 className="detail-title">{selectedJob.title}</h2>
               <div className="detail-company-link">
@@ -628,7 +764,60 @@ const [submittedQuery, setSubmittedQuery] = useState({
                 {selectedJob.description}
               </div>
             </div>
-          </div>
+          </div> */}
+          {/* {selectedJob && (
+  <div className="detail-panel">
+    <h2>{selectedJob.titre}</h2>
+
+    <p>
+      {selectedJob.entreprise_id} • {selectedJob.emplacement}
+    </p>
+
+    <p>{selectedJob.description}</p>
+  </div>
+)} */}
+
+              {selectedJob && (
+  <div className="detail-panel">
+    {/* Header */}
+    <div className="detail-header">
+      <h2 className="detail-title">{selectedJob.titre}</h2>
+      
+      <div className="detail-company-link">
+        <a href="#">{selectedJob.entreprise_id}</a> • {selectedJob.emplacement}
+      </div>
+
+      <div className="action-buttons">
+        <button className="btn-apply" onClick={() => handleapply(selectedJob.offre_id)}>Postuler maintenant</button>
+        <button className="btn-icon">
+          <Bookmark size={24} />
+        </button>
+        <button className="btn-icon">
+          <Ban size={24} />
+        </button>
+      </div>
+    </div>
+
+    {/* Content */}
+    <div className="detail-content">
+      {/* Job type badge */}
+      <h3 className="section-title">Détails du stage</h3>
+      <div style={{ marginBottom: '20px' }}>
+        <span className="badge-gray">
+          <Building2 size={14} /> {selectedJob.type_de_stage}
+        </span>
+      </div>
+
+      {/* Full description */}
+      <h3 className="section-title">Description complète</h3>
+      <div className="job-description-text">
+        {selectedJob.description}
+      </div>
+    </div>
+  </div>
+)}
+
+
 
         </div>
       </div>
