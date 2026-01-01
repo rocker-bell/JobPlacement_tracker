@@ -402,6 +402,7 @@ useEffect(() => {
 const handleCandidature = (id, e) => {
   e.preventDefault();
   alert("Candidature " + id);
+  navigate(`/Candidatures/${id}`)
 };
 
 const handleRapport = (id, e) => {
@@ -412,11 +413,82 @@ const handleRapport = (id, e) => {
 const handleEncadrants = (id, e) => {
   e.preventDefault();
   alert("Encadrant " + id);
+  navigate(`/Encadrant/${id}`)
 };
 
-const handleSupprimer = (id, e) => {
-  e.preventDefault();
-  alert("Supprimer " + id);
+// const handleSupprimer = async (id, enterpriseId, e) => {
+//   e.preventDefault();
+
+//   const confirmDelete = window.confirm("Supprimer le stage " + id + " ?");
+//   if (!confirmDelete) return; // exit if user cancels
+
+//   try {
+//     const response = await fetch(`${BASE_URL}/delete_stage.php`, { // make sure this is the correct PHP endpoint
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify({
+//         entreprise_id: enterpriseId,
+//         stage_id: id
+//       })
+//     });
+
+//     if (!response.ok) {
+//       alert("Échec de la connexion au serveur ou données manquantes");
+//       return;
+//     }
+
+//     const res = await response.json();
+
+//     if (res.success) {
+//       alert(`Stage avec ID ${id} supprimé avec succès`);
+//       // Optionally remove it from the local state without refetching
+//       setStages((prev) => prev.filter(stage => stage.id !== id));
+//       // if (selectedJob?.id === id) setSelectedJob(null);
+//       window.location.reload()
+//       SliderContentHandler("ED_CB_stages")
+//     } else {
+//       alert("Erreur: " + res.message);
+//     }
+
+//   } catch (error) {
+//     console.error("Erreur:", error);
+//     alert("Erreur lors de la suppression du stage");
+//   }
+// };
+
+
+const handleSupprimer = async (id, enterpriseId, e) => {
+  e.preventDefault(); // optional for button
+
+  const confirmDelete = window.confirm("Supprimer le stage " + id + " ?");
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`${BASE_URL}/delete_stage.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: JSON.stringify({
+        entreprise_id: enterpriseId,
+        stage_id: id
+      })
+    });
+
+    const res = await response.json();
+
+    if (res.success) {
+      alert(`Stage avec ID ${id} supprimé avec succès`);
+      // Update local state instead of reloading
+      setStages((prev) => prev.filter(stage => stage.offre_id !== id));
+      SliderContentHandler("ED_CB_Stages");
+    } else {
+      alert("Erreur: " + res.message);
+    }
+  } catch (error) {
+    console.error("Erreur:", error);
+    alert("Erreur lors de la suppression du stage");
+  }
 };
 
 
@@ -540,7 +612,7 @@ const handleSupprimer = (id, e) => {
               ActiveSlider === "ED_CB_Stages" ? "Active" : ""
             }`}
           >
-            Content 3: Stages
+            {/* Content 3: Stages */}
 
 
                   <div className="stage-section">
@@ -633,7 +705,14 @@ const handleSupprimer = (id, e) => {
             <button className="encadrant" onClick={() => handleEncadrants(stage.offre_id)}>Encadrants</button>
             <button className="rapport" onClick={() => handleRapport(stage.offre_id)}>Rapport</button> */}
             <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
-            <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, e)}>Supprimer</button>
+                <button
+  type="button"
+  className="delete"
+  onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}
+>
+  Supprimer
+</button>
+
             <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
             <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
             <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
@@ -643,6 +722,8 @@ const handleSupprimer = (id, e) => {
         </form>
         
       ))}
+
+      <div className="page_navigation">page navigation</div>
       
     </div>
           </span>
@@ -743,6 +824,8 @@ const handleSupprimer = (id, e) => {
           >
             Content 5: Statistiques
           </span>
+
+          
         </div>
       </div>
 
