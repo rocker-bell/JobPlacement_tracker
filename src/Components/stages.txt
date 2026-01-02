@@ -1,0 +1,115 @@
+ <span
+  className={`EntrepiriseDashboard_contentAbout ED_CB_Stages ${
+    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
+  }`}
+>
+  {/* Stage Section with Pagination + Detail Panel */}
+  <div className="stage-section" style={{ display: "flex", gap: "20px" }}>
+
+    {/* --- LEFT PANEL: Paginated Stage List --- */}
+    <div className="left-panel" style={{ width: "40%", maxHeight: "500px", overflowY: "auto" }}>
+      {stages && stages.length > 0 ? (
+        <>
+          {paginatedStages.map((stage) => (
+            <form
+              key={stage.offre_id}
+              className={`stage-form ${
+                selectedStage?.offre_id === stage.offre_id ? "active" : ""
+              }`}
+              onClick={() => setSelectedStage(stage)}
+            >
+              <div>
+                <label>Type de Stage:</label>
+                <input
+                  type="text"
+                  name="type_de_stage"
+                  value={editingStageId === stage.offre_id ? editedStage.type_de_stage : stage.type_de_stage}
+                  readOnly={editingStageId !== stage.offre_id}
+                  onChange={handleEditChange}
+                />
+              </div>
+              <div>
+                <label>Catégorie:</label>
+                <input
+                  type="text"
+                  name="stage_categorie"
+                  value={editingStageId === stage.offre_id ? editedStage.stage_categorie : stage.stage_categorie}
+                  readOnly={editingStageId !== stage.offre_id}
+                  onChange={handleEditChange}
+                />
+              </div>
+              <div>
+                <label>Titre:</label>
+                <input
+                  type="text"
+                  name="titre"
+                  value={editingStageId === stage.offre_id ? editedStage.titre : stage.titre}
+                  readOnly={editingStageId !== stage.offre_id}
+                  onChange={handleEditChange}
+                />
+              </div>
+              {/* ... other inputs remain the same ... */}
+
+              {/* Dropdown Actions */}
+              <div className="dropdown-container">
+                <button
+                  type="button"
+                  className={`stage_action_dropdown ${activeStageId === stage.offre_id ? "ActiveStageAction" : ""}`}
+                  onMouseEnter={() => handleMouseEnter(stage.offre_id)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  Actions
+                </button>
+                <div className={`stage_actions ${activeStageId === stage.offre_id ? "show" : "hidden"}`}>
+                  <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
+                  <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}>Supprimer</button>
+                  <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
+                  <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
+                  <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
+                </div>
+              </div>
+            </form>
+          ))}
+
+          {/* Pagination */}
+          {totalPagesStages > 1 && (
+            <div className="page_navigation" style={{ marginTop: "10px" }}>
+              {Array.from({ length: totalPagesStages }, (_, idx) => (
+                <button
+                  key={idx + 1}
+                  className={currentPageStage === idx + 1 ? "active" : ""}
+                  onClick={() => setCurrentPageStage(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <p>No stages found.</p>
+      )}
+    </div>
+
+    {/* --- RIGHT PANEL: Selected Stage Detail --- */}
+    <div className="right-panel" style={{ width: "60%", borderLeft: "1px solid #ccc", padding: "10px" }}>
+      {selectedStage ? (
+        <div className="stage-detail">
+          <h2>Détails du Stage</h2>
+          <p><strong>Titre:</strong> {selectedStage.titre}</p>
+          <p><strong>Type:</strong> {selectedStage.type_de_stage}</p>
+          <p><strong>Catégorie:</strong> {selectedStage.stage_categorie}</p>
+          <p><strong>Description:</strong> {selectedStage.description}</p>
+          <p><strong>Compétences requises:</strong> {selectedStage.competences_requises}</p>
+          <p><strong>Date début:</strong> {selectedStage.date_debut}</p>
+          <p><strong>Durée:</strong> {selectedStage.duree_semaines} semaines</p>
+          <p><strong>Nombre de places:</strong> {selectedStage.nombre_places}</p>
+          <p><strong>Emplacement:</strong> {selectedStage.emplacement}</p>
+          <p><strong>Statut:</strong> {selectedStage.statut}</p>
+        </div>
+      ) : (
+        <p>Select a stage to see details</p>
+      )}
+    </div>
+  </div>
+</span>

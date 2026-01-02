@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import "../Styles/Candidatures.css";
+import { ArrowLeft} from "lucide-react";
 
-const BASE_URL = "http://localhost:8000"; // adjust if needed
+const BASE_URL = "http://localhost:8000";
 
 const Candidatures = () => {
+  const navigate = useNavigate()
   const { id } = useParams(); // stage ID
   const [candidatures, setCandidatures] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,21 +38,43 @@ const Candidatures = () => {
     fetchCandidatures();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="loading-text">Loading...</p>;
 
   return (
-    <div>
-      <h2>Candidatures for Stage ID: {id}</h2>
+    <div className="candidatures-container">
+      < ArrowLeft
+    size={24}
+    onClick={() => navigate("/jobboard_Entreprise")}
+    className="nav-icon"
+  />
+      <h2 className="candidatures-title">Candidatures for Stage ID: {id}</h2>
+
       {candidatures.length === 0 ? (
-        <p>No candidatures found.</p>
+        <p className="no-candidatures">No candidatures found.</p>
       ) : (
         candidatures.map((c) => (
-          <div key={c.candidature_id} style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-            <p><strong>Name:</strong> {c.nom} {c.prenom}</p>
-            <p><strong>Status:</strong> {c.statut}</p>
-            <p><strong>Message:</strong> {c.message_motivation}</p>
-            <p><strong>CV:</strong> {c.cv_path ? <a href={`${BASE_URL}/${c.cv_path}`} target="_blank">View CV</a> : "None"}</p>
-            <p><strong>Photo:</strong> {c.photo_path ? <img src={`${BASE_URL}/${c.photo_path}`} alt="Photo" width="80" /> : "None"}</p>
+          <div key={c.candidature_id} className="candidature-card">
+            <div className="candidature-header">
+              <h3>{c.nom} {c.prenom}</h3>
+              <span className={`status-badge status-${c.statut.toLowerCase()}`}>
+                {c.statut}
+              </span>
+            </div>
+            <p><strong>Message Motivation:</strong> {c.message_motivation}</p>
+            <p>
+              <strong>CV:</strong>{" "}
+              {c.cv_path ? (
+                <a href={`${BASE_URL}/${c.cv_path}`} target="_blank" rel="noopener noreferrer">
+                  View CV
+                </a>
+              ) : "None"}
+            </p>
+            <p>
+              <strong>Photo:</strong>{" "}
+              {c.photo_path ? (
+                <img src={`${BASE_URL}/${c.photo_path}`} alt="Photo" className="candidature-photo" />
+              ) : "None"}
+            </p>
           </div>
         ))
       )}

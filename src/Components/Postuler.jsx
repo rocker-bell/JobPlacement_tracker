@@ -52,9 +52,11 @@
 
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft} from "lucide-react";
 
 const Postuler = () => {
+  const navigate = useNavigate()
   const { id } = useParams(); // stage_id
   const userId = localStorage.getItem("user_id");
   const BASE_URL = "http://localhost:8000";
@@ -142,6 +144,11 @@ const Postuler = () => {
 
   return (
     <div className="Postuler_dashboard">
+       < ArrowLeft
+    size={24}
+    onClick={() => navigate("/Jobboard_Stagiaire")}
+    className="nav-icon"
+  />
       <h2>Stage ID: {id}</h2>
       <h2>USER ID: {userId}</h2>
 

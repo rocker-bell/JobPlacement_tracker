@@ -1,6 +1,6 @@
 .UserJobBoard_wrapper {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -67,6 +67,11 @@ nav {
   cursor: pointer;
 }
 
+.UserDashboard_nav_icons {
+  width: 35px;
+  height: 35px;
+}
+
 .logo_actions_group  {
   width: 35px;
   height: 35px;
@@ -77,7 +82,7 @@ nav {
 }
 
 .UserJobBoard_navLists {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     min-width: 50%;
     max-width: 100%;
     height: 100%;
@@ -117,7 +122,7 @@ nav {
 .UserJobBoard_nav_list {
         min-width: 100px;
         height: 100%;
-        border: 1px solid black;
+        /* border: 1px solid black; */
         /* padding: 5px 5px; */
         padding: 5px 5px;
         display: flex;
@@ -153,168 +158,148 @@ nav {
     display: flex;
 }
 
-/* Add Stage content slider */
-
-/* .ED_stage_form_wrapper {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background-color: grey;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
+.Candidatures_userJobBoard {
+  border: 3px solid red;
+  display: flex;
+  justify-content: flex-start;
+ 
+  flex-direction: column;
+  gap: 10px;
 }
 
-.ED_stage_form {
-     width: 50%;
-    height: 50%;
-    background-color: white;
-     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.candidature-card {
+  position: relative;
+   border: 3px solid #2557a7;
+  padding: 10px;
+ box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; 
+  /* border: 1px solid #2557a7; 
+  box-shadow: inset 3px 0 0 #2557a7; */
+  min-width: 300px;
+  max-width: 300px;
+  word-break: break-all;
+  cursor: pointer;
+  
+}
+
+.candidature-card.active {
+   
+  box-shadow: inset 3px 0 0 #2557a7;
+  border-bottom-left-radius: 20px;
+}
+
+.UserjobBoard_candidatureactions {
+  border: 1px solid black;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+}
+/* .candidature_actions {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.candidature_actions.Active {
+  
+  position: absolute;
+  display: flex;
+  transition: all 0.2s ease-in-out;
+}
+ */
+
+
+ .candidature_actions {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute; /* relative to parent */
+  top: 100%;          /* directly below the button */
+  right: 0;           /* align right edge with button */
+  background: white;  /* optional */
+  border: 1px solid #ccc;
+  padding: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 100;       /* above other content */
+  transition: all 0.2s ease-in-out;
+}
+
+.candidature_actions.Active {
+  display: flex;
+}
+
+.UserjobBoard_candidatureactions  {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+.cancel_candidature {
+  background-color: red;
+}
+
+.candidature_rapport {
+  background-color: blue;
+}
+
+.profile_card, .profile_card_1 {
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  border: 1px solid #2557a7; 
+  box-shadow: inset 3px 0 0 #2557a7;
+  gap: 5px;
+}
+
+.Candidatprofile_btn_actions {
+  gap: 10px;
+}
+
+.profile_actions_btn {
+  background-color: #2557a7;
+}
+
+.profile_form_control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 35px;
+}
+
+.profile_form_label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 35px;
+}
+
+.profile_form_group {
+   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+
 }
 
 
-.ED_stage_form_formGroupe {
-    width: 100%;
-    height: 100%;
-    background-color: white;
-     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-}
-
-.ED_stage_form_label, .ED_stage_form_control {
-   height: 20px;
-    display: flex;
-   justify-content: center;
-   align-items: center;
-   padding: 5px 5px;
-}
-
-.ED_stage_form_control {
-    width: 70%;
+.ED_stage_form_wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw; 
+  height: 100vh; 
+  background-color: rgba(0, 0, 0, 0.5); 
+  align-items: center;
+  z-index: 1000; 
    
 }
 
-.ED_stage_form_label {
-    width: 20%;
-} */
 
 
-
-
-
-
-/* 
-.ED_stage_form_wrapper {
-    background-color: #4caf50;
-  width: 100%;
-  height: 100%; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-
-.ED_stage_form {
-  width: 100%; 
-  max-width: 600px; 
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-
-.ED_stage_form_formGroupe {
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.ED_stage_form_label {
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.ED_stage_form_control {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.ED_stage_form_btn_group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-
-button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-}
-
-button[type="button"] {
-  background-color: #f44336; 
-}
-
-
-button:hover {
-  opacity: 0.9;
-}
-
-
-
-
-.Active {
-  display: block;
-} */
-
-
-.ED_stage_form_wrapper {
-  position: absolute; /* Fix it on the screen */
-  top: 0;
-  left: 0;
-  width: 100vw; /* Full width */
-  height: 100vh; /* Full height */
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Ensure it's on top of other content */
-   /* Optional: Apply blur to the background */
-  /* backdrop-filter: blur(2px); Optional: Use backdrop-filter for smoother blur effect */
-}
-
-/* The actual form */
-/* .ED_stage_form {
-  overflow-y: scroll;
-
-  width: 100%; 
-  max-width: 600px; 
-  background-color: white;
-  flex-wrap: wrap;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-} */
 
 .ED_stage_form {
   width: 100%;
@@ -335,6 +320,57 @@ button:hover {
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
   box-sizing: border-box;
 }
+
+.stages-container {
+  display: flex;
+  gap: 20px;
+}
+
+.left-panel {
+  width: 40%;
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.right-panel {
+  width: 60%;
+  padding: 10px;
+  border-left: 1px solid #ccc;
+}
+
+.stage-card {
+   border: 1px solid #2557a7; 
+  box-shadow: inset 3px 0 0 #2557a7;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.stage-card.active {
+  background-color: #f0f8ff;
+  border-bottom-left-radius: 10px;
+}
+
+.pagination button {
+  margin-right: 5px;
+  padding: 5px 10px;
+}
+
+.pagination button.active {
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+}
+
+.Cancdidatstage_btn_actions {
+  background-color: #007bff;
+}
+
 
 /* Form group style */
 .ED_stage_form_formGroupe {

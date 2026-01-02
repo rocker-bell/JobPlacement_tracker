@@ -74,7 +74,10 @@ import { useNavigate } from "react-router-dom";
 import "../Styles/EntrepriseDashboard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
-import Logo1 from "../assets/Logo1.svg"
+import Logo1 from "../assets/Logo1.svg";
+import Profile from "../assets/profile.png";
+import Logout from "../assets/Logout.svg"
+import {MessageSquare, Bell} from "lucide-react";
 
 const Entreprise_dashboard = () => {
   // State for active slider and mobile screen size
@@ -110,6 +113,21 @@ const [editedStage, setEditedStage] = useState({});
 
   const [Showmenu, setShowmenu] = useState(false);
   const navigate = useNavigate()
+
+  // pagination
+
+  // Pagination & selected stage
+const [currentPageStage, setCurrentPageStage] = useState(1);
+const [selectedStage, setSelectedStage] = useState(null);
+const stagesPerPage = 3;
+
+// Paginated stages
+const totalPagesStages = Math.ceil(stages?.length / stagesPerPage);
+const paginatedStages = stages?.slice(
+  (currentPageStage - 1) * stagesPerPage,
+  currentPageStage * stagesPerPage
+);
+
 
   const [formData, setFormData] = useState({
     entreprise_id: localStorage.getItem("user_id") || "",
@@ -318,7 +336,7 @@ async function InsertEnterprise() {
 
   const handleLogout = () => {
     localStorage.removeItem("user_id");
-    navigate("/JobBoard")
+    navigate("/")
   }
 
 // fetch all stages
@@ -600,6 +618,11 @@ const handleSupprimer = async (id, enterpriseId, e) => {
                         </div>
             <ul className={`EntrepiriseDashboard_navLists ${IsMobile ? "mobile" : ""} ${menuActive ? "Active" : ""}`}>
               {/* On click of each nav item, change the active slider */}
+               <li className="EntrepiriseDashboard_nav_list">
+              <MessageSquare size={24} className="nav-icon" />
+            
+            </li>
+            <li className="EntrepiriseDashboard_nav_list"><Bell size={24} className="nav-icon" /></li>
               <li
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_addStage")}
@@ -616,7 +639,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_profile")}
               >
-                Profile
+                <img src={Profile} alt="" className="EntrepriseDashboard_nav_icons"/>
               </li>
               <li
                 className="EntrepiriseDashboard_nav_list"
@@ -624,7 +647,10 @@ const handleSupprimer = async (id, enterpriseId, e) => {
               >
                 statistique
               </li>
-              <li  className="EntrepiriseDashboard_nav_list" onClick={handleLogout}>Logout</li>
+              <li  className="EntrepiriseDashboard_nav_list" onClick={handleLogout}>
+                <img src={Logout} alt="" className="EntrepriseDashboard_nav_icons" />
+                
+                </li>
             </ul>
           </nav>
         </div>
@@ -707,91 +733,11 @@ const handleSupprimer = async (id, enterpriseId, e) => {
               ActiveSlider === "ED_CB_Stages" ? "Active" : ""
             }`}
           >
-            {/* Content 3: Stages */}
+           
 
 
                   <div className="stage-section">
-      {/* {stages.map((stage) => (
-        <form key={stage.offre_id} className="stage-form">
-          <div>
-            <label>Type de Stage:</label>
-            <input type="text" value={stage.type_de_stage} readOnly />
-          </div>
-          <div>
-            <label>Catégorie:</label>
-            <input type="text" value={stage.stage_categorie} readOnly />
-          </div>
-          <div>
-            <label>Titre:</label>
-            <input type="text" value={stage.titre} readOnly />
-          </div>
-          <div>
-            <label>Description:</label>
-            <textarea value={stage.description} readOnly />
-          </div>
-          <div>
-            <label>Compétences requises:</label>
-            <textarea value={stage.competences_requises} readOnly />
-          </div>
-          <div>
-            <label>Début:</label>
-            <input type="date" value={stage.date_debut} readOnly />
-          </div>
-          <div>
-            <label>Durée (semaines):</label>
-            <input type="number" value={stage.duree_semaines} readOnly />
-          </div>
-          <div>
-            <label>Nombre de places:</label>
-            <input type="number" value={stage.nombre_places} readOnly />
-          </div>
-          <div>
-            <label>Emplacement:</label>
-            <input type="text" value={stage.emplacement} readOnly />
-          </div>
-          <div>
-            <label>Statut:</label>
-            <input type="text" value={stage.statut} readOnly />
-          </div>
-        
-
-     <div
-            className="dropdown-container"
-            onMouseEnter={() => handleMouseEnter(stage.offre_id)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <button
-              className={`stage_action_dropdown ${
-                activeStageId === stage.offre_id ? "ActiveStageAction" : ""
-              }`}
-            >
-              Actions
-            </button>
-
-            <div
-              className={`stage_actions ${
-                activeStageId === stage.offre_id ? "show" : "hidden"
-              }`}
-            >
-             
-            <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
-                <button
-  type="button"
-  className="delete"
-  onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}
->
-  Supprimer
-</button>
-
-            <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
-            <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
-            <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
-
-            </div>
-          </div>
-        </form>
-        
-      ))} */} 
+      
           {stages.map(stage => (
     <form key={stage.offre_id} className="stage-form">
       <div>
@@ -947,6 +893,12 @@ const handleSupprimer = async (id, enterpriseId, e) => {
       
     </div>
           </span>
+
+
+       
+
+          
+
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_profile ${
               ActiveSlider === "ED_CB_profile" ? "Active" : ""
@@ -954,10 +906,10 @@ const handleSupprimer = async (id, enterpriseId, e) => {
           >
             Content 4: Profile
              <div>
-                {Fetchuser ? (
-                  // <pre>{JSON.stringify(Fetchuser, null, 2)}</pre>
+                {/* {Fetchuser ? (
+                  
                     <form onSubmit={handleSubmit}>
-      {/* User Info (read-only) */}
+      
       <div>
         <strong>User ID:</strong> {Fetchuser?.user_id} <br />
         <strong>Email:</strong> {Fetchuser?.email} <br />
@@ -969,7 +921,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
         <strong>Username:</strong> {Fetchuser?.username} <br />
       </div>
 
-      {/* Editable Entreprise Info */}
+      
       <div>
         <label>Entreprise ID:</label>
         <input
@@ -1010,15 +962,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
         />
       </div>
 
-      {/* <div>
-        <label>Logo Path:</label>
-        <input
-          type="text"
-          name="logo_path"
-          value={formData.logo_path}
-          onChange={handleChange}
-        />
-      </div> */}
+     
 
       <div>
         <label>Site Web:</label>
@@ -1034,7 +978,181 @@ const handleSupprimer = async (id, enterpriseId, e) => {
     </form>
                 ) : (
                   <p>Loading user data...</p>
-                )}
+                )} */}
+
+                {Fetchuser ? (
+  <form onSubmit={handleSubmit} className="profile_form">
+
+    {/* User Info (read-only) */}
+    {/* <div className="profile_user_info">
+      <strong>User ID:</strong> {Fetchuser?.user_id} <br />
+      <strong>Email:</strong> {Fetchuser?.email} <br />
+      <strong>Telephone:</strong> {Fetchuser?.telephone} <br />
+      <strong>Role:</strong> {Fetchuser?.role} <br />
+      <strong>Account Status:</strong> {Fetchuser?.account_status} <br />
+      <strong>Created At:</strong> {Fetchuser?.created_at} <br />
+      <strong>Updated At:</strong> {Fetchuser?.updated_at} <br />
+      <strong>Username:</strong> {Fetchuser?.username} <br />
+    </div> */}
+
+    <div className="profile_user_info">
+  <div className="profile_form_group">
+    <label className="profile_form_label">User ID:</label>
+    <input
+      type="text"
+      value={Fetchuser?.user_id || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Email:</label>
+    <input
+      type="text"
+      value={Fetchuser?.email || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Telephone:</label>
+    <input
+      type="text"
+      value={Fetchuser?.telephone || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Role:</label>
+    <input
+      type="text"
+      value={Fetchuser?.role || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Account Status:</label>
+    <input
+      type="text"
+      value={Fetchuser?.account_status || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Created At:</label>
+    <input
+      type="text"
+      value={Fetchuser?.created_at || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Updated At:</label>
+    <input
+      type="text"
+      value={Fetchuser?.updated_at || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+
+  <div className="profile_form_group">
+    <label className="profile_form_label">Username:</label>
+    <input
+      type="text"
+      value={Fetchuser?.username || ""}
+      readOnly
+      className="profile_form_control"
+    />
+  </div>
+</div>
+
+
+    {/* Editable Entreprise Info */}
+    <div className="profile_form_group">
+      <label className="profile_form_label">Entreprise ID:</label>
+      <input
+        type="text"
+        name="entreprise_id"
+        value={formData.entreprise_id}
+        readOnly
+        placeholder={`${UserId}`}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom Entreprise:</label>
+      <input
+        type="text"
+        name="nom_entreprise"
+        value={formData.nom_entreprise}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Description:</label>
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Adresse:</label>
+      <input
+        type="text"
+        name="adresse"
+        value={formData.adresse}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    {/* Optional logo input commented out */}
+    {/* <div className="profile_form_group">
+      <label className="profile_form_label">Logo Path:</label>
+      <input
+        type="text"
+        name="logo_path"
+        value={formData.logo_path}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div> */}
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Site Web:</label>
+      <input
+        type="text"
+        name="site_web"
+        value={formData.site_web}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <button type="submit" className="profile_form_submit_entreprise">Submit</button>
+    <button type="submit" className="profile_form_submit_entreprise">update</button>
+  </form>
+) : (
+  <p>Loading user data...</p>
+)}
+
             </div>
           </span>
           <span

@@ -8,6 +8,16 @@ import Logo1 from "../assets/Logo1.svg"
 const EncadrantDashboard = () => {
   // State for active slider and mobile screen size
   const [Fetchuser, setFetchuser] = useState(null);
+  const [cvFile, setCvFile] = useState(null);
+const [photoFile, setPhotoFile] = useState(null);
+  const [FetchEncadrant, setFetchEncadrant] = useState(
+    {
+  nom: "",
+  prenom: "",
+  cv_path: "",
+  photo_path: ""
+}
+  );
   const [UserId, setUserId] = useState(null);
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -16,6 +26,63 @@ const EncadrantDashboard = () => {
 
   const [Showmenu, setShowmenu] = useState(false);
   const navigate = useNavigate()
+
+
+   async function FetchEncadrantfunction(user_id) {
+  console.log("user id = " + user_id)
+      try {
+        const response = await fetch(`${BASE_URL}/Stagiairefetch.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+          },
+          body: new URLSearchParams({ user_id: user_id }), // send user_id
+        });
+  
+        if (!response.ok) {
+          console.error("HTTP error:", response.status);
+          return;
+        }
+  
+        const data = await response.json();
+        console.log(data)
+        if (data.success) {
+          setFetchEncadrant(data.user_data);
+        } else {
+          console.error("Error from API:", data.message);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    }
+
+
+    async function updateEncadrantdata(id) {
+  try {
+    const formData = new FormData();
+    formData.append("stagiaire_id", id);
+    formData.append("nom", FetchEncadrant.nom);
+    formData.append("prenom", FetchEncadrant.prenom);
+
+    if (cvFile) formData.append("cv_file", cvFile);
+    if (photoFile) formData.append("photo_file", photoFile);
+
+    const response = await fetch(`${BASE_URL}/stagiaire_update.php`, {
+      method: "POST",
+      body: formData, // no need for headers, fetch sets multipart automatically
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      alert("encadrant updated successfully!");
+    } else {
+      alert("Failed to update encadrant: " + data.message);
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
 
   // Handle screen resizing to adjust the mobile state
   useEffect(() => {
@@ -40,58 +107,10 @@ const EncadrantDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user_id");
-    navigate("/JobBoard")
+    navigate("/")
   }
 
- const handleSubmitStage = async (e) => {
-  e.preventDefault();
 
-  const form = e.target;
-  const typeStage = form.elements["type_stage"].value.trim();
-  const categorieStage = form.elements["categorie_stage"].value.trim();
-  const emplacement = form.elements["emplacement"].value.trim();
-  const nombrePlace = form.elements["nombre_place"].value.trim();
-  const debutStage = form.elements["debut_stage"].value.trim();
-  const dureeStage = form.elements["durre_stage"].value.trim();
-  const titreStage = form.elements["titre_stage"].value.trim();
-  const descriptionStage = form.elements["description_stage"].value.trim();
-  const competencesRequises = form.elements["competence_requise"].value.trim();
-
-  // Validate form fields
-  if (!typeStage || !categorieStage || !emplacement || !nombrePlace || !debutStage || !dureeStage || !titreStage || !descriptionStage || !competencesRequises) {
-    return alert("All fields are required!");
-  }
-
-  try {
-    const res = await fetch("http://localhost:8000/handle_stage.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        type_stage: typeStage,
-        categorie_stage: categorieStage,
-        emplacement: emplacement,
-        nombre_place: nombrePlace,
-        debut_stage: debutStage,
-        durre_stage: dureeStage,
-        titre_stage: titreStage,
-        description_stage: descriptionStage,
-        competence_requise: competencesRequises,
-        entreprise_id: "your_entreprise_id", // Pass entreprise_id (or fetch dynamically)
-      }),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert("Stage added successfully!");
-      // Optionally, clear the form or redirect
-    } else {
-      alert(data.message);
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong. Please try again.");
-  }
-};
 
 
   const handleCancel = () => {
@@ -135,6 +154,7 @@ const EncadrantDashboard = () => {
       const user_id = localStorage.getItem("user_id");
       setUserId(user_id);
       // setenterpriseId(user_id)
+      FetchEncadrantfunction(user_id);
   
       if (user_id) {
         FetchuserData(user_id); // actually call the function
@@ -166,12 +186,12 @@ const EncadrantDashboard = () => {
             </div>
             <ul className={`EncadrantDashboard_navLists ${IsMobile ? "mobile" : ""} ${menuActive ? "Active" : ""}`}>
               {/* On click of each nav item, change the active slider */}
-              <li
+              {/* <li
                 className="EncadrantDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_addStage")}
               >
                 Ajouter Stage
-              </li>
+              </li> */}
               <li
                 className="EncadrantDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
@@ -204,61 +224,15 @@ const EncadrantDashboard = () => {
           >
             Content 1: Default
           </span>
-          <span
+          {/* <span
             className={`EncadrantDashboard_contentAbout ED_CB_addStage ${
               ActiveSlider === "ED_CB_addStage" ? "Active" : ""
             }`}
           >
             Content 2: chercher stage
 
-                    {/* <div className={`ED_stage_form_wrapper ${CancelAddStage ? "cancel" : ""}`}>
-                            <form  method="POST" className="ED_stage_form" onSubmit={handleSubmitStage}>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">type de stage</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">categorie</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">emplacement</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">nombre place demande</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">debut de stagee</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">duree du stage</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                            <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">stage title</label>
-                                                <input type="text" className="ED_stage_form_control" />
-                                            </div>
-                                             <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">stage description</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                              <div className="ED_stage_form_formGroupe">
-                                                <label htmlFor="" className="ED_stage_form_label">competences requises</label>
-                                                <textarea type="text" className="ED_stage_form_control" > </textarea>
-                                            </div>
-                                          
-                                                <div className="ED_stage_form_btn_group">
-                                                     <button type="submit">submit</button>
-                                                     <button type="cancel" onClick={handleCancel}>cancel</button>
-                                                </div>
-                                           
-                            </form>
-                    </div> */}
 
-          </span>
+          </span> */}
           <span
             className={`EncadrantDashboard_contentAbout ED_CB_Stages ${
               ActiveSlider === "ED_CB_Stages" ? "Active" : ""
@@ -266,6 +240,10 @@ const EncadrantDashboard = () => {
           >
             Content 3: Stages
           </span>
+         
+
+        
+
           <span
             className={`EncadrantDashboard_contentAbout ED_CB_profile ${
               ActiveSlider === "ED_CB_profile" ? "Active" : ""
@@ -273,17 +251,149 @@ const EncadrantDashboard = () => {
           >
             Content 4: Profile
            {Fetchuser && (
-  <div>
-    <strong>User ID:</strong> {Fetchuser.user_id} <br />
-    <strong>Email:</strong> {Fetchuser.email} <br />
-    <strong>Telephone:</strong> {Fetchuser.telephone} <br />
-    <strong>Role:</strong> {Fetchuser.role} <br />
-    <strong>Account Status:</strong> {Fetchuser.account_status} <br />
-    <strong>Created At:</strong> {Fetchuser.created_at} <br />
-    <strong>Updated At:</strong> {Fetchuser.updated_at} <br />
-    <strong>Username:</strong> {Fetchuser.username} <br />
+  
+              <div className="profile_card">
+                <div className="profile_form_group">
+                  <label className="profile_form_label">User ID:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="text" 
+                    value={Fetchuser.user_id} 
+                    readOnly 
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Email:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="email" 
+                    value={Fetchuser.email} 
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Telephone:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="tel" 
+                    value={Fetchuser.telephone} 
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Role:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="text" 
+                    value={Fetchuser.role} 
+                    readOnly
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Account Status:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="text" 
+                    value={Fetchuser.account_status} 
+                    readOnly
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Created At:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="text" 
+                    value={Fetchuser.created_at} 
+                    readOnly
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Updated At:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="text" 
+                    value={Fetchuser.updated_at} 
+                    readOnly
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Username:</label>
+                  <input 
+                    className="profile_form_control" 
+                    type="text" 
+                    value={Fetchuser.username} 
+                  />
+                </div>
+
+                <div className="Candidatprofile_btn_actions">
+                  <button className="modifier profile_actions_btn">modifier</button>
+                </div>
+              </div>
+
+
+              )}
+
+
+     
+
+{FetchEncadrant && (
+  <div className="profile_card_1">
+    <div className="profile_form_group"> 
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || ""}
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+  
+
+    <div className="profile_form_group">
+  <label className="profile_form_label">CV:</label>
+  <input
+    type="file"
+    onChange={(e) => setCvFile(e.target.files[0])} // store actual file
+    className="profile_form_control"
+  />
+</div>
+
+<div className="profile_form_group">
+  <label className="profile_form_label">Photo:</label>
+  <input
+    type="file"
+    onChange={(e) => setPhotoFile(e.target.files[0])} // store actual file
+    className="profile_form_control"
+  />
+</div>
+
+     <button className="submit profile_actions_btn"  onClick={() => updateEncadrantdata(UserId)}>update stagiaire data</button>
+      <button className="delete profile_actions_btn">delete account</button>
   </div>
 )}
+
 
 
           </span>
