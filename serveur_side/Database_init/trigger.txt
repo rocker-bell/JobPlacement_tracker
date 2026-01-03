@@ -129,3 +129,107 @@ $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 3_
 
+after insert into user 
+
+insert into stagiaire
+insert into_entreprise
+
+logic endarant
+
+
+
+$Utilisateurs = "
+    CREATE TABLE IF NOT EXISTS Utilisateurs (
+        user_id CHAR(36) NOT NULL PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        telephone VARCHAR(20),
+        role ENUM('Stagiaire', 'Entreprise', 'Encadrant', 'Admin') NOT NULL,
+        account_status ENUM('Pending', 'Active', 'Verified', 'Blocked') DEFAULT 'Pending',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+";
+
+// 2. Table StagiaireAccounts
+// - PK is CHAR(36) because it matches Utilisateurs.user_id
+$StagiaireAccount = "
+    CREATE TABLE IF NOT EXISTS StagiaireAccounts (
+        stagiaire_id CHAR(36) NOT NULL PRIMARY KEY,
+        nom VARCHAR(100) NOT NULL,
+        prenom VARCHAR(100) NOT NULL,
+        cv_path VARCHAR(255),
+        photo_path VARCHAR(255),
+        FOREIGN KEY (stagiaire_id) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE
+    );
+";
+
+// 3. Table Entreprises
+// - PK is CHAR(36)
+$Entreprises = "
+    CREATE TABLE IF NOT EXISTS Entreprises (
+        entreprise_id CHAR(36) NOT NULL PRIMARY KEY,
+        nom_entreprise VARCHAR(150) NOT NULL,
+        description TEXT,
+        adresse VARCHAR(255),
+        logo_path VARCHAR(255),
+        site_web VARCHAR(255),
+        UNIQUE(nom_entreprise), 
+        FOREIGN KEY (entreprise_id) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE
+    );
+";
+
+
+
+// 4. Table Encadrants
+// - PK is CHAR(36)
+// - agence_id must be CHAR(36) to reference Entreprises
+$Encadrants = "
+    CREATE TABLE IF NOT EXISTS Encadrants (
+        encadrant_id CHAR(36) NOT NULL PRIMARY KEY,
+        nom VARCHAR(100) NOT NULL,
+        prenom VARCHAR(100) NOT NULL,
+        agence_id CHAR(36), 
+        nom_d_agence VARCHAR(150) NOT NULL,
+        departement VARCHAR(100),
+        status_d_encadrant VARCHAR(100),
+        
+        FOREIGN KEY (encadrant_id) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE,
+        FOREIGN KEY (agence_id) REFERENCES Entreprises(entreprise_id),
+        
+        INDEX(agence_id)
+    );
+";
+
+triiger
+
+DELIMITER $$
+
+CREATE TRIGGER after_utilisateur_insert
+AFTER INSERT ON Utilisateurs
+FOR EACH ROW
+BEGIN
+    CASE NEW.role
+        WHEN 'Stagiaire' THEN
+            INSERT INTO StagiaireAccounts (stagiaire_id, nom, prenom)
+            VALUES (NEW.user_id, 'Unknown', 'Unknown');
+
+        WHEN 'Encadrant' THEN
+            INSERT INTO Encadrants (
+                encadrant_id, nom, prenom, nom_d_agence
+            )
+            VALUES (
+                NEW.user_id, 'Unknown', 'Unknown', 'Unknown'
+            );
+
+        WHEN 'Entreprise' THEN
+            INSERT INTO Entreprises (
+                entreprise_id, nom_entreprise
+            )
+            VALUES (
+                NEW.user_id, 'Unknown'
+            );
+    END CASE;
+END$$
+
+DELIMITER ;

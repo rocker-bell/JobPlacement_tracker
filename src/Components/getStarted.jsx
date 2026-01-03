@@ -37,6 +37,7 @@ const handleLogin = async () => {
     const user_id = data.user_data.user_id; // Get user_id from user_data
     console.log(user_id);
     localStorage.setItem("user_id", user_id);
+    console.log(data.user_data);
 
     // Redirect based on role inside user_data
     switch (data.user_data.role) {
@@ -202,7 +203,7 @@ const handleRegister = async (e) => {
 
             <div className="form-group-access">
                 <label htmlFor="role" className="form-label-access">Select Role</label>
-                <select
+                {/* <select
                     name="role"
                     id="role"
                     className="role-choice-options"
@@ -212,7 +213,20 @@ const handleRegister = async (e) => {
                     <option value="stagiaire">Stagiaire</option>
                     <option value="Entreprise">Entreprise</option>
                     <option value="encadrant">Encadrant</option>
-                </select>
+                </select> */}
+
+                <select
+    name="role"
+    id="role"
+    className="role-choice-options"
+    required
+>
+    <option value="">Choose a role</option>
+    <option value="Stagiaire">Stagiaire</option>
+    <option value="Entreprise">Entreprise</option>
+    <option value="Encadrant">Encadrant</option>
+</select>
+
             </div>
 
             <p className="role-choice-NB">

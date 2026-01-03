@@ -87,6 +87,7 @@ const Entreprise_dashboard = () => {
   const [editingStageId, setEditingStageId] = useState(null);
 const [editedStage, setEditedStage] = useState({});
 
+
   const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
   // const [stageform, setstageform] = useState({
   //   offre_id: "",
@@ -110,9 +111,19 @@ const [editedStage, setEditedStage] = useState({});
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
   const [menuActive, setmenuActive] = useState(false);
+  const [fetchEntreprise, setFetchEntreprise] = useState()
 
   const [Showmenu, setShowmenu] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+    const [FetchEncadrant, setFetchEncadrant] = useState(
+    {
+  nom: "",
+  prenom: "",
+  agence_id: "",
+  nom_d_agence: "",
+  departement: ""
+}
+  );
 
   // pagination
 
@@ -127,6 +138,38 @@ const paginatedStages = stages?.slice(
   (currentPageStage - 1) * stagesPerPage,
   currentPageStage * stagesPerPage
 );
+
+ const SliderContentHandler = (sliderName) => {
+    setActiveSlider(sliderName);
+  };
+
+  async function FetchEncadrantfunctionby(user_id) {
+  console.log("user id = " + user_id)
+      try {
+        const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+          },
+          body: new URLSearchParams({ user_id: user_id }), // send user_id
+        });
+  
+        if (!response.ok) {
+          console.error("HTTP error:", response.status);
+          return;
+        }
+  
+        const data = await response.json();
+        console.log(data)
+        if (data.success) {
+          setFetchEncadrant(data.user_data);
+        } else {
+          console.error("Error from API:", data.message);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    }
 
 
   const [formData, setFormData] = useState({
@@ -170,6 +213,12 @@ const paginatedStages = stages?.slice(
   e.preventDefault();
   console.log("Form submitted:", formData);
   InsertEnterprise();
+  window.location.reload()
+  setTimeout(() => {
+    SliderContentHandler("ED_CB_profile")
+  }, 300)
+  
+  
 };
 
 const handleModifier = (stageId, e) => {
@@ -244,7 +293,7 @@ const handleSaveStage = async (stageId, e) => {
 
 async function InsertEnterprise() {
   try {
-    const response = await fetch(`${BASE_URL}/add_entreprise.php`, {
+    const response = await fetch(`${BASE_URL}/update_entreprise.php`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -258,7 +307,8 @@ async function InsertEnterprise() {
     }
 
     const data = await response.json();
-    console.log("Server response:", data);
+    console.log("Server response:", data.data);
+    
 
     if (data.success) {
       alert("Entreprise added successfully!");
@@ -269,6 +319,27 @@ async function InsertEnterprise() {
     console.error("Fetch error:", err);
   }
 }
+
+
+const fetchentreprise = async (userId) => {
+  const response = await fetch("http://localhost:8000/fetch_enterprise.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user_id: userId, // 👈 ONLY this
+    }),
+  });
+
+  const data = await response.json();
+
+  if (data.success) {
+    setFetchEntreprise(data.data);
+  } else {
+    setFetchEntreprise(null);
+  }
+};
 
 
   // Handle screen resizing to adjust the mobile state
@@ -325,19 +396,32 @@ async function InsertEnterprise() {
 
     if (user_id) {
       FetchuserData(user_id); // actually call the function
+      fetchentreprise(user_id)
+      
     }
   }, []);
 
 
   // Function to handle the slider change
-  const SliderContentHandler = (sliderName) => {
-    setActiveSlider(sliderName);
-  };
-
+ 
   const handleLogout = () => {
     localStorage.removeItem("user_id");
     navigate("/")
   }
+
+
+  useEffect(() => {
+  if (fetchEntreprise) {
+    setFormData({
+      entreprise_id: fetchEntreprise.entreprise_id,
+      nom_entreprise: fetchEntreprise.nom_entreprise ?? "",
+      description: fetchEntreprise.description ?? "",
+      adresse: fetchEntreprise.adresse ?? "",
+      site_web: fetchEntreprise.site_web ?? "",
+    });
+  }
+}, [fetchEntreprise]);
+
 
 // fetch all stages
 // useEffect(() => {
@@ -388,6 +472,13 @@ useEffect(() => {
 
  const handleSubmitStage = async (e) => {
   e.preventDefault();
+
+
+   if (Fetchuser.account_status !== "Active") {
+    alert("Please complete your account activation to submit a stage.");
+    SliderContentHandler("ED_CB_profile"); // redirect to profile
+    return; // stop further execution
+  }
 
   const form = e.currentTarget;
   const typeStage = form.elements["type_stage"].value.trim();
@@ -980,20 +1071,10 @@ const handleSupprimer = async (id, enterpriseId, e) => {
                   <p>Loading user data...</p>
                 )} */}
 
-                {Fetchuser ? (
+                {/* {Fetchuser ? (
   <form onSubmit={handleSubmit} className="profile_form">
 
-    {/* User Info (read-only) */}
-    {/* <div className="profile_user_info">
-      <strong>User ID:</strong> {Fetchuser?.user_id} <br />
-      <strong>Email:</strong> {Fetchuser?.email} <br />
-      <strong>Telephone:</strong> {Fetchuser?.telephone} <br />
-      <strong>Role:</strong> {Fetchuser?.role} <br />
-      <strong>Account Status:</strong> {Fetchuser?.account_status} <br />
-      <strong>Created At:</strong> {Fetchuser?.created_at} <br />
-      <strong>Updated At:</strong> {Fetchuser?.updated_at} <br />
-      <strong>Username:</strong> {Fetchuser?.username} <br />
-    </div> */}
+    
 
     <div className="profile_user_info">
   <div className="profile_form_group">
@@ -1078,8 +1159,10 @@ const handleSupprimer = async (id, enterpriseId, e) => {
 </div>
 
 
-    {/* Editable Entreprise Info */}
-    <div className="profile_form_group">
+   
+    {fetchEntreprise ? (
+
+       <div className="profile_form_group">
       <label className="profile_form_label">Entreprise ID:</label>
       <input
         type="text"
@@ -1096,7 +1179,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
       <input
         type="text"
         name="nom_entreprise"
-        value={formData.nom_entreprise}
+        value={fetchEntreprise.nom_entreprise}
         onChange={handleChange}
         className="profile_form_control"
       />
@@ -1106,7 +1189,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
       <label className="profile_form_label">Description:</label>
       <textarea
         name="description"
-        value={formData.description}
+        value={fetchEntreprise.description}
         onChange={handleChange}
         className="profile_form_control"
       />
@@ -1117,41 +1200,187 @@ const handleSupprimer = async (id, enterpriseId, e) => {
       <input
         type="text"
         name="adresse"
-        value={formData.adresse}
+        value={fetchEntreprise.adresse}
         onChange={handleChange}
         className="profile_form_control"
       />
     </div>
 
-    {/* Optional logo input commented out */}
-    {/* <div className="profile_form_group">
-      <label className="profile_form_label">Logo Path:</label>
-      <input
-        type="text"
-        name="logo_path"
-        value={formData.logo_path}
-        onChange={handleChange}
-        className="profile_form_control"
-      />
-    </div> */}
+   
 
     <div className="profile_form_group">
       <label className="profile_form_label">Site Web:</label>
       <input
         type="text"
         name="site_web"
-        value={formData.site_web}
+        value={fetchEntreprise.site_web}
         onChange={handleChange}
         className="profile_form_control"
       />
     </div>
+
+    )}
+   
 
     <button type="submit" className="profile_form_submit_entreprise">Submit</button>
     <button type="submit" className="profile_form_submit_entreprise">update</button>
   </form>
 ) : (
   <p>Loading user data...</p>
+)} */}
+      {Fetchuser ? (
+  <form onSubmit={handleSubmit} className="profile_form">
+
+    <div className="profile_user_info">
+      <div className="profile_form_group">
+        <label className="profile_form_label">User ID:</label>
+        <input
+          type="text"
+          value={Fetchuser?.user_id || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Email:</label>
+        <input
+          type="text"
+          value={Fetchuser?.email || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Telephone:</label>
+        <input
+          type="text"
+          value={Fetchuser?.telephone || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Role:</label>
+        <input
+          type="text"
+          value={Fetchuser?.role || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Account Status:</label>
+        <input
+          type="text"
+          value={Fetchuser?.account_status || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Created At:</label>
+        <input
+          type="text"
+          value={Fetchuser?.created_at || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Updated At:</label>
+        <input
+          type="text"
+          value={Fetchuser?.updated_at || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Username:</label>
+        <input
+          type="text"
+          value={Fetchuser?.username || ""}
+          readOnly
+          className="profile_form_control"
+        />
+      </div>
+    </div>
+
+    {/* Editable Entreprise Info */}
+    
+    {fetchEntreprise ? (
+      <>
+        <div className="profile_form_group">
+          <label className="profile_form_label">Entreprise ID:</label>
+          <input
+            type="text"
+            name="entreprise_id"
+            value={formData.entreprise_id}
+            readOnly
+            placeholder={`${UserId}`}
+            className="profile_form_control"
+          />
+        </div>
+
+        <div className="profile_form_group">
+          <label className="profile_form_label">Nom Entreprise:</label>
+          <input
+            type="text"
+            name="nom_entreprise"
+            value={formData.nom_entreprise}
+            onChange={handleChange}
+            className="profile_form_control"
+          />
+        </div>
+
+        <div className="profile_form_group">
+          <label className="profile_form_label">Description:</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="profile_form_control"
+          />
+        </div>
+
+        <div className="profile_form_group">
+          <label className="profile_form_label">Adresse:</label>
+          <input
+            type="text"
+            name="adresse"
+            value={formData.adresse}
+            onChange={handleChange}
+            className="profile_form_control"
+          />
+        </div>
+
+        <div className="profile_form_group">
+          <label className="profile_form_label">Site Web:</label>
+          <input
+            type="text"
+            name="site_web"
+            value={formData.site_web}
+            onChange={handleChange}
+            className="profile_form_control"
+          />
+        </div>
+      </>
+    ) : null}
+
+    <button type="submit" className="profile_form_submit_entreprise">Submit account data</button>
+    {/* <button type="update" className="profile_form_submit_entreprise">update</button> */}
+  </form>
+) : (
+  <p>Loading user data...</p>
 )}
+
 
             </div>
           </span>

@@ -630,7 +630,7 @@ button:hover {
 }
 
 .profile_form_submit_entreprise {
-  width: 100px;
+  min-width: 100px;
   background-color: blue;
   
 }

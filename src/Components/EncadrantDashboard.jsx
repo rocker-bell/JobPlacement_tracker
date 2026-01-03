@@ -14,8 +14,9 @@ const [photoFile, setPhotoFile] = useState(null);
     {
   nom: "",
   prenom: "",
-  cv_path: "",
-  photo_path: ""
+  agence_id: "",
+  nom_d_agence: "",
+  departement: ""
 }
   );
   const [UserId, setUserId] = useState(null);
@@ -31,7 +32,7 @@ const [photoFile, setPhotoFile] = useState(null);
    async function FetchEncadrantfunction(user_id) {
   console.log("user id = " + user_id)
       try {
-        const response = await fetch(`${BASE_URL}/Stagiairefetch.php`, {
+        const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
@@ -60,14 +61,16 @@ const [photoFile, setPhotoFile] = useState(null);
     async function updateEncadrantdata(id) {
   try {
     const formData = new FormData();
-    formData.append("stagiaire_id", id);
+    formData.append("encadrant_id", id);
     formData.append("nom", FetchEncadrant.nom);
     formData.append("prenom", FetchEncadrant.prenom);
+    formData.append("agence_id", FetchEncadrant.agence_id);
+    formData.append("nom_d_agence", FetchEncadrant.nom_d_agence);
+    formData.append("departement", FetchEncadrant.departement);
 
-    if (cvFile) formData.append("cv_file", cvFile);
-    if (photoFile) formData.append("photo_file", photoFile);
+   
 
-    const response = await fetch(`${BASE_URL}/stagiaire_update.php`, {
+    const response = await fetch(`${BASE_URL}/Encadrant_update.php`, {
       method: "POST",
       body: formData, // no need for headers, fetch sets multipart automatically
     });
@@ -341,7 +344,7 @@ const [photoFile, setPhotoFile] = useState(null);
 
      
 
-{FetchEncadrant && (
+{/* {FetchEncadrant && (
   <div className="profile_card_1">
     <div className="profile_form_group"> 
       <label className="profile_form_label">Nom:</label>
@@ -369,31 +372,133 @@ const [photoFile, setPhotoFile] = useState(null);
       />
     </div>
 
-  
+    <div className="profile_form_group">
+      <label className="profile_form_label">agence_id :</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id  || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+     <div className="profile_form_group">
+      <label className="profile_form_label">nom_d_agence :</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence  || ""}
+        placeholder="Entrez votre nom_d_agence "
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
 
     <div className="profile_form_group">
-  <label className="profile_form_label">CV:</label>
-  <input
-    type="file"
-    onChange={(e) => setCvFile(e.target.files[0])} // store actual file
-    className="profile_form_control"
-  />
-</div>
+      <label className="profile_form_label">departement :</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement  || ""}
+        placeholder="Entrez votre departement "
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
 
-<div className="profile_form_group">
-  <label className="profile_form_label">Photo:</label>
-  <input
-    type="file"
-    onChange={(e) => setPhotoFile(e.target.files[0])} // store actual file
-    className="profile_form_control"
-  />
-</div>
+  
+
+   
 
      <button className="submit profile_actions_btn"  onClick={() => updateEncadrantdata(UserId)}>update stagiaire data</button>
       <button className="delete profile_actions_btn">delete account</button>
   </div>
-)}
+)} */}
 
+{FetchEncadrant && (
+  <div className="profile_card_1">
+    
+    <div className="profile_form_group"> 
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || ""}
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Agence ID:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, agence_id: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom d'agence:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence || ""}
+        placeholder="Entrez votre nom_d_agence"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom_d_agence: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Département:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement || ""}
+        placeholder="Entrez votre departement"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, departement: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <button
+      className="submit profile_actions_btn"
+      onClick={() => updateEncadrantdata(UserId)}
+    >
+      Update Encadrant Data
+    </button>
+
+    <button className="delete profile_actions_btn">Delete Account</button>
+  </div>
+)}
 
 
           </span>

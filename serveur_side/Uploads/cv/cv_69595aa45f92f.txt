@@ -1,0 +1,9 @@
+Product Name: Diazepam
+Manufacturer Name: [Insert Manufacturer, e.g., Roche Pharma]
+Manufacture Date: [jj/mm/aaaa]
+Initial Location: [e.g., Factory Floor A]
+Batch / Lot Number: [Insert batch ID]
+Expiry Date: [jj/mm/aaaa]
+Strength / Dosage Form: [e.g., 5 mg tablets]
+Packaging Type: [e.g., Blister pack of 10 tablets]
+Metadata URI: [Insert link or decentralized storage reference, e.g., IPFS hash]
