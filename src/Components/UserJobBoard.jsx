@@ -601,7 +601,7 @@ const rapportcandidature = (id) => {
     {/* --- LEFT PANEL: Paginated Candidature List --- */}
     <div className="left-panel" style={{ width: '40%', maxHeight: '500px', overflowY: 'auto' }}>
       {FetchCandidature && FetchCandidature.length > 0 ? (
-        <>
+        <div className="candidatures_cards_container">
           {paginatedCandidatures.map((candidature) => (
             <div
               key={candidature.candidature_id}
@@ -640,7 +640,7 @@ const rapportcandidature = (id) => {
               ))}
             </div>
           )}
-        </>
+        </div>
       ) : (
         <p>No candidatures found.</p>
       )}
