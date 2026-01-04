@@ -9,6 +9,10 @@ header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Content-Type: application/json');
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 // Handle preflight request (React sends this before POST)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -16,8 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // 2. Error Reporting (Keep enabled for debugging, disable in production)
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 // 3. Get Input
 $data = json_decode(file_get_contents("php://input"), true);
@@ -32,7 +34,7 @@ if (!$input_login || !$password) {
 try {
     // 4. Correct Query (PDO)
     // We check ONLY 'email' because the 'username' column does not exist in your Utilisateurs table 
-    $stmt = $db->prepare("SELECT * FROM Utilisateurs WHERE email = :email");
+    $stmt = $db->prepare("SELECT * FROM Utilisateurs WHERE email = :email OR username = :email");
     
     // Bind the input (React sends 'username', but we treat it as email)
     $stmt->bindValue(':email', $input_login, PDO::PARAM_STR);

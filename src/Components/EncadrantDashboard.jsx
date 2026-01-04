@@ -161,6 +161,7 @@ const [photoFile, setPhotoFile] = useState(null);
   
       if (user_id) {
         FetchuserData(user_id); // actually call the function
+        
       }
     }, []);
 
@@ -173,6 +174,35 @@ const [photoFile, setPhotoFile] = useState(null);
     
 
   }
+async function DeleteAccount(UserId) {
+  try {
+    const response = await fetch(`${BASE_URL}/DeleteAccount.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: UserId }) // ✅ use parameter
+    });
+
+    const res = await response.json();
+    console.log(res);
+
+    if (res.success) {
+      alert("User deleted successfully");
+    } else {
+      alert("Failed to delete user: " + res.message);
+    }
+  } catch (err) {
+    console.error("Error deleting user:", err);
+  }
+}
+
+
+const handleDelete = () => {
+  if (!UserId) return alert("User ID not found");
+  DeleteAccount(UserId);
+};
+
+
+
 
 
 
@@ -496,7 +526,15 @@ const [photoFile, setPhotoFile] = useState(null);
       Update Encadrant Data
     </button>
 
-    <button className="delete profile_actions_btn">Delete Account</button>
+    {/* <button type="delete" className="delete profile_actions_btn" onClick={() => DeleteAccount(userId)}>Delete Account</button> */}
+        <button
+  type="button"
+  className="delete profile_actions_btn"
+  onClick={handleDelete}
+>
+  Delete Account
+</button>
+
   </div>
 )}
 

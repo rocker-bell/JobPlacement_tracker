@@ -235,3 +235,36 @@ END$$
 DELIMITER ;
 
 stage evaluatio - modification des donnes - cv - et photo - affectation des candidature - rapports
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER after_utilisateur_insert
+AFTER INSERT ON Utilisateurs
+FOR EACH ROW
+BEGIN
+    CASE NEW.role
+        WHEN 'Stagiaire' THEN
+            INSERT INTO StagiaireAccounts (stagiaire_id, nom, prenom)
+            VALUES (NEW.user_id, 'Unknown', 'Unknown');
+
+        WHEN 'Encadrant' THEN
+            INSERT INTO Encadrants (
+                encadrant_id, nom, prenom, nom_d_agence
+            )
+            VALUES (
+                NEW.user_id, 'Unknown', 'Unknown', 'Unknown'
+            );
+
+        WHEN 'Entreprise' THEN
+            INSERT INTO Entreprises (
+                entreprise_id, nom_entreprise
+            )
+            VALUES (
+                NEW.user_id, 'Unknown'
+            );
+    END CASE;
+END$$
+
+DELIMITER ;

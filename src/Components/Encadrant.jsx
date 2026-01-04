@@ -116,6 +116,99 @@ useEffect(() => {
   }
 }, [submitQuerry]);
 
+
+// const affecterEncadrant = async (encadrantId) => {
+//   if (!encadrantId || !stageId) {
+//     return alert("Encadrant ID or Stage ID is missing");
+//   }
+
+//   console.log(encadrantId, stageId)
+
+//   try {
+//     const response = await fetch(`${BASE_URL}/Affecterencadrant.php`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         encadrant_id: encadrantId,
+//         stage_id: stageId,
+//       }),
+//     });
+
+//     const res = await response.json();
+//     console.log(res);
+
+//     if (res.success) {
+//       alert("Encadrant affecté au stage avec succès!");
+//     } else {
+//       alert("Impossible d'affecter l'encadrant: " + res.message);
+//     }
+//   } catch (err) {
+//     console.error("Error affecting encadrant:", err);
+//     alert("Erreur réseau, veuillez réessayer.");
+//   }
+// };
+
+const affecterEncadrant = async (encadrantId) => {
+  if (!encadrantId || !stageId) {
+    return alert("Encadrant ID or Stage ID is missing");
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/AffecterEncadrant.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        encadrant_id: encadrantId,
+        stage_id: stageId, // You should ensure you’re sending the stage ID
+        affectation_status: "Active" // Optional field (defaults to "Active")
+      }),
+    });
+
+    const res = await response.json();
+    console.log(res);
+
+    if (res.success) {
+      alert("Encadrant assigned to stage successfully!");
+    } else {
+      alert("Failed to assign encadrant: " + res.message);
+    }
+  } catch (err) {
+    console.error("Error assigning encadrant:", err);
+    alert("Error assigning encadrant, please try again.");
+  }
+};
+
+
+const demissionnerEncadrant = async (encadrantId) => {
+  if (!encadrantId || !stageId) {
+    return alert("Encadrant ID or Stage ID is missing");
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/DemissionnerEncadrant.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        encadrant_id: encadrantId,
+        stage_id: stageId,
+      }),
+    });
+
+    const res = await response.json();
+    console.log(res);
+
+    if (res.success) {
+      alert("Encadrant retiré du stage avec succès!");
+    } else {
+      alert("Impossible de retirer l'encadrant: " + res.message);
+    }
+  } catch (err) {
+    console.error("Error removing encadrant:", err);
+    alert("Erreur réseau, veuillez réessayer.");
+  }
+};
+
+
   return (
     <div className="Encadrant_dasboard_ref_entreprise">
       <p className="stage_id_ref_entreprise">
@@ -221,12 +314,13 @@ useEffect(() => {
       affecter encadrant
     </button>
 
-    <button
-      className="delete profile_actions_btn"
-      onClick={() => demissionnerEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
-    >
-      démissionner encadrant
-    </button>
+   <button
+  className="delete profile_actions_btn"
+  onClick={() => demissionnerEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
+>
+  Démissionner encadrant
+</button>
+
 
   </div>
 )}

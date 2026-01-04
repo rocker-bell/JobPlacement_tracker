@@ -1,1 +1,0 @@
-<!-- fetch cnaidature by affectation -->
