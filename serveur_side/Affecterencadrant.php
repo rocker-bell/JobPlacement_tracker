@@ -30,44 +30,65 @@ if (!$encadrant_id || !$stage_id) {
     exit;
 }
 
+// try {
+//     // Check if encadrant exists
+//     $stmtCheck = $db->prepare("SELECT * FROM Affectation WHERE encadrant_id = :encadrant_id");
+//     $stmtCheck->execute([':encadrant_id' => $encadrant_id]);
+//     $existing = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+//         if ($existing) {
+//     // Encadrant exists
+//     if (is_null($existing['offre_id'])) {
+//         // Generate a new UUID for affectation_id
+//         $affectation_id = uuidv4();
+
+//         // Update existing row with the new stage AND new affectation_id
+//         $stmtUpdate = $db->prepare("UPDATE Affectation 
+//                                     SET affectation_id = :affectation_id,
+//                                         offre_id = :offre_id, 
+//                                         affectation_status = :status, 
+//                                         updated_at = NOW()
+//                                     WHERE encadrant_id = :encadrant_id");
+//         $stmtUpdate->execute([
+//             ':affectation_id' => $affectation_id,
+//             ':offre_id' => $stage_id,
+//             ':status' => $status,
+//             ':encadrant_id' => $encadrant_id
+//         ]);
+
+//         echo json_encode(['success' => true, 'message' => 'Encadrant assigned to stage successfully']);
+//     } else {
+//         // Already assigned
+//         echo json_encode(['success' => false, 'message' => 'Failed to assign encadrant: This encadrant is already assigned to a stage']);
+//     }
+// }
+
 try {
-    // Check if encadrant exists
-    $stmtCheck = $db->prepare("SELECT * FROM Affectation WHERE encadrant_id = :encadrant_id");
-    $stmtCheck->execute([':encadrant_id' => $encadrant_id]);
+    // Check if encadrant is already assigned to this offre
+    $stmtCheck = $db->prepare("
+        SELECT * 
+        FROM Affectation 
+        WHERE encadrant_id = :encadrant_id AND offre_id = :offre_id
+    ");
+    $stmtCheck->execute([
+        ':encadrant_id' => $encadrant_id,
+        ':offre_id' => $stage_id
+    ]);
     $existing = $stmtCheck->fetch(PDO::FETCH_ASSOC);
 
-        if ($existing) {
-    // Encadrant exists
-    if (is_null($existing['offre_id'])) {
-        // Generate a new UUID for affectation_id
-        $affectation_id = uuidv4();
-
-        // Update existing row with the new stage AND new affectation_id
-        $stmtUpdate = $db->prepare("UPDATE Affectation 
-                                    SET affectation_id = :affectation_id,
-                                        offre_id = :offre_id, 
-                                        affectation_status = :status, 
-                                        updated_at = NOW()
-                                    WHERE encadrant_id = :encadrant_id");
-        $stmtUpdate->execute([
-            ':affectation_id' => $affectation_id,
-            ':offre_id' => $stage_id,
-            ':status' => $status,
-            ':encadrant_id' => $encadrant_id
+    if ($existing) {
+        // Already assigned to this stage
+        echo json_encode([
+            'success' => false,
+            'message' => 'This encadrant is already assigned to this stage'
         ]);
-
-        echo json_encode(['success' => true, 'message' => 'Encadrant assigned to stage successfully']);
     } else {
-        // Already assigned
-        echo json_encode(['success' => false, 'message' => 'Failed to assign encadrant: This encadrant is already assigned to a stage']);
-    }
-}
-
-    else {
-        // Insert new row
-        
-        $stmtInsert = $db->prepare("INSERT INTO Affectation (affectation_id, encadrant_id, offre_id, affectation_status) 
-                                    VALUES (:affectation_id, :encadrant_id, :offre_id, :status)");
+        // Insert new affectation with a new UUID
+        $affectation_id = uuidv4();
+        $stmtInsert = $db->prepare("
+            INSERT INTO Affectation (affectation_id, encadrant_id, offre_id, affectation_status) 
+            VALUES (:affectation_id, :encadrant_id, :offre_id, :status)
+        ");
         $stmtInsert->execute([
             ':affectation_id' => $affectation_id,
             ':encadrant_id' => $encadrant_id,
@@ -75,9 +96,38 @@ try {
             ':status' => $status
         ]);
 
-        echo json_encode(['success' => true, 'message' => 'Encadrant assigned to stage successfully']);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Encadrant assigned to stage successfully'
+        ]);
     }
 
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error', 'error' => $e->getMessage()]);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database error',
+        'error' => $e->getMessage()
+    ]);
 }
+
+
+//     else {
+//         // Insert new row
+        
+//         $stmtInsert = $db->prepare("INSERT INTO Affectation (affectation_id, encadrant_id, offre_id, affectation_status) 
+//                                     VALUES (:affectation_id, :encadrant_id, :offre_id, :status)");
+//         $stmtInsert->execute([
+//             ':affectation_id' => $affectation_id,
+//             ':encadrant_id' => $encadrant_id,
+//             ':offre_id' => $stage_id,
+//             ':status' => $status
+//         ]);
+
+//         echo json_encode(['success' => true, 'message' => 'Encadrant assigned to stage successfully']);
+//     }
+
+// } catch (PDOException $e) {
+//     echo json_encode(['success' => false, 'message' => 'Database error', 'error' => $e->getMessage()]);
+// }
+
+?>

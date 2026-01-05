@@ -143,33 +143,33 @@ const paginatedStages = stages?.slice(
     setActiveSlider(sliderName);
   };
 
-  async function FetchEncadrantfunctionby(user_id) {
-  console.log("user id = " + user_id)
-      try {
-        const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-          },
-          body: new URLSearchParams({ user_id: user_id }), // send user_id
-        });
+  // async function FetchEncadrantfunctionby(user_id) {
+  // console.log("user id = " + user_id)
+  //     try {
+  //       const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+  //         },
+  //         body: new URLSearchParams({ user_id: user_id }), // send user_id
+  //       });
   
-        if (!response.ok) {
-          console.error("HTTP error:", response.status);
-          return;
-        }
+  //       if (!response.ok) {
+  //         console.error("HTTP error:", response.status);
+  //         return;
+  //       }
   
-        const data = await response.json();
-        console.log(data)
-        if (data.success) {
-          setFetchEncadrant(data.user_data);
-        } else {
-          console.error("Error from API:", data.message);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
-    }
+  //       const data = await response.json();
+  //       console.log(data)
+  //       if (data.success) {
+  //         setFetchEncadrant(data.user_data);
+  //       } else {
+  //         console.error("Error from API:", data.message);
+  //       }
+  //     } catch (err) {
+  //       console.error("Fetch error:", err);
+  //     }
+  //   }
 
 
   const [formData, setFormData] = useState({

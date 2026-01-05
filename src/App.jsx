@@ -10,6 +10,7 @@ import Candidatures from "./Components/Candidatures.jsx";
 import Rapports from "./Components/Rapports.jsx";
 import Postuler from "./Components/Postuler.jsx";
 // import Entreprise_dashboard  from "./Components/Empty.jsx";
+import Rapport_encadrant from "./Components/Rapport_encadrant.jsx";
 const App = () => {
   return (
     <>
@@ -26,6 +27,7 @@ const App = () => {
              <Route path="/Rapports/:id" element={<Rapports/>}/>
               {/* <Route path="/empty" element={<Entreprise_dashboard />} /> */}
               <Route path="/Postuler/:id" element={<Postuler/>} />
+              <Route path="/EncadrantRapport/:id"  element={<Rapport_encadrant/>}/>
       </Routes>
 
     </>

@@ -55,6 +55,7 @@ const Candidatures = () => {
         candidatures.map((c) => (
           <div key={c.candidature_id} className="candidature-card">
             <div className="candidature-header">
+              <h1>{c.stagiaire_id}</h1>
               <h3>{c.nom} {c.prenom}</h3>
               <span className={`status-badge status-${c.statut.toLowerCase()}`}>
                 {c.statut}
