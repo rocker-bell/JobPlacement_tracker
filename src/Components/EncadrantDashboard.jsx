@@ -31,6 +31,18 @@ const [photoFile, setPhotoFile] = useState(null);
   const [OffreId, setOffreId] = useState(null);
   const [Candidatures, setCandidatures] = useState([]);
   const [expandedAffectation, setExpandedAffectation] = useState(null);
+  const [selectedAffectation, setSelectedAffectation] = useState(null);
+  const handleAffectationClick = (affect) => {
+  setSelectedAffectation(affect);
+  setOffreId(affect.offre_id);
+
+  if (affect.offre_id) {
+    fetchCandidatures(affect.offre_id);
+  } else {
+    setCandidatures([]);
+  }
+};
+
 
 
   const navigate = useNavigate()
@@ -94,6 +106,43 @@ const [photoFile, setPhotoFile] = useState(null);
   }
 }
 
+// async function fetchAffectation(user_id) {
+//   try {
+//     const res = await fetch(`${BASE_URL}/fetch_affectation.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify({ encadrant_id: user_id })
+//     });
+
+//     const data = await res.json();
+//     console.log("Data from PHP:", data);
+
+//     if (data.success === true && data.user_data.length > 0) {
+//       const userData = data.user_data; // 🔹 IMPORTANT
+//       setAffectation(data.user_data);
+
+//       const offreId = userData.offre_id;
+//       setOffreId(offreId);
+
+//       if (offreId) {
+//         fetchCandidatures(offreId);
+        
+//       }
+
+//     } else {
+//       setAffectation(null);
+//       setCandidatures([]);
+//       alert(data.message || "Aucune affectation trouvée");
+//     }
+
+//   } catch (error) {
+//     alert(`Erreur : ${error}`);
+//   }
+// }
+
+
 async function fetchAffectation(user_id) {
   try {
     const res = await fetch(`${BASE_URL}/fetch_affectation.php`, {
@@ -108,57 +157,46 @@ async function fetchAffectation(user_id) {
     console.log("Data from PHP:", data);
 
     if (data.success === true && data.user_data.length > 0) {
-      const userData = data.user_data[0]; // 🔹 IMPORTANT
       setAffectation(data.user_data);
-
-      const offreId = userData.offre_id;
-      setOffreId(offreId);
-
-      if (offreId) {
-        fetchCandidatures(offreId);
-        
-      }
-
     } else {
-      setAffectation(null);
+      setAffectation([]);
       setCandidatures([]);
-      alert(data.message || "Aucune affectation trouvée");
     }
 
   } catch (error) {
-    alert(`Erreur : ${error}`);
-  }
-}
-
-
-async function fetchCandidatures(OffreId) {
-  if (!OffreId) return; // sécurité
-
-  const formData = new FormData();
-  formData.append("offre_id", OffreId);
-
-  try {
-    const res = await fetch(`${BASE_URL}/fetchCandidaturebyStageid.php`, {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await res.json();
-
-    console.log("Data from PHP:", data); // <-- très important pour debug
-
-    if (data.success === true) {
-      setCandidatures(data.candidatures);
-    } else {
-      setCandidatures([]); 
-      console.warn(data.message);
-    }
-
-  } catch (error) {
-    setCandidatures([]);
     console.error(error);
   }
 }
+
+
+// async function fetchCandidatures(OffreId) {
+//   if (!OffreId) return; // sécurité
+
+//   const formData = new FormData();
+//   formData.append("offre_id", OffreId);
+
+//   try {
+//     const res = await fetch(`${BASE_URL}/fetchCandidaturebyStageid.php`, {
+//       method: "POST",
+//       body: formData
+//     });
+
+//     const data = await res.json();
+
+//     console.log("Data from PHP:", data); // <-- très important pour debug
+
+//     if (data.success === true) {
+//       setCandidatures(data.candidatures);
+//     } else {
+//       setCandidatures([]); 
+//       console.warn(data.message);
+//     }
+
+//   } catch (error) {
+//     setCandidatures([]);
+//     console.error(error);
+//   }
+// }
 
 
 // async function fetchCandidaturesByAffectation(affect) {
@@ -191,6 +229,34 @@ async function fetchCandidatures(OffreId) {
 
 
   // Handle screen resizing to adjust the mobile state
+  
+  async function fetchCandidatures(OffreId) {
+  if (!OffreId) return;
+
+  const formData = new FormData();
+  formData.append("offre_id", OffreId);
+
+  try {
+    const res = await fetch(`${BASE_URL}/fetchCandidaturebyStageid.php`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    console.log("Candidatures:", data);
+
+    if (data.success === true) {
+      setCandidatures(data.candidatures);
+    } else {
+      setCandidatures([]);
+    }
+
+  } catch (error) {
+    setCandidatures([]);
+    console.error(error);
+  }
+}
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -311,6 +377,10 @@ const rapportEncadrant = (id) => {
   navigate(`/EncadrantRapport/${id}`)
 }
 
+const hanldeJobConnect = () => {
+   SliderContentHandler("ED_CB_default")
+}
+
 
 
 // affectatiion et candidature
@@ -323,7 +393,7 @@ const rapportEncadrant = (id) => {
         <div className="EncadrantDashboard_sideNav">
           <nav >
             <div className="logo_actions_group">
-                <img src={Logo1} alt="" className="jobconnectlogo" />
+                <img src={Logo1} alt="" className="jobconnectlogo" onClick={hanldeJobConnect} />
                 <img src={menu} alt="" className={`dropdown_menu_logo ${Showmenu ? "mobile" : ""} ${menuActive ? "Active" : ""}`} onClick={handleClickMenu}/>
                 <img src={menu_active} alt="" className={`menu_active ${menuActive ? "Active" : ""}`} />
             </div>
@@ -383,7 +453,7 @@ const rapportEncadrant = (id) => {
           >
             Content 3: affectation
 
-              {Affectation && Affectation.length > 0 ? (
+              {/* {Affectation && Affectation.length > 0 ? (
   <div>
     {Affectation.map((affect, index) => (
       <div key={affect.affectation_id} className="affectation-card">
@@ -398,8 +468,28 @@ const rapportEncadrant = (id) => {
   </div>
 ) : (
   <p>Il n’y a pas d’affectation pour le moment.</p>
-)}
+)} */}
 
+{Affectation && Affectation.length > 0 ? (
+  <div>
+    {Affectation.map(affect => (
+      <div
+        key={affect.affectation_id}
+        className={`affectation-card ${
+          selectedAffectation?.affectation_id === affect.affectation_id ? "active" : ""
+        }`}
+        onClick={() => handleAffectationClick(affect)}
+      >
+        <p><strong>Affectation ID:</strong> {affect.affectation_id}</p>
+        <p><strong>Encadrant ID:</strong> {affect.encadrant_id}</p>
+        <p><strong>Offre ID:</strong> {affect.offre_id || "Non assignée"}</p>
+        <p><strong>Status:</strong> {affect.affectation_status}</p>
+      </div>
+    ))}
+  </div>
+) : (
+  <p>Il n’y a pas d’affectation pour le moment.</p>
+)}
 
          
 
@@ -788,7 +878,7 @@ const rapportEncadrant = (id) => {
     {/* <button type="delete" className="delete profile_actions_btn" onClick={() => DeleteAccount(userId)}>Delete Account</button> */}
         <button
   type="button"
-  className="delete profile_actions_btn"
+  className="delete_profile_actions_btn"
   onClick={handleDelete}
 >
   Delete Account

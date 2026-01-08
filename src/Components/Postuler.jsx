@@ -91,7 +91,7 @@ const Postuler = () => {
 
 //   ✅ Fetch candidature for this stage
   useEffect(() => {
-    if (!userId || !id) return;
+    if (!userId || !id) return navigate('/GetStarted');
 
     const fetchCandidature = async () => {
       try {

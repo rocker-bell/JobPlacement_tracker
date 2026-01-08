@@ -119,7 +119,8 @@ const jobData = FetchedStages.map((stage) => ({
 }));
 
 const handleapply = (id) => {
-  alert("apply click = " + id)
+  // alert("apply click = " + id)
+  navigate(`/Postuler/${id}`)
 }
 
 
@@ -353,7 +354,7 @@ onClick={() => {
                     </div>
 
                     <div className="footer-bottom">
-                        <p>Copyright © 2024 PrimeStack. All Rights Reserved.</p>
+                        <p>Copyright © 2024 JOBCONNECT. All Rights Reserved.</p>
                         <p>User Terms & Conditions | Privacy Policy</p>
                     </div>
                 </footer>

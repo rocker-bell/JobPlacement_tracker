@@ -328,6 +328,11 @@ const rapportcandidature = (id) => {
   alert(id)
 }
 
+const hanldeJobConnect = () => {
+   SliderContentHandler("ED_CB_default")
+}
+
+
   return (
     <div className="UserJobBoard_wrapper">
       <div className="UserJobBoard_container">
@@ -335,7 +340,7 @@ const rapportcandidature = (id) => {
           <nav >
             <div className="logo_actions_group">
                
-                <img src={Logo1} alt="" className="jobconnectlogo" />
+                <img src={Logo1} alt="" className="jobconnectlogo" onClick={hanldeJobConnect} />
                 <img src={menu} alt="" className={`dropdown_menu_logo ${Showmenu ? "mobile" : ""} ${menuActive ? "Active" : ""}`} onClick={handleClickMenu}/>
                 <img src={menu_active} alt="" className={`menu_active ${menuActive ? "Active" : ""}`} />
             </div>

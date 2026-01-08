@@ -7,6 +7,7 @@
     flex-direction: column;
     border: 5px solid yellow;
     flex-wrap: wrap;
+    
     /* overflow-y: hidden;   */
 }
 
@@ -289,7 +290,7 @@ button:hover {
 
 
 .ED_stage_form_wrapper {
-  position: absolute; /* Fix it on the screen */
+  position: absolute; 
   top: 0;
   left: 0;
   width: 100vw; /* Full width */
@@ -380,7 +381,7 @@ button:hover {
 }
 
 /* Style the buttons */
-button {
+.submit-stage {
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
@@ -389,7 +390,7 @@ button {
   cursor: pointer;
 }
 
-button[type="button"] {
+.cancel-stage {
   background-color: #f44336; /* Red for cancel */
 }
 
@@ -530,7 +531,7 @@ button:hover {
 } */
 /* Container to manage the hover effect */
 .dropdown-container {
-  position: relative;  /* Make the container the reference point for absolute positioning */
+  position: relative;  
   display: inline-block;  /* Keeps the container from resizing */
 }
 
@@ -544,7 +545,7 @@ button:hover {
 
 .stage_actions {
   display: none;  /* Hidden by default */
-  position: absolute;  /* Positioned relative to the parent container */
+  position: absolute;  
   top: 0;  /* Position below the button */
   left: 0;  /* Align the left side of the dropdown with the button */
   background-color: black;

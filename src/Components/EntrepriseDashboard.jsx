@@ -128,16 +128,32 @@ const [editedStage, setEditedStage] = useState({});
   // pagination
 
   // Pagination & selected stage
-const [currentPageStage, setCurrentPageStage] = useState(1);
-const [selectedStage, setSelectedStage] = useState(null);
-const stagesPerPage = 3;
+// const [currentPageStage, setCurrentPageStage] = useState(1);
+// const [selectedStage, setSelectedStage] = useState(null);
+// const stagesPerPage = 3;
 
 // Paginated stages
-const totalPagesStages = Math.ceil(stages?.length / stagesPerPage);
-const paginatedStages = stages?.slice(
-  (currentPageStage - 1) * stagesPerPage,
-  currentPageStage * stagesPerPage
+// const totalPagesStages = Math.ceil(stages?.length / stagesPerPage);
+// const paginatedStages = stages?.slice(
+//   (currentPageStage - 1) * stagesPerPage,
+//   currentPageStage * stagesPerPage
+// );
+const [currentPage, setCurrentPage] = useState(1);
+
+const stagesPerPage = 3;
+
+
+const indexOfLastStage = currentPage * stagesPerPage;
+const indexOfFirstStage = indexOfLastStage - stagesPerPage;
+
+const currentStages = stages.slice(
+  indexOfFirstStage,
+  indexOfLastStage
 );
+
+const totalPages = Math.ceil(stages.length / stagesPerPage);
+
+
 
  const SliderContentHandler = (sliderName) => {
     setActiveSlider(sliderName);
@@ -696,6 +712,12 @@ const handleSupprimer = async (id, enterpriseId, e) => {
 };
 
 
+const hanldeJobConnect = () => {
+   SliderContentHandler("ED_CB_default")
+}
+
+
+
   return (
     <div className="EntrepriseDashboard_wrapper">
       <div className="EntrepiriseDashboard_container">
@@ -703,7 +725,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
           <nav >
               <div className="logo_actions_group">
                            
-                            <img src={Logo1} alt="" className="jobconnectlogo" />
+                            <img src={Logo1} alt="" className="jobconnectlogo" onClick={hanldeJobConnect} />
                             <img src={menu} alt="" className={`dropdown_menu_logo ${Showmenu ? "mobile" : ""} ${menuActive ? "Active" : ""}`} onClick={handleClickMenu}/>
                             <img src={menu_active} alt="" className={`menu_active ${menuActive ? "Active" : ""}`} />
                         </div>
@@ -811,8 +833,8 @@ const handleSupprimer = async (id, enterpriseId, e) => {
     </div>
 
     <div className="ED_stage_form_btn_group">
-      <button type="submit">Submit</button>
-      <button type="button" onClick={handleCancel}>Cancel</button>
+      <button type="submit" className="submit-stage">Submit</button>
+      <button type="button" onClick={handleCancel} className="cancel-stage">Cancel</button>
     </div>
 
   </form>
@@ -829,7 +851,7 @@ const handleSupprimer = async (id, enterpriseId, e) => {
 
                   <div className="stage-section">
       
-          {stages.map(stage => (
+          {currentStages.map(stage => (
     <form key={stage.offre_id} className="stage-form">
       <div>
         <label>Type de Stage:</label>
@@ -980,7 +1002,34 @@ const handleSupprimer = async (id, enterpriseId, e) => {
     </form>
   ))}
 
-      <div className="page_navigation">page navigation</div>
+      {/* <div className="page_navigation">page navigation</div> */}
+
+      <div className="page_navigation">
+  <button
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage(prev => prev - 1)}
+  >
+    Prev
+  </button>
+
+  {Array.from({ length: totalPages }, (_, i) => (
+    <button
+      key={i}
+      className={currentPage === i + 1 ? "active" : ""}
+      onClick={() => setCurrentPage(i + 1)}
+    >
+      {i + 1}
+    </button>
+  ))}
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage(prev => prev + 1)}
+  >
+    Next
+  </button>
+</div>
+
       
     </div>
           </span>

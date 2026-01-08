@@ -1,7 +1,7 @@
 :root {
   --bg-cream: #F9F7F2;
   --bg-white: #ffffff;
-  --text-dark: #2C1810;
+  --text-dark: #0A2463;
   --text-light: #6D5D55;
   --accent-gold: #C5A059;
   --shadow-card: 0 10px 40px rgba(44, 24, 16, 0.08);
@@ -123,7 +123,7 @@
 
 .btn-login-access:hover, 
 .btn-register-access:hover {
-  background-color: #4A3B32; /* Lighter coffee */
+  background-color: #0A2463; /* Lighter coffee */
   transform: translateY(-2px);
 }
 

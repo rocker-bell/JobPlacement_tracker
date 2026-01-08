@@ -351,7 +351,7 @@ button:hover {
 }
 
 /* Style the buttons */
-button {
+.btn_rapport_encadrant {
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
@@ -360,7 +360,7 @@ button {
   cursor: pointer;
 }
 
-button[type="button"] {
+.delete_profile_actions_btn{
   background-color: #f44336; /* Red for cancel */
 }
 

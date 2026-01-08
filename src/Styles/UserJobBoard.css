@@ -411,9 +411,9 @@ button {
   cursor: pointer;
 }
 
-button[type="button"] {
-  background-color: #f44336; /* Red for cancel */
-}
+/* button[type="button"] {
+  background-color: #f44336; 
+} */
 
 /* Add a simple hover effect */
 button:hover {
