@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { 
   Building2, MoreHorizontal, Bookmark, Ban, Send, 
-  Search, MapPin, MessageSquare, Bell, User, ArrowUp 
+  Search, MapPin, MessageSquare, Bell, User, ArrowUp, Save, Star 
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../Styles/JobBoard.css';
@@ -121,6 +121,24 @@ const jobData = FetchedStages.map((stage) => ({
 const handleapply = (id) => {
   // alert("apply click = " + id)
   navigate(`/Postuler/${id}`)
+}
+
+const handleBookmark = () => {
+  const user_id = localStorage.getItem("user_id");
+  if(user_id) {
+     alert("Bookmark job for user")
+
+  }
+  alert("Bookmark")
+}
+
+const handleStar = () => {
+    const user_id = localStorage.getItem("user_id");
+  if(user_id) {
+     alert("star job for user")
+
+  }
+  alert('star')
 }
 
 
@@ -275,6 +293,7 @@ onClick={() => {
         <button className="btn-icon">
           <Ban size={24} />
         </button>
+
       </div>
     </div>
 
@@ -293,6 +312,11 @@ onClick={() => {
       <div className="job-description-text">
         {selectedJob.description}
       </div>
+      <button className='selected_job_actions_group'>
+               <Bookmark size={20} color="blue" strokeWidth={1.5}  onClick={handleBookmark} />
+        <Star size={20} className="text-yellow-500" onClick={handleStar} />
+
+      </button>
     </div>
   </div>
 )}
