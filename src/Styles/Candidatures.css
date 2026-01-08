@@ -1,4 +1,4 @@
-.candidatures-container {
+/* .candidatures-container {
   max-width: 900px;
   margin: 20px auto;
   padding: 20px;
@@ -52,7 +52,7 @@
   text-transform: capitalize;
 }
 
-/* Example status colors */
+
 .status-ouverte {
   background-color: #4caf50;
 }
@@ -61,6 +61,103 @@
 }
 .status-expirée {
   background-color: #ff9800;
+}
+
+.candidature-photo {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+} */
+
+
+.candidatures-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nav-icon {
+  cursor: pointer;
+  margin-bottom: 15px;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.nav-icon:hover {
+  color: #007bff;
+}
+
+.candidatures-title {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #222;
+  text-align: center;
+}
+
+.no-candidatures,
+.loading-text {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+.candidature-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fefefe;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.candidature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.candidature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.status-en_attente { background-color: #ff9800; }
+.status-acceptee { background-color: #4caf50; }
+.status-refusee { background-color: #f44336; }
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  min-width: 150px;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group span,
+.form-group a {
+  flex: 1;
+  color: #333;
+  word-break: break-word;
 }
 
 .candidature-photo {

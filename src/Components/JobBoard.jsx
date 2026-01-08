@@ -326,7 +326,7 @@ onClick={() => {
         </div>
       </div>
 
-      <footer className="footer">
+      <span className="footer">
                     <div className="footer-top">
                         <h1 className="footer-title">Let's Connect</h1>
                         <img src={send} className="footer-connect-img" onClick={handleContactus}/>
@@ -381,7 +381,7 @@ onClick={() => {
                         <p>Copyright © 2024 JOBCONNECT. All Rights Reserved.</p>
                         <p>User Terms & Conditions | Privacy Policy</p>
                     </div>
-                </footer>
+      </span>
 
                 {/* Scroll To Top Button */}
                 <button 

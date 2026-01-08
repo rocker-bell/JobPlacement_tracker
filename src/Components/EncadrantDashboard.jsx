@@ -359,6 +359,8 @@ async function DeleteAccount(UserId) {
 
     if (res.success) {
       alert("User deleted successfully");
+      localStorage.removeItem("user_id");
+      navigate("/")
     } else {
       alert("Failed to delete user: " + res.message);
     }

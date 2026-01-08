@@ -1,76 +1,8 @@
-// import { useState, useEffect } from "react";
-// import "../Styles/EntrepriseDashboard.css";
 
-
-// const Entreprise_dashboard = () => {
-
-//     const [ActiveSlider, setActiveSlider] = useState(null)
-//     const [IsMobile, setIsMobile] = useState(window.innerWidth < 786);
-    
-
-//         useEffect(() => {
-//   const handleResize = () => {
-//     const mobile = window.innerWidth < 768;
-//     setIsMobile(mobile);
-
-//     // close menu when switching to desktop
-//     if (!mobile) setShowMenu(false);
-//   };
-
-//   window.addEventListener("resize", handleResize);
-//   handleResize();
-
-//   return () => window.removeEventListener("resize", handleResize);
-// }, []);
-
-// const SliderContentHandler = () => {
-
-// }
-   
-//     return (
-//         <>
-//             <div className="EntrepriseDashboard_wrapper">
-                
-//                 <div className="EntrepiriseDashboard_container">
-//                     <div className="EntrepiriseDashboard_sideNav">
-//                         <nav>
-//                             <ul className="EntrepiriseDashboard_navLists">
-//                                 <li className="EntrepiriseDashboard_nav_list" onClick={SliderContentHandler}>ajouter stage</li>
-//                                 <li className="EntrepiriseDashboard_nav_list" onClick={SliderContentHandler}>stages</li>
-//                                 <li className="EntrepiriseDashboard_nav_list" onClick={SliderContentHandler}>profile</li>
-//                                 <li className="EntrepiriseDashboard_nav_list" onClick={SliderContentHandler}>logout</li>
-//                             </ul>
-//                         </nav>
-
-//                     </div>
-
-//                     <div className="EntrepiriseDashboard_NavContentSlider"> 
-                                
-//                             <span className={`EntrepiriseDashboard_contentAbout ED_CB_default  {${ActiveSlider} ? "Active" : ""}`}>content1 default</span>
-//                             <span className={`EntrepiriseDashboard_contentAbout ED_CB_addStage`}>content2</span>
-//                             <span className={`EntrepiriseDashboard_contentAbout ED_CB_Stages`}>content3</span>
-//                             <span className={`EntrepiriseDashboard_contentAbout ED_CB_profile`}>content4</span>
-//                             <span className={`EntrepiriseDashboard_contentAbout ED_CB_statistiques`}>content5</span>
-                    
-//                     </div>
-
-                    
-//                 </div>
-
-//                 <footer>
-//                                 copyrights
-//                 </footer>
-                
-//             </div>
-//         </>
-//     )
-// }
-
-// export default Entreprise_dashboard;
 
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../Styles/EntrepriseDashboard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
@@ -89,25 +21,11 @@ const [editedStage, setEditedStage] = useState({});
 
 
   const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
-  // const [stageform, setstageform] = useState({
-  //   offre_id: "",
-  //   entreprise_id: entreprise_id,
-  //   type_de_stage: "",
-  //   titre: "",
-  //   stage_categorie: "",
-  //   description: "",
-  //   competences_requises: "",
-  //   date_debut: "",
-  //   duree_semaines: "",
-  //   nombre_places: "",
-  //   emplacement: "",
-  //   statut: "",
-
-  // })
-  // const [ActiveStageAction, setActiveStageAction] = useState(false);
+  
+  
   const [activeStageId, setActiveStageId] = useState(null);
 
-  const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
+  const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); 
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
   const [menuActive, setmenuActive] = useState(false);
@@ -115,6 +33,8 @@ const [editedStage, setEditedStage] = useState({});
 
   const [Showmenu, setShowmenu] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  
     const [FetchEncadrant, setFetchEncadrant] = useState(
     {
   nom: "",
@@ -125,19 +45,27 @@ const [editedStage, setEditedStage] = useState({});
 }
   );
 
-  // pagination
 
-  // Pagination & selected stage
-// const [currentPageStage, setCurrentPageStage] = useState(1);
-// const [selectedStage, setSelectedStage] = useState(null);
-// const stagesPerPage = 3;
+//   const toggleDropdown = (stageId) => {
+//   setActiveStageId(prev => (prev === stageId ? null : stageId));
+// };
 
-// Paginated stages
-// const totalPagesStages = Math.ceil(stages?.length / stagesPerPage);
-// const paginatedStages = stages?.slice(
-//   (currentPageStage - 1) * stagesPerPage,
-//   currentPageStage * stagesPerPage
-// );
+// const [showMenu, setShowMenu] = useState(false);
+// const [timer, setTimer] = useState(null);
+
+//   const handleMouseOver = () => {
+//     if (timer) clearTimeout(timer); // Clear any existing timeout
+//     setShowMenu(true); // Show the dropdown menu immediately
+//   };
+
+//   const handleMouseOut = () => {
+//     const newTimer = setTimeout(() => {
+//       setShowMenu(false); // Hide the dropdown after 300ms
+//     }, 300); // You can adjust the delay here
+//     setTimer(newTimer);
+//   };
+
+ 
 const [currentPage, setCurrentPage] = useState(1);
 
 const stagesPerPage = 3;
@@ -159,33 +87,13 @@ const totalPages = Math.ceil(stages.length / stagesPerPage);
     setActiveSlider(sliderName);
   };
 
-  // async function FetchEncadrantfunctionby(user_id) {
-  // console.log("user id = " + user_id)
-  //     try {
-  //       const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-  //         },
-  //         body: new URLSearchParams({ user_id: user_id }), // send user_id
-  //       });
-  
-  //       if (!response.ok) {
-  //         console.error("HTTP error:", response.status);
-  //         return;
-  //       }
-  
-  //       const data = await response.json();
-  //       console.log(data)
-  //       if (data.success) {
-  //         setFetchEncadrant(data.user_data);
-  //       } else {
-  //         console.error("Error from API:", data.message);
-  //       }
-  //     } catch (err) {
-  //       console.error("Fetch error:", err);
-  //     }
-  //   }
+    useEffect(() => {
+    if (location.state?.content) {
+      SliderContentHandler(location.state.content);
+    }
+  }, [location.state]);
+
+ 
 
 
   const [formData, setFormData] = useState({
@@ -202,28 +110,7 @@ const totalPages = Math.ceil(stages.length / stagesPerPage);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Form submitted:", formData);
-  //   // send formData to backend
-  // };
-
-  // async function InsertEnterprise() {
-  //   const response = await fetch(`${BASE_URL}/add_entreprise.php`, {
-  //     method: "POST",
-  //     headers: {
-  //         "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-  //       },
-  //       body : formData
-  //   })
-
-  //    if (!response.ok) {
-  //       console.error("HTTP error:", response.status);
-  //       return;
-  //     }
-
-  // }
-
+  
 
   const handleSubmit = (e) => {
   e.preventDefault();
@@ -260,19 +147,6 @@ const handleCancelEditStage = (offre_id, e) => {
   // Exit edit mode
   setEditingStageId(null);
 
-  // Reset editedStage (optional but recommended)
-  // setEditedStage({
-  //   type_de_stage: "",
-  //   titre: "",
-  //   stage_categorie: "",
-  //   description: "",
-  //   competences_requises: "",
-  //   date_debut: "",
-  //   duree_semaines: "",
-  //   nombre_places: "",
-  //   emplacement: "",
-  //   statut: "Ouverte"
-  // });
 };
 
 
@@ -439,24 +313,7 @@ const fetchentreprise = async (userId) => {
 }, [fetchEntreprise]);
 
 
-// fetch all stages
-// useEffect(() => {
-//     async function fetchStages() {
-//       try {
-//         const response = await fetch(`${BASE_URL}/fetch_stage.php`);
-//         const data = await response.json();
-//         if (data.success) {
-//           setStages(data.stages);
-//         } else {
-//           console.error(data.message);
-//         }
-//       } catch (err) {
-//         console.error(err);
-//       }
-//     }
 
-//     fetchStages();
-//   }, []);
 
 useEffect(() => {
   async function fetchStages() {
@@ -495,6 +352,9 @@ useEffect(() => {
     SliderContentHandler("ED_CB_profile"); // redirect to profile
     return; // stop further execution
   }
+
+
+ 
 
   const form = e.currentTarget;
   const typeStage = form.elements["type_stage"].value.trim();
@@ -597,7 +457,7 @@ useEffect(() => {
   const handleMouseLeave = () => {
     setTimeout(() => {
       setActiveStageId(false);  
-    }, 3000);
+    }, 5000);
      // Hide dropdown
   };
 
@@ -612,11 +472,7 @@ useEffect(() => {
   ];
 
 
-//   const handleModifier = (id, e) => {
-//   e.preventDefault();
-//   alert("Modifier " + id);
 
-// };
 
 const handleCandidature = (id, e) => {
   e.preventDefault();
@@ -636,47 +492,7 @@ const handleEncadrants = (id, e) => {
   navigate(`/Encadrant/${id}`)
 };
 
-// const handleSupprimer = async (id, enterpriseId, e) => {
-//   e.preventDefault();
 
-//   const confirmDelete = window.confirm("Supprimer le stage " + id + " ?");
-//   if (!confirmDelete) return; // exit if user cancels
-
-//   try {
-//     const response = await fetch(`${BASE_URL}/delete_stage.php`, { // make sure this is the correct PHP endpoint
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({
-//         entreprise_id: enterpriseId,
-//         stage_id: id
-//       })
-//     });
-
-//     if (!response.ok) {
-//       alert("Échec de la connexion au serveur ou données manquantes");
-//       return;
-//     }
-
-//     const res = await response.json();
-
-//     if (res.success) {
-//       alert(`Stage avec ID ${id} supprimé avec succès`);
-//       // Optionally remove it from the local state without refetching
-//       setStages((prev) => prev.filter(stage => stage.id !== id));
-//       // if (selectedJob?.id === id) setSelectedJob(null);
-//       window.location.reload()
-//       SliderContentHandler("ED_CB_stages")
-//     } else {
-//       alert("Erreur: " + res.message);
-//     }
-
-//   } catch (error) {
-//     console.error("Erreur:", error);
-//     alert("Erreur lors de la suppression du stage");
-//   }
-// };
 
 
 const handleSupprimer = async (id, enterpriseId, e) => {
@@ -717,6 +533,36 @@ const hanldeJobConnect = () => {
 }
 
 
+async function DeleteAccount(UserId) {
+  try {
+    const response = await fetch(`${BASE_URL}/DeleteAccount.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: UserId }) // ✅ use parameter
+    });
+
+    const res = await response.json();
+    console.log(res);
+
+    if (res.success) {
+      alert("User deleted successfully");
+      localStorage.removeItem("user_id");
+      navigate("/")
+    } else {
+      alert("Failed to delete user: " + res.message);
+    }
+  } catch (err) {
+    console.error("Error deleting user:", err);
+  }
+}
+
+
+const handleDelete = () => {
+  if (!UserId) return alert("User ID not found");
+  DeleteAccount(UserId);
+};
+
+
 
   return (
     <div className="EntrepriseDashboard_wrapper">
@@ -732,10 +578,10 @@ const hanldeJobConnect = () => {
             <ul className={`EntrepiriseDashboard_navLists ${IsMobile ? "mobile" : ""} ${menuActive ? "Active" : ""}`}>
               {/* On click of each nav item, change the active slider */}
                <li className="EntrepiriseDashboard_nav_list">
-              <MessageSquare size={24} className="nav-icon" />
+              <MessageSquare size={24} className="EntrepriseDashboard_nav_icons" />
             
             </li>
-            <li className="EntrepiriseDashboard_nav_list"><Bell size={24} className="nav-icon" /></li>
+            <li className="EntrepiriseDashboard_nav_list"><Bell size={24} className="EntrepriseDashboard_nav_icons" /></li>
               <li
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_addStage")}
@@ -776,6 +622,7 @@ const hanldeJobConnect = () => {
             }`}
           >
             Content 1: Default
+             Welcome to your Entreprise Dashboard 
           </span>
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_addStage ${
@@ -849,189 +696,265 @@ const hanldeJobConnect = () => {
            
 
 
-                  <div className="stage-section">
-      
-          {currentStages.map(stage => (
-    <form key={stage.offre_id} className="stage-form">
-      <div>
-        <label>Type de Stage:</label>
-        <input
-          type="text"
-          name="type_de_stage"
-          value={editingStageId === stage.offre_id ? editedStage.type_de_stage : stage.type_de_stage}
-          readOnly={editingStageId !== stage.offre_id}
-          onChange={handleEditChange}
-        />
-      </div>
+                            <div className="stage-section">
+                
+                                      {currentStages.map(stage => (
+                                <form key={stage.offre_id} className="stage-form">
+                                  <div className="ED_stage_form_formGroupe_stage">
+                                    <label className="ED_stage_form_label">stage id:</label>
+                                    <input
+                                      className="ED_stage_form_control"
+                                      type="text"
+                                      name="type_de_stage"
+                                      value={editingStageId === stage.offre_id ? editedStage.offre_id : stage.offre_id}
+                                      readOnly
 
-      <div>
-        <label>Catégorie:</label>
-        <input
-          type="text"
-          name="stage_categorie"
-          value={editingStageId === stage.offre_id ? editedStage.stage_categorie : stage.stage_categorie}
-          readOnly={editingStageId !== stage.offre_id}
-          onChange={handleEditChange}
-        />
-      </div>
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
+                                  <div className="ED_stage_form_formGroupe_stage">
+                                    <label className="ED_stage_form_label">Type de Stage:</label>
+                                    <input
+                                      className="ED_stage_form_control"
+                                      type="text"
+                                      name="type_de_stage"
+                                      value={editingStageId === stage.offre_id ? editedStage.type_de_stage : stage.type_de_stage}
+                                      readOnly={editingStageId !== stage.offre_id}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
 
-      <div>
-        <label>Titre:</label>
-        <input
-          type="text"
-          name="titre"
-          value={editingStageId === stage.offre_id ? editedStage.titre : stage.titre}
-          readOnly={editingStageId !== stage.offre_id}
-          onChange={handleEditChange}
-        />
-      </div>
+                                  <div className="ED_stage_form_formGroupe_stage">
+                                    <label className="ED_stage_form_label">Catégorie:</label>
+                                    <input
+                                    className="ED_stage_form_control"
+                                      type="text"
+                                      name="stage_categorie"
+                                      value={editingStageId === stage.offre_id ? editedStage.stage_categorie : stage.stage_categorie}
+                                      readOnly={editingStageId !== stage.offre_id}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
 
-      <div>
-        <label>Description:</label>
-        <textarea
-          name="description"
-          value={editingStageId === stage.offre_id ? editedStage.description : stage.description}
-          readOnly={editingStageId !== stage.offre_id}
-          onChange={handleEditChange}
-        />
-      </div>
+                                  <div className="ED_stage_form_formGroupe_stage">
+                                    <label className="ED_stage_form_label">Titre:</label>
+                                    <input
+                                      className="ED_stage_form_control"
+                                      type="text"
+                                      name="titre"
+                                      value={editingStageId === stage.offre_id ? editedStage.titre : stage.titre}
+                                      readOnly={editingStageId !== stage.offre_id}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
 
-      <div>
-  <label>Compétences requises:</label>
-  <textarea
-    name="competences_requises"
-    value={editingStageId === stage.offre_id ? editedStage.competences_requises : stage.competences_requises}
-    readOnly={editingStageId !== stage.offre_id}
-    onChange={handleEditChange}
-  />
-</div>
+                                  <div className="ED_stage_form_formGroupe_stage">
+                                    <label className="ED_stage_form_label">Description:</label>
+                                    <textarea
+                                    className="ED_stage_form_control"
+                                      name="description"
+                                      value={editingStageId === stage.offre_id ? editedStage.description : stage.description}
+                                      readOnly={editingStageId !== stage.offre_id}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
 
-<div>
-  <label>Date début:</label>
-  <input
-    type="date"
-    name="date_debut"
-    value={editingStageId === stage.offre_id ? editedStage.date_debut : stage.date_debut}
-    readOnly={editingStageId !== stage.offre_id}
-    onChange={handleEditChange}
-  />
-</div>
-<div>
-  <label>duree_semaines:</label>
-  <input
-    type="date"
-    name="dduree_semaines"
-    value={editingStageId === stage.offre_id ? editedStage.duree_semaines : stage.duree_semaines}
-    readOnly={editingStageId !== stage.offre_id}
-    onChange={handleEditChange}
-  />
-</div>
+                                  <div className="ED_stage_form_formGroupe_stage">
+                              <label className="ED_stage_form_label">Compétences requises:</label>
+                              <textarea
+                              className="ED_stage_form_control"
+                                name="competences_requises"
+                                value={editingStageId === stage.offre_id ? editedStage.competences_requises : stage.competences_requises}
+                                readOnly={editingStageId !== stage.offre_id}
+                                onChange={handleEditChange}
+                              />
+                            </div>
 
-<div>
-  <label>nombre_places:</label>
-  <input
-    type="number"
-    name="nombre_places"
-    value={editingStageId === stage.offre_id ? editedStage.nombre_places : stage.nombre_places}
-    readOnly={editingStageId !== stage.offre_id}
-    onChange={handleEditChange}
-  />
-</div>
+                            <div className="ED_stage_form_formGroupe_stage">
+                              <label className="ED_stage_form_label">Date début:</label>
+                              <input
+                              className="ED_stage_form_control"
+                                type="date"
+                                name="date_debut"
+                                value={editingStageId === stage.offre_id ? editedStage.date_debut : stage.date_debut}
+                                readOnly={editingStageId !== stage.offre_id}
+                                onChange={handleEditChange}
+                              />
+                            </div>
+                            <div className="ED_stage_form_formGroupe_stage">
+                              <label className="ED_stage_form_label">duree_semaines:</label>
+                              {/* <input
+                                className="ED_stage_form_control"
+                                type="number"
+                                name="dduree_semaines"
+                                value={editingStageId === stage.offre_id ? editedStage.duree_semaines : stage.duree_semaines}
+                                readOnly={editingStageId !== stage.offre_id}
+                                onChange={handleEditChange}
+                              /> */}
+                              <input
+  className="ED_stage_form_control"
+  type="number"
+  name="duree_semaines"
+  value={editingStageId === stage.offre_id ? editedStage.duree_semaines : stage.duree_semaines}
+  readOnly={editingStageId !== stage.offre_id} // only read-only if not editing
+  onChange={handleEditChange}
+/>
 
-<div>
-  <label>emplacement:</label>
-  <input
-    type="text"
-    name="emplacement"
-    value={editingStageId === stage.offre_id ? editedStage.emplacement  : stage.emplacement }
-    readOnly={editingStageId !== stage.offre_id}
-    onChange={handleEditChange}
-  />
-</div>
+                            </div>
 
-<div>
-  <label>Statut:</label>
-  <select
-    name="statut"
-    value={editingStageId === stage.offre_id ? editedStage.statut : stage.statut}
-    disabled={editingStageId !== stage.offre_id}
-    onChange={handleEditChange}
+                            <div className="ED_stage_form_formGroupe_stage">
+                              <label className="ED_stage_form_label">nombre_places:</label>
+                              <input
+                                className="ED_stage_form_control"
+                                type="number"
+                                name="nombre_places"
+                                value={editingStageId === stage.offre_id ? editedStage.nombre_places : stage.nombre_places}
+                                readOnly={editingStageId !== stage.offre_id}
+                                onChange={handleEditChange}
+                              />
+                            </div>
+
+                            <div className="ED_stage_form_formGroupe_stage">
+                              <label className="ED_stage_form_label">emplacement:</label>
+                              <input
+                                className="ED_stage_form_control"
+                                type="text"
+                                name="emplacement"
+                                value={editingStageId === stage.offre_id ? editedStage.emplacement  : stage.emplacement }
+                                readOnly={editingStageId !== stage.offre_id}
+                                onChange={handleEditChange}
+                              />
+                            </div>
+
+                            <div className="ED_stage_form_formGroupe_stage">
+                              <label className="ED_stage_form_label">Statut:</label>
+                              <select
+                                className="ED_stage_form_control"
+                                name="statut"
+                                value={editingStageId === stage.offre_id ? editedStage.statut : stage.statut}
+                                disabled={editingStageId !== stage.offre_id}
+                                onChange={handleEditChange}
+                              >
+                                <option value="Ouverte">Ouverte</option>
+                                <option value="Fermée">Fermée</option>
+                                <option value="Expirée">Expirée</option>
+                              </select>
+                            </div>
+
+                                        {editingStageId === stage.offre_id && (
+                              <div className="stages_stage_btn_actions">
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleSaveStage(stage.offre_id, e)}
+                                >
+                                  Sauvegarder
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleCancelEditStage(stage.offre_id, e)}
+                                >
+                                  Annuler
+                                </button>
+                              </div>
+                            )}
+
+
+                                  <div className="stage_action_dropdown_container">
+                                    <button
+                                      type="button"
+                                      className={`stage_action_dropdown ${activeStageId === stage.offre_id ? "ActiveStageAction" : ""}`}
+                                      onMouseEnter={() => handleMouseEnter(stage.offre_id)}
+                                      onMouseLeave={handleMouseLeave}
+                                    >
+                                      Actions
+                                    </button>
+                                    <div className={`stage_actions ${activeStageId === stage.offre_id ? "show" : "hidden"}`}>
+                                      <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
+                                      <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}>Supprimer</button>
+                                      <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
+                                      <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
+                                      <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
+                                    </div>
+                                  </div>
+
+                                  {/* <div className="stage_action_dropdown_container">
+  <button
+    className="stage_action_dropdown"
+    onClick={() => toggleDropdown(stage.offre_id)}
   >
-    <option value="Ouverte">Ouverte</option>
-    <option value="Fermée">Fermée</option>
-    <option value="Expirée">Expirée</option>
-  </select>
-</div>
+    Actions
+  </button>
 
-            {editingStageId === stage.offre_id && (
-  <>
-    <button
-      type="button"
-      onClick={(e) => handleSaveStage(stage.offre_id, e)}
+  <div className={`stage_actions ${activeStageId === stage.offre_id ? "show" : "hidden"}`}>
+    <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
+    <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}>Supprimer</button>
+    <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
+    <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
+    <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
+  </div>
+</div> */}
+                                          {/* <div
+      className="stage_action_dropdown_container"
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
     >
-      Sauvegarder
-    </button>
+      <button className="stage_action_dropdown">
+        Actions
+      </button>
 
-    <button
-      type="button"
-      onClick={(e) => handleCancelEditStage(stage.offre_id, e)}
-    >
-      Annuler
-    </button>
-  </>
-)}
-
-
-      <div className="dropdown-container">
-        <button
-          type="button"
-          className={`stage_action_dropdown ${activeStageId === stage.offre_id ? "ActiveStageAction" : ""}`}
-          onMouseEnter={() => handleMouseEnter(stage.offre_id)}
-          onMouseLeave={handleMouseLeave}
-        >
-          Actions
+      <div className={`stage_actions ${showMenu ? "show" : "hidden"}`}>
+        <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>
+          Modifier
         </button>
-        <div className={`stage_actions ${activeStageId === stage.offre_id ? "show" : "hidden"}`}>
-          <button className="modifier" onClick={(e) => handleModifier(stage.offre_id, e)}>Modifier</button>
-          <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}>Supprimer</button>
-          <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>Candidature</button>
-          <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>Encadrants</button>
-          <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>Rapport</button>
-        </div>
+        <button className="delete" onClick={(e) => handleSupprimer(stage.offre_id, stage.entreprise_id, e)}>
+          Supprimer
+        </button>
+        <button className="candidature" onClick={(e) => handleCandidature(stage.offre_id, e)}>
+          Candidature
+        </button>
+        <button className="encadrant" onClick={(e) => handleEncadrants(stage.offre_id, e)}>
+          Encadrants
+        </button>
+        <button className="rapport" onClick={(e) => handleRapport(stage.offre_id, e)}>
+          Rapport
+        </button>
       </div>
-    </form>
-  ))}
+    </div> */}
+                                </form>
+                              ))}
 
-      {/* <div className="page_navigation">page navigation</div> */}
+                                  {/* <div className="page_navigation">page navigation</div> */}
 
-      <div className="page_navigation">
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage(prev => prev - 1)}
-  >
-    Prev
-  </button>
+                                 
 
-  {Array.from({ length: totalPages }, (_, i) => (
-    <button
-      key={i}
-      className={currentPage === i + 1 ? "active" : ""}
-      onClick={() => setCurrentPage(i + 1)}
-    >
-      {i + 1}
-    </button>
-  ))}
+                                  
+                            </div>
+                             <div className="page_navigation">
+                              <button
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage(prev => prev - 1)}
+                              >
+                                Prev
+                              </button>
 
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage(prev => prev + 1)}
-  >
-    Next
-  </button>
-</div>
+                              {Array.from({ length: totalPages }, (_, i) => (
+                                <button
+                                  key={i}
+                                  className={`pagination_btns ${currentPage === i + 1 ? "active" : ""}`}
+                                  onClick={() => setCurrentPage(i + 1)}
+                                >
+                                  {i + 1}
+                                </button>
+                              ))}
 
-      
-    </div>
+                              <button
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage(prev => prev + 1)}
+                              >
+                                Next
+                              </button>
+                            </div>
           </span>
 
 
@@ -1039,400 +962,170 @@ const hanldeJobConnect = () => {
 
           
 
-          <span
-            className={`EntrepiriseDashboard_contentAbout ED_CB_profile ${
-              ActiveSlider === "ED_CB_profile" ? "Active" : ""
-            }`}
-          >
-            Content 4: Profile
-             <div>
-                {/* {Fetchuser ? (
-                  
-                    <form onSubmit={handleSubmit}>
-      
-      <div>
-        <strong>User ID:</strong> {Fetchuser?.user_id} <br />
-        <strong>Email:</strong> {Fetchuser?.email} <br />
-        <strong>Telephone:</strong> {Fetchuser?.telephone} <br />
-        <strong>Role:</strong> {Fetchuser?.role} <br />
-        <strong>Account Status:</strong> {Fetchuser?.account_status} <br />
-        <strong>Created At:</strong> {Fetchuser?.created_at} <br />
-        <strong>Updated At:</strong> {Fetchuser?.updated_at} <br />
-        <strong>Username:</strong> {Fetchuser?.username} <br />
-      </div>
+                  <span
+                    className={`EntrepiriseDashboard_contentAbout ED_CB_profile ${
+                      ActiveSlider === "ED_CB_profile" ? "Active" : ""
+                    }`}
+                  >
+                    Content 4: Profile
+                    <div>
+                      
+              {Fetchuser ? (
+          <form onSubmit={handleSubmit} className="profile_form">
 
-      
-      <div>
-        <label>Entreprise ID:</label>
-        <input
-          type="text"
-          name="entreprise_id"
-          value={formData.entreprise_id}
-          readOnly
-          placeholder={`${UserId}`}
-        />
-      </div>
+            <div className="profile_user_info">
+              <div className="profile_form_group">
+                <label className="profile_form_label">User ID:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.user_id || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-      <div>
-        <label>Nom Entreprise:</label>
-        <input
-          type="text"
-          name="nom_entreprise"
-          value={formData.nom_entreprise}
-          onChange={handleChange}
-        />
-      </div>
+              <div className="profile_form_group">
+                <label className="profile_form_label">Email:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.email || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-      <div>
-        <label>Description:</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-      </div>
+              <div className="profile_form_group">
+                <label className="profile_form_label">Telephone:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.telephone || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-      <div>
-        <label>Adresse:</label>
-        <input
-          type="text"
-          name="adresse"
-          value={formData.adresse}
-          onChange={handleChange}
-        />
-      </div>
+              <div className="profile_form_group">
+                <label className="profile_form_label">Role:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.role || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-     
+              <div className="profile_form_group">
+                <label className="profile_form_label">Account Status:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.account_status || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-      <div>
-        <label>Site Web:</label>
-        <input
-          type="text"
-          name="site_web"
-          value={formData.site_web}
-          onChange={handleChange}
-        />
-      </div>
+              <div className="profile_form_group">
+                <label className="profile_form_label">Created At:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.created_at || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-      <button type="submit">Submit</button>
-    </form>
-                ) : (
-                  <p>Loading user data...</p>
-                )} */}
+              <div className="profile_form_group">
+                <label className="profile_form_label">Updated At:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.updated_at || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
 
-                {/* {Fetchuser ? (
-  <form onSubmit={handleSubmit} className="profile_form">
-
-    
-
-    <div className="profile_user_info">
-  <div className="profile_form_group">
-    <label className="profile_form_label">User ID:</label>
-    <input
-      type="text"
-      value={Fetchuser?.user_id || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Email:</label>
-    <input
-      type="text"
-      value={Fetchuser?.email || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Telephone:</label>
-    <input
-      type="text"
-      value={Fetchuser?.telephone || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Role:</label>
-    <input
-      type="text"
-      value={Fetchuser?.role || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Account Status:</label>
-    <input
-      type="text"
-      value={Fetchuser?.account_status || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Created At:</label>
-    <input
-      type="text"
-      value={Fetchuser?.created_at || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Updated At:</label>
-    <input
-      type="text"
-      value={Fetchuser?.updated_at || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Username:</label>
-    <input
-      type="text"
-      value={Fetchuser?.username || ""}
-      readOnly
-      className="profile_form_control"
-    />
-  </div>
-</div>
-
-
-   
-    {fetchEntreprise ? (
-
-       <div className="profile_form_group">
-      <label className="profile_form_label">Entreprise ID:</label>
-      <input
-        type="text"
-        name="entreprise_id"
-        value={formData.entreprise_id}
-        readOnly
-        placeholder={`${UserId}`}
-        className="profile_form_control"
-      />
-    </div>
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Nom Entreprise:</label>
-      <input
-        type="text"
-        name="nom_entreprise"
-        value={fetchEntreprise.nom_entreprise}
-        onChange={handleChange}
-        className="profile_form_control"
-      />
-    </div>
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Description:</label>
-      <textarea
-        name="description"
-        value={fetchEntreprise.description}
-        onChange={handleChange}
-        className="profile_form_control"
-      />
-    </div>
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Adresse:</label>
-      <input
-        type="text"
-        name="adresse"
-        value={fetchEntreprise.adresse}
-        onChange={handleChange}
-        className="profile_form_control"
-      />
-    </div>
-
-   
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Site Web:</label>
-      <input
-        type="text"
-        name="site_web"
-        value={fetchEntreprise.site_web}
-        onChange={handleChange}
-        className="profile_form_control"
-      />
-    </div>
-
-    )}
-   
-
-    <button type="submit" className="profile_form_submit_entreprise">Submit</button>
-    <button type="submit" className="profile_form_submit_entreprise">update</button>
-  </form>
-) : (
-  <p>Loading user data...</p>
-)} */}
-      {Fetchuser ? (
-  <form onSubmit={handleSubmit} className="profile_form">
-
-    <div className="profile_user_info">
-      <div className="profile_form_group">
-        <label className="profile_form_label">User ID:</label>
-        <input
-          type="text"
-          value={Fetchuser?.user_id || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Email:</label>
-        <input
-          type="text"
-          value={Fetchuser?.email || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Telephone:</label>
-        <input
-          type="text"
-          value={Fetchuser?.telephone || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Role:</label>
-        <input
-          type="text"
-          value={Fetchuser?.role || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Account Status:</label>
-        <input
-          type="text"
-          value={Fetchuser?.account_status || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Created At:</label>
-        <input
-          type="text"
-          value={Fetchuser?.created_at || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Updated At:</label>
-        <input
-          type="text"
-          value={Fetchuser?.updated_at || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-
-      <div className="profile_form_group">
-        <label className="profile_form_label">Username:</label>
-        <input
-          type="text"
-          value={Fetchuser?.username || ""}
-          readOnly
-          className="profile_form_control"
-        />
-      </div>
-    </div>
-
-    {/* Editable Entreprise Info */}
-    
-    {fetchEntreprise ? (
-      <>
-        <div className="profile_form_group">
-          <label className="profile_form_label">Entreprise ID:</label>
-          <input
-            type="text"
-            name="entreprise_id"
-            value={formData.entreprise_id}
-            readOnly
-            placeholder={`${UserId}`}
-            className="profile_form_control"
-          />
-        </div>
-
-        <div className="profile_form_group">
-          <label className="profile_form_label">Nom Entreprise:</label>
-          <input
-            type="text"
-            name="nom_entreprise"
-            value={formData.nom_entreprise}
-            onChange={handleChange}
-            className="profile_form_control"
-          />
-        </div>
-
-        <div className="profile_form_group">
-          <label className="profile_form_label">Description:</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="profile_form_control"
-          />
-        </div>
-
-        <div className="profile_form_group">
-          <label className="profile_form_label">Adresse:</label>
-          <input
-            type="text"
-            name="adresse"
-            value={formData.adresse}
-            onChange={handleChange}
-            className="profile_form_control"
-          />
-        </div>
-
-        <div className="profile_form_group">
-          <label className="profile_form_label">Site Web:</label>
-          <input
-            type="text"
-            name="site_web"
-            value={formData.site_web}
-            onChange={handleChange}
-            className="profile_form_control"
-          />
-        </div>
-      </>
-    ) : null}
-
-    <button type="submit" className="profile_form_submit_entreprise">Submit account data</button>
-    {/* <button type="update" className="profile_form_submit_entreprise">update</button> */}
-  </form>
-) : (
-  <p>Loading user data...</p>
-)}
-
-
+              <div className="profile_form_group">
+                <label className="profile_form_label">Username:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.username || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
             </div>
-          </span>
+
+            {/* Editable Entreprise Info */}
+            
+            {fetchEntreprise ? (
+              <>
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Entreprise ID:</label>
+                  <input
+                    type="text"
+                    name="entreprise_id"
+                    value={formData.entreprise_id}
+                    readOnly
+                    placeholder={`${UserId}`}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Nom Entreprise:</label>
+                  <input
+                    type="text"
+                    name="nom_entreprise"
+                    value={formData.nom_entreprise}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Description:</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Adresse:</label>
+                  <input
+                    type="text"
+                    name="adresse"
+                    value={formData.adresse}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Site Web:</label>
+                  <input
+                    type="text"
+                    name="site_web"
+                    value={formData.site_web}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+              </>
+            ) : null}
+
+            <button type="submit" className="profile_form_submit_entreprise">Submit account data</button>
+            {/* <button type="update" className="profile_form_submit_entreprise">update</button> */}
+          </form>
+        ) : (
+          <p>Loading user data...</p>
+        )}
+                <button className="btn_delete_account" onClick={handleDelete}>delete account</button>
+
+                    </div>
+                  </span>
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_statistiques ${
               ActiveSlider === "ED_CB_statistiques" ? "Active" : ""

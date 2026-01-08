@@ -14,7 +14,7 @@ const UserJobBoard = () => {
   const [Query, setQuery] = useState({
   stage_search_querry: ""
 });
-
+  
 const [cvFile, setCvFile] = useState(null);
 const [photoFile, setPhotoFile] = useState(null);
 
@@ -320,17 +320,83 @@ async function updateStagiairedata(id) {
   }
 }
 
-const cancelcanidature = (id) => {
-  alert(id)
-}
+// const cancelcanidature = (id) => {
+//   alert(id)
+// }
 
-const rapportcandidature = (id) => {
-  alert(id)
+// const rapportcandidature = (id) => {
+//   alert(id)
+// }
+
+
+// Cancel a specific candidature
+async function cancelcanidature(candidature_id) {
+  if (!candidature_id) return alert("Candidature ID not provided");
+
+  try {
+    const response = await fetch(`${BASE_URL}/cancel_candidature.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ candidature_id }), // send the ID
+    });
+
+    const res = await response.json();
+    console.log(res);
+
+    if (res.success) {
+      alert("Candidature cancelled successfully");
+
+      // Optionally remove it from local state
+      setFetchCandidature(prev =>
+        prev.filter(c => c.candidature_id !== candidature_id)
+      );
+
+      // Clear the selected candidature if it was the one deleted
+      if (selectedCandidature?.candidature_id === candidature_id) {
+        setSelectedCandidature(null);
+      }
+    } else {
+      alert("Failed to cancel candidature: " + res.message);
+    }
+  } catch (err) {
+    console.error("Error cancelling candidature:", err);
+    alert("Error cancelling candidature");
+  }
 }
 
 const hanldeJobConnect = () => {
    SliderContentHandler("ED_CB_default")
 }
+
+
+async function DeleteAccount(UserId) {
+  try {
+    const response = await fetch(`${BASE_URL}/DeleteAccount.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: UserId }) // ✅ use parameter
+    });
+
+    const res = await response.json();
+    console.log(res);
+
+    if (res.success) {
+      alert("User deleted successfully");
+      localStorage.removeItem("user_id");
+      navigate("/")
+    } else {
+      alert("Failed to delete user: " + res.message);
+    }
+  } catch (err) {
+    console.error("Error deleting user:", err);
+  }
+}
+
+
+const handleDelete = () => {
+  if (!UserId) return alert("User ID not found");
+  DeleteAccount(UserId);
+};
 
 
   return (
@@ -363,11 +429,11 @@ const hanldeJobConnect = () => {
     style={{ cursor: "pointer" }}
   />
 </li>
-            <li className="UserJobBoard_nav_list">
-              <MessageSquare size={24} className="nav-icon" />
-            
-            </li>
-            <li className="UserJobBoard_nav_list"><Bell size={24} className="nav-icon" /></li>
+             <li className="UserJobBoard_nav_list">
+                          <MessageSquare size={24} className="UserJobBoard_nav_icons" />
+                        
+                        </li>
+                        <li className="UserJobBoard_nav_list"><Bell size={24} className="UserJobBoard_nav_icons" /></li>
 
               {/* </li> */}
               
@@ -502,7 +568,7 @@ const hanldeJobConnect = () => {
     </div>
 
     {/* --- RIGHT PANEL: Selected Stage Details --- */}
-    <div className="right-panel">
+    {/* <div className="right-panel">
       {selectedStage ? (
         <div className="stage-detail">
           <h2>{selectedStage.titre}</h2>
@@ -530,7 +596,116 @@ const hanldeJobConnect = () => {
       ) : (
         <p>Select a stage to see details</p>
       )}
+    </div> */}
+
+
+    <div className="right-panel">
+  {selectedStage ? (
+    <div className="stage-detail-form">
+      <h2>{selectedStage.titre}</h2>
+
+      <div className="form-group">
+        <label className="form-label">Company:</label>
+        <input
+          type="text"
+          className="form-control"
+          value={selectedStage.entreprise_id}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Location:</label>
+        <input
+          type="text"
+          className="form-control"
+          value={selectedStage.emplacement}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Type:</label>
+        <input
+          type="text"
+          className="form-control"
+          value={selectedStage.type_de_stage}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Category:</label>
+        <input
+          type="text"
+          className="form-control"
+          value={selectedStage.stage_categorie}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Description:</label>
+        <textarea
+          className="form-control"
+          value={selectedStage.description}
+          readOnly
+          rows={4}
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Start Date:</label>
+        <input
+          type="text"
+          className="form-control"
+          value={selectedStage.date_debut}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Duration (weeks):</label>
+        <input
+          type="number"
+          className="form-control"
+          value={selectedStage.duree_semaines}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Available Places:</label>
+        <input
+          type="number"
+          className="form-control"
+          value={selectedStage.nombre_places}
+          readOnly
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Status:</label>
+        <input
+          type="text"
+          className={`form-control status ${selectedStage.statut}`}
+          value={selectedStage.statut}
+          readOnly
+        />
+      </div>
+
+      <button
+        className="candidature-btn"
+        onClick={() => handeleposutler(selectedStage.offre_id)}
+      >
+        Postuler
+      </button>
     </div>
+  ) : (
+    <p>Select a stage to see details</p>
+  )}
+</div>
+
   </div>
 </span>
 
@@ -595,7 +770,7 @@ const hanldeJobConnect = () => {
 
           </span> */}
 
-          <span
+          {/* <span
   className={`UserJobBoard_contentAbout ED_CB_Stages ${
     ActiveSlider === "ED_CB_Stages" ? "Active" : ""
   }`}
@@ -603,7 +778,7 @@ const hanldeJobConnect = () => {
   Mes candidature:
 
   <div className="candidatures-container" style={{ display: 'flex', gap: '20px' }}>
-    {/* --- LEFT PANEL: Paginated Candidature List --- */}
+   
     <div className="left-panel" style={{ width: '40%', maxHeight: '500px', overflowY: 'auto' }}>
       {FetchCandidature && FetchCandidature.length > 0 ? (
         <div className="candidatures_cards_container">
@@ -631,7 +806,7 @@ const hanldeJobConnect = () => {
             </div>
           ))}
 
-          {/* Pagination */}
+          
           {totalPagesCandidatures > 1 && (
             <div className="pagination" style={{ marginTop: '10px' }}>
               {Array.from({ length: totalPagesCandidatures }, (_, idx) => (
@@ -651,7 +826,7 @@ const hanldeJobConnect = () => {
       )}
     </div>
 
-    {/* --- RIGHT PANEL: Selected Candidature Detail --- */}
+   
     <div className="right-panel" style={{ width: '60%', borderLeft: '1px solid #ccc', padding: '10px' }}>
       {selectedCandidature ? (
         <div className="candidature-detail">
@@ -690,7 +865,509 @@ const hanldeJobConnect = () => {
       )}
     </div>
   </div>
+</span> */}
+
+  {/* <span
+  className={`UserJobBoard_contentAbout ED_CB_Stages ${
+    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
+  }`}
+>
+  Mes candidature:
+
+  <div
+    className="candidatures-container"
+    style={{ display: "flex", gap: "20px" }}
+  >
+ 
+    <div
+      className="left-panel"
+      style={{ width: "40%", maxHeight: "500px", overflowY: "auto" }}
+    >
+      {FetchCandidature && FetchCandidature.length > 0 ? (
+        <div className="candidatures_cards_container">
+          {paginatedCandidatures.map((candidature) => (
+            <div
+              key={candidature.candidature_id}
+              className={`candidature-card ${
+                selectedCandidature?.candidature_id ===
+                candidature.candidature_id
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() => setSelectedCandidature(candidature)}
+            >
+              <div className="form-column">
+                <div className="form-group">
+                  <label className="form-label">Offre ID:</label>
+                  <span className="form-control">
+                    {candidature.offre_id}
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Status:</label>
+                  <span className="form-control">
+                    {candidature.statut}
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Message:</label>
+                  <span className="form-control">
+                    {candidature.message_motivation}
+                  </span>
+                </div>
+
+                {candidature.cv_path && (
+                  <div className="form-group">
+                    <label className="form-label">CV:</label>
+                    <a
+                      className="form-control"
+                      href={`${BASE_URL}/${candidature.cv_path}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View CV
+                    </a>
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <label className="form-label">Applied at:</label>
+                  <span className="form-control">
+                    {candidature.created_at}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          
+          {totalPagesCandidatures > 1 && (
+            <div className="pagination" style={{ marginTop: "10px" }}>
+              {Array.from(
+                { length: totalPagesCandidatures },
+                (_, idx) => (
+                  <button
+                    key={idx + 1}
+                    className={
+                      currentPageCandidature === idx + 1
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setCurrentPageCandidature(idx + 1)
+                    }
+                  >
+                    {idx + 1}
+                  </button>
+                )
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>No candidatures found.</p>
+      )}
+    </div>
+
+    
+    <div
+      className="right-panel"
+      style={{
+        width: "60%",
+        borderLeft: "1px solid #ccc",
+        padding: "10px",
+      }}
+    >
+      {selectedCandidature ? (
+        <div className="candidature-detail form-column">
+          <h2>Candidature Details</h2>
+           <div className="form-group">
+            <label className="form-label">Candidature_id:</label>
+            <span className="form-control">
+              {selectedCandidature.candidature_id}
+            </span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Offre ID:</label>
+            <span className="form-control">
+              {selectedCandidature.offre_id}
+            </span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Status:</label>
+            <span className="form-control">
+              {selectedCandidature.statut}
+            </span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Message:</label>
+            <span className="form-control">
+              {selectedCandidature.message_motivation}
+            </span>
+          </div>
+
+          {selectedCandidature.cv_path && (
+            <div className="form-group">
+              <label className="form-label">CV:</label>
+              <a
+                className="form-control"
+                href={`${BASE_URL}/${selectedCandidature.cv_path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View CV
+              </a>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label className="form-label">Applied at:</label>
+            <span className="form-control">
+              {selectedCandidature.created_at}
+            </span>
+          </div>
+
+          <div className="UserjobBoard_candidatureactions">
+            <button
+              className="cancel_candidature"
+              onClick={() =>
+                cancelcanidature(selectedCandidature.offre_id)
+              }
+            >
+              Cancel Candidature
+            </button>
+
+            <button
+              className="candidature_rapport"
+              onClick={() =>
+                rapportcandidature(selectedCandidature.offre_id)
+              }
+            >
+              Rapport
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p>Select a candidature to see details</p>
+      )}
+    </div>
+  </div>
+</span> */}
+{/* <span
+  className={`UserJobBoard_contentAbout ED_CB_Stages ${
+    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
+  }`}
+>
+  Mes candidature:
+
+  <div
+    className="candidatures-container"
+    
+  >
+    
+    <div
+      className="left-panel"
+      style={{ width: "40%", maxHeight: "500px", overflowY: "auto" }}
+    >
+      {FetchCandidature && FetchCandidature.length > 0 ? (
+        <div className="candidatures_cards_container">
+         
+          {FetchCandidature.slice(
+            (currentPageCandidature - 1) * 3,
+            currentPageCandidature * 3
+          ).map((candidature) => (
+            <div
+              key={candidature.candidature_id}
+              className={`candidature-card ${
+                selectedCandidature?.candidature_id === candidature.candidature_id
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() => setSelectedCandidature(candidature)}
+            >
+              <div className="form-column">
+                <div className="form-group">
+                  <label className="form-label">offre_id:</label>
+                  <span className="form-control">{candidature.offre_id}</span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Status:</label>
+                  <span className="form-control">{candidature.statut}</span>
+                </div>
+
+               
+
+                <div className="form-group">
+                  <label className="form-label">Applied at:</label>
+                  <span className="form-control">{candidature.created_at}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          
+          {Math.ceil(FetchCandidature.length / 3) > 1 && (
+            <div className="pagination" style={{ marginTop: "10px" }}>
+              {Array.from({ length: Math.ceil(FetchCandidature.length / 3) }, (_, idx) => (
+                <button
+                  key={idx + 1}
+                  className={currentPageCandidature === idx + 1 ? "active" : ""}
+                  onClick={() => setCurrentPageCandidature(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>No candidatures found.</p>
+      )}
+    </div>
+
+    
+    <div
+      className="right-panel"
+      style={{ width: "60%", borderLeft: "1px solid #ccc", padding: "10px" }}
+    >
+      {selectedCandidature ? (
+        <div className="candidature-detail form-column">
+          <h2>Candidature Details</h2>
+
+          <div className="form-group">
+            <label className="form-label">Candidature ID:</label>
+            <span className="form-control">{selectedCandidature.candidature_id}</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Offre ID:</label>
+            <span className="form-control">{selectedCandidature.offre_id}</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Status:</label>
+            <span className="form-control">{selectedCandidature.statut}</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Message:</label>
+            <span className="form-control">{selectedCandidature.message_motivation}</span>
+          </div>
+
+          {selectedCandidature.cv_path && (
+            <div className="form-group">
+              <label className="form-label">CV:</label>
+              <a
+                className="form-control"
+                href={`${BASE_URL}/${selectedCandidature.cv_path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View CV
+              </a>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label className="form-label">Applied at:</label>
+            <span className="form-control">{selectedCandidature.created_at}</span>
+          </div>
+
+          <div className="UserjobBoard_candidatureactions">
+            <button
+              className="cancel_candidature"
+              onClick={() => cancelcanidature(selectedCandidature.offre_id)}
+            >
+              Cancel Candidature
+            </button>
+
+            <button
+              className="candidature_rapport"
+              onClick={() => rapportcandidature(selectedCandidature.offre_id)}
+            >
+              Rapport
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p>Select a candidature to see details</p>
+      )}
+    </div>
+  </div>
+</span> */}
+
+      <span
+  className={`UserJobBoard_contentAbout ED_CB_Stages ${
+    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
+  }`}
+>
+  Mes candidatures:
+
+  <div
+    className="candidatures-container"
+    style={{ display: "flex", gap: "20px" }}
+  >
+    {/* --- LEFT PANEL: Paginated Candidature List --- */}
+    <div
+      className="left-panel"
+      style={{
+        width: "40%",
+        maxHeight: "500px",
+        overflowY: "auto",
+        borderRight: "1px solid #ccc",
+        paddingRight: "10px",
+      }}
+    >
+      {FetchCandidature && FetchCandidature.length > 0 ? (
+        <div className="candidatures_cards_container">
+          {/** Slice 3 per page */}
+          {FetchCandidature.slice(
+            (currentPageCandidature - 1) * 3,
+            currentPageCandidature * 3
+          ).map((candidature) => (
+            <div
+              key={candidature.candidature_id}
+              className={`candidature-card ${
+                selectedCandidature?.candidature_id === candidature.candidature_id
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() => setSelectedCandidature(candidature)}
+              style={{
+                cursor: "pointer",
+                padding: "10px",
+                marginBottom: "10px",
+                border: "1px solid #ddd",
+                borderRadius: "5px",
+                backgroundColor:
+                  selectedCandidature?.candidature_id === candidature.candidature_id
+                    ? "#f0f8ff"
+                    : "#fff",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span><strong>Offre:</strong> {candidature.offre_id}</span>
+                <span>{candidature.statut}</span>
+              </div>
+              <div style={{ fontSize: "12px", color: "#555", marginTop: "5px" }}>
+                Applied at: {candidature.created_at}
+              </div>
+            </div>
+          ))}
+
+          {/* Pagination buttons */}
+          {Math.ceil(FetchCandidature.length / 3) > 1 && (
+            <div
+              className="pagination"
+              style={{
+                marginTop: "10px",
+                display: "flex",
+                gap: "5px",
+                justifyContent: "center",
+              }}
+            >
+              {Array.from({ length: Math.ceil(FetchCandidature.length / 3) }, (_, idx) => (
+                <button
+                  key={idx + 1}
+                  className={currentPageCandidature === idx + 1 ? "active" : ""}
+                  onClick={() => setCurrentPageCandidature(idx + 1)}
+                  style={{
+                    padding: "5px 10px",
+                    cursor: "pointer",
+                    border: currentPageCandidature === idx + 1 ? "2px solid #007bff" : "1px solid #ccc",
+                    borderRadius: "3px",
+                    backgroundColor: currentPageCandidature === idx + 1 ? "#e6f0ff" : "#fff",
+                  }}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>No candidatures found.</p>
+      )}
+    </div>
+
+    {/* --- RIGHT PANEL: Selected Candidature Detail --- */}
+    <div
+      className="right-panel"
+      style={{ width: "60%", padding: "10px" }}
+    >
+      {selectedCandidature ? (
+        <div className="candidature-detail form-column">
+          <h2>Candidature Details</h2>
+
+          <div className="form-group">
+            <label className="form-label">Candidature ID:</label>
+            <span className="form-control">{selectedCandidature.candidature_id}</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Offre ID:</label>
+            <span className="form-control">{selectedCandidature.offre_id}</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Status:</label>
+            <span className="form-control">{selectedCandidature.statut}</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Message:</label>
+            <span className="form-control">{selectedCandidature.message_motivation}</span>
+          </div>
+
+          {selectedCandidature.cv_path && (
+            <div className="form-group">
+              <label className="form-label">CV:</label>
+              <a
+                className="form-control"
+                href={`${BASE_URL}/${selectedCandidature.cv_path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View CV
+              </a>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label className="form-label">Applied at:</label>
+            <span className="form-control">{selectedCandidature.created_at}</span>
+          </div>
+
+          <div className="UserjobBoard_candidatureactions">
+            <button
+              className="cancel_candidature"
+              onClick={() => cancelcanidature(selectedCandidature.candidature_id)}
+            >
+              Cancel Candidature
+            </button>
+
+            {/* <button
+              className="candidature_rapport"
+              onClick={() => rapportcandidature(selectedCandidature.offre_id)}
+            >
+              Rapport
+            </button> */}
+          </div>
+        </div>
+      ) : (
+        <p>Select a candidature to see details</p>
+      )}
+    </div>
+  </div>
 </span>
+
+
 
           <span
             className={`UserJobBoard_contentAbout ED_CB_profile ${
@@ -935,7 +1612,13 @@ const hanldeJobConnect = () => {
 </div>
 
      <button className="submit profile_actions_btn"  onClick={() => updateStagiairedata(UserId)}>update stagiaire data</button>
-      <button className="delete profile_actions_btn">delete account</button>
+      <button
+  type="button"
+  className="delete_profile_actions_btn"
+  onClick={handleDelete}
+>
+  Delete Account
+</button>
   </div>
 )}
 

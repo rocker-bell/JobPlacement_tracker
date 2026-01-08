@@ -2,10 +2,10 @@
     width: 100%;
     min-height: 100vh;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     flex-direction: column;
-    border: 5px solid yellow;
+    /* border: 5px solid yellow; */
     /* overflow-y: hidden;   */
 }
 
@@ -16,18 +16,18 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border: 1px dashed black;
+    /* border: 1px dashed black; */
 
 }
 
 .EncadrantDashboard_sideNav {
     width: 100%;
-    height: 10%;
+    height: 15%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: row;
-    border: 4px dashed green;
+    /* border: 4px dashed green; */
 }
 
 nav {
@@ -35,11 +35,12 @@ nav {
     height: 100%;
     /* display: flex;
     flex-wrap: wrap; */
-    border: 1px solid red;
+    /* border: 1px solid red; */
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 }
 
 .dropdown_menu_logo {
@@ -68,7 +69,7 @@ nav {
 }
 
 .EncadrantDashboard_navLists {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     min-width: 50%;
     max-width: 100%;
     height: 100%;
@@ -107,7 +108,7 @@ nav {
 
 .EncadrantDashboard_nav_list {
         min-width: 100px;
-        border: 1px solid black;
+        /* border: 1px solid black; */
         padding: 5px 5px;
         display: flex;
         justify-content: center;
@@ -130,7 +131,7 @@ nav {
     width: 100%;
     height: 100%;
     flex-direction: column;
-    border: 3px dashed black;
+    /* border: 3px dashed black; */
     padding: 10px 10px;
 }
 
@@ -138,168 +139,25 @@ nav {
     display: flex;
 }
 
-/* Add Stage content slider */
 
-/* .ED_stage_form_wrapper {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background-color: grey;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
-
-.ED_stage_form {
-     width: 50%;
-    height: 50%;
-    background-color: white;
-     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-
-.ED_stage_form_formGroupe {
-    width: 100%;
-    height: 100%;
-    background-color: white;
-     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-}
-
-.ED_stage_form_label, .ED_stage_form_control {
-   height: 20px;
-    display: flex;
-   justify-content: center;
-   align-items: center;
-   padding: 5px 5px;
-}
-
-.ED_stage_form_control {
-    width: 70%;
-   
-}
-
-.ED_stage_form_label {
-    width: 20%;
-} */
-
-
-
-
-
-
-/* 
-.ED_stage_form_wrapper {
-    background-color: #4caf50;
-  width: 100%;
-  height: 100%; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-
-.ED_stage_form {
-  width: 100%; 
-  max-width: 600px; 
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-
-.ED_stage_form_formGroupe {
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.ED_stage_form_label {
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.ED_stage_form_control {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.ED_stage_form_btn_group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-
-button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-}
-
-button[type="button"] {
-  background-color: #f44336; 
-}
-
-
-button:hover {
-  opacity: 0.9;
-}
-
-
-
-
-.Active {
-  display: block;
-} */
 
 
 .ED_stage_form_wrapper {
-  position: absolute; /* Fix it on the screen */
+  position: absolute; 
   top: 0;
   left: 0;
-  width: 100vw; /* Full width */
-  height: 100vh; /* Full height */
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  width: 100vw; 
+  height: 100vh; 
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it's on top of other content */
-   /* Optional: Apply blur to the background */
-  /* backdrop-filter: blur(2px); Optional: Use backdrop-filter for smoother blur effect */
+  z-index: 1000;
+  
+  
 }
 
-/* The actual form */
-/* .ED_stage_form {
-  overflow-y: scroll;
 
-  width: 100%; 
-  max-width: 600px; 
-  background-color: white;
-  flex-wrap: wrap;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-} */
 
 .ED_stage_form {
   width: 100%;
@@ -321,14 +179,14 @@ button:hover {
   box-sizing: border-box;
 }
 
-/* Form group style */
+
 .ED_stage_form_formGroupe {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
 
-/* Input and textarea fields */
+
 .ED_stage_form_label {
   margin-bottom: 5px;
   font-weight: bold;
@@ -341,7 +199,7 @@ button:hover {
   border: 1px solid #ccc;
 }
 
-/* Button group for submit and cancel buttons */
+
 .ED_stage_form_btn_group {
     width: 100%;
 
@@ -350,7 +208,19 @@ button:hover {
   margin-top: 20px;
 }
 
-/* Style the buttons */
+/* .stage-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.stage-section {
+  border: 3px solid green;
+} */
+
+
+
+
 .btn_rapport_encadrant {
   padding: 10px 20px;
   border-radius: 5px;
@@ -361,10 +231,10 @@ button:hover {
 }
 
 .delete_profile_actions_btn{
-  background-color: #f44336; /* Red for cancel */
+  background-color: #f44336; 
 }
 
-/* Add a simple hover effect */
+
 button:hover {
   opacity: 0.9;
 }
@@ -373,18 +243,28 @@ button:hover {
     display: none;
 }
 
-
-
 footer {
     width:  95%;
-    border: 1px solid black;
-    height: 10%;
+   
+    min-height: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
 }
+
+
+/* footer {
+    width:  95%;
+   
+    height: 100px;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+} */
 
 @media screen and (max-width: 768px) {
   .EncadrantDashboard_sideNav {
     min-width: 100%;
-    border: 3px solid black;
+    /* border: 3px solid black; */
     /* min-height: 15%; */
     /* max-height: 100%; */
     display: flex;
@@ -407,7 +287,7 @@ footer {
     }
 
     .EncadrantDashboard_navLists {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     width: 100%;
     height: 100%;
     /* padding: 10px 5px; */

@@ -384,20 +384,11 @@
 
 
 .footer {
-    width: 100%;
-    /* background: #0046FF; */
-  /* background: linear-gradient(
-  to bottom,
-  #0A1F6F 0%,
-  #000000 100%
-); */
-
-
-
-
+    min-width: 100%;
     background-color: #101828;
     color: #eee;
     display: flex;
+    min-height: auto;
     flex-direction: column;
     padding: 60px 0 30px;
     gap: 40px;
