@@ -36,8 +36,8 @@ const transporter = nodemailer.createTransport({
   port: 587,  // Use port 587 for STARTTLS (recommended)
   secure: false,  // Do not use SSL for port 587
   auth: {
-    user: 'rockbell8@gmail.com',   // Replace with your email address
-    pass: 'iucb ercv ugme czsm'        
+    user: '',   // Replace with your email address
+    pass: ''        
   },
   tls: {
     rejectUnauthorized: false,
@@ -55,7 +55,7 @@ function sendVerificationEmail(toEmail, username, token) {
     const verifyLink = `http://localhost:5173/verify?token=${token}`;
 
     const mailOptions = {
-        from: 'rockbell8@gmail.com',
+        from: '',
         to: toEmail,
         subject: 'Verify your email address',
         html: `
