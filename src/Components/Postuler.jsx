@@ -227,7 +227,7 @@ const Postuler = () => {
 
   useEffect(() => {
     if (!userId) return;
-
+    
     const fetchUserInfo = async () => {
       try {
         const res = await fetch(`${BASE_URL}/fetch_profile.php`, {

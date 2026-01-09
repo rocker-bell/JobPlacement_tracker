@@ -398,6 +398,42 @@ const handleDelete = () => {
   DeleteAccount(UserId);
 };
 
+const [dashboardStats, setDashboardStats] = useState({
+    total_applications: 0,
+    accepted_applications: 0,
+    refused_applications: 0,
+    pending_applications: 0,
+    viewed_applications: 0,
+    unviewed_applications: 0,
+    total_affectations: 0,
+    pending_evaluations: 0
+  });
+
+  useEffect(() => {
+    if (!UserId) return;
+
+    async function fetchStats() {
+      try {
+        const res = await fetch(
+          `http://localhost:8000/dashboard_stats_stagiaire.php`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ stagiaire_id: UserId })
+          }
+        );
+
+        const data = await res.json();
+        console.log("Stagiaire stats:", data);
+        if (data.success) setDashboardStats(data);
+      } catch (err) {
+        console.error("Failed to fetch stats:", err);
+      }
+    }
+
+    fetchStats();
+  }, [UserId]);
+
 
   return (
     <div className="UserJobBoard_wrapper">
@@ -470,6 +506,41 @@ const handleDelete = () => {
             }`}
           >
             Content 1: Default
+
+                    <div className="general_statistique">
+                              <div className="statistique_card">
+                                <h3>Total Applications</h3>
+                                <p>{dashboardStats.total_applications}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Accepted</h3>
+                                <p>{dashboardStats.accepted_applications}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Refused</h3>
+                                <p>{dashboardStats.refused_applications}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Pending</h3>
+                                <p>{dashboardStats.pending_applications}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Viewed</h3>
+                                <p>{dashboardStats.viewed_applications}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Unviewed</h3>
+                                <p>{dashboardStats.unviewed_applications}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Total Affectations</h3>
+                                <p>{dashboardStats.total_affectations}</p>
+                              </div>
+                              <div className="statistique_card">
+                                <h3>Pending Evaluations</h3>
+                                <p>{dashboardStats.pending_evaluations}</p>
+                              </div>
+                 </div>
           </span>
          {/* <span
   className={`UserJobBoard_contentAbout ED_CB_addStage ${
