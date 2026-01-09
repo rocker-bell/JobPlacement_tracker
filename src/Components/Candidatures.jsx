@@ -315,7 +315,7 @@ const Candidatures = () => {
   if (loading) return <p className="loading-text">Loading...</p>;
 
   return (
-    <div className="candidatures-container">
+    <div className="candidatures-container-canidatures">
       <ArrowLeft
         size={24}
         onClick={() =>

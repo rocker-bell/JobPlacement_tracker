@@ -382,6 +382,36 @@ const rapportEncadrant = (id) => {
 const hanldeJobConnect = () => {
    SliderContentHandler("ED_CB_default")
 }
+const [dashboardStats, setDashboardStats] = useState({
+  total_affectations: 0,
+  pending_evaluations: 0,
+  accepted_applicants: 0,
+  refused_applicants: 0,
+  pending_applicants: 0
+});
+
+
+useEffect(() => {
+  if (!UserId) return;
+
+  async function fetchStats() {
+    try {
+      const res = await fetch(`http://localhost:8000/dashboard_stats_encadrants.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ encadrant_id: UserId }) // <-- French key
+      });
+      const data = await res.json();
+      console.log("stats", data)
+      if (data.success) setDashboardStats(data);
+    } catch (err) {
+      console.error("Failed to fetch stats:", err);
+    }
+  }
+
+  fetchStats();
+}, [UserId]);
+
 
 
 
@@ -438,6 +468,32 @@ const hanldeJobConnect = () => {
             }`}
           >
             Content 1: Default
+
+
+                  <div className="general_statistique">
+  <div className="statistique_card">
+    <h3>Total Affectations</h3>
+    <p>{dashboardStats.total_affectations}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Pending Evaluations</h3>
+    <p>{dashboardStats.pending_evaluations}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Accepted Applicants</h3>
+    <p>{dashboardStats.accepted_applicants}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Refused Applicants</h3>
+    <p>{dashboardStats.refused_applicants}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Pending Applicants</h3>
+    <p>{dashboardStats.pending_applicants}</p>
+  </div>
+</div>
+
+
           </span>
           {/* <span
             className={`EncadrantDashboard_contentAbout ED_CB_addStage ${

@@ -16,11 +16,12 @@ const Entreprise_dashboard = () => {
   const [Fetchuser, setFetchuser] = useState(null)
   const [stages, setStages] = useState([]);
   const [UserId, setUserId] = useState(null);
+   const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
   const [editingStageId, setEditingStageId] = useState(null);
 const [editedStage, setEditedStage] = useState({});
 
 
-  const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
+ 
   
   
   const [activeStageId, setActiveStageId] = useState(null);
@@ -279,17 +280,6 @@ const fetchentreprise = async (userId) => {
     }
   }
 
-  useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
-    setUserId(user_id);
-    setenterpriseId(user_id)
-
-    if (user_id) {
-      FetchuserData(user_id); // actually call the function
-      fetchentreprise(user_id)
-      
-    }
-  }, []);
 
 
   // Function to handle the slider change
@@ -415,9 +405,10 @@ useEffect(() => {
     const data = await res.json();
     if (data.success) {
       alert("Stage added successfully!");
+
       // Optionally, clear the form or redirect
       setCancelAddStage(true)
-
+      window.location.reload()
       SliderContentHandler("ED_CB_Stages");
 
 
@@ -563,6 +554,52 @@ const handleDelete = () => {
 };
 
 
+ useEffect(() => {
+    const user_id = localStorage.getItem("user_id");
+    setUserId(user_id);
+    setenterpriseId(user_id)
+
+    if (user_id) {
+      FetchuserData(user_id); // actually call the function
+      fetchentreprise(user_id)
+      
+    }
+  }, []);
+
+
+const [dashboardStats, setDashboardStats] = useState({
+  encadrants_count: 0,
+  active_stages: 0,
+  applicants_count: 0,
+  ratio: 0
+});
+
+useEffect(() => {
+  if (!enterpriseId) return;
+
+  async function fetchStats() {
+    try {
+      const res = await fetch(`http://localhost:8000/dashboard_stats_entreprise.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ entreprise_id: enterpriseId }) // <-- French key
+      });
+      const data = await res.json();
+      if (data.success) setDashboardStats(data);
+    } catch (err) {
+      console.error("Failed to fetch stats:", err);
+    }
+  }
+
+  fetchStats();
+}, [enterpriseId]);
+
+
+
+ 
+
+
+
 
   return (
     <div className="EntrepriseDashboard_wrapper">
@@ -623,6 +660,45 @@ const handleDelete = () => {
           >
             Content 1: Default
              Welcome to your Entreprise Dashboard 
+              {/* how many encadrants - how many active stages - how many applicants - ratio */}
+              {/* <div className="general_statistique">
+  <div className="statistique_card">
+    <h3>Encadrants</h3>
+    <p>{dashboardStats.encadrants_count}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Active Stages</h3>
+    <p>{dashboardStats.active_stages}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Applicants</h3>
+    <p>{dashboardStats.applicants_count}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Applicants per Stage</h3>
+    <p>{dashboardStats.ratio}</p>
+  </div>
+</div> */}
+          <div className="general_statistique">
+  <div className="statistique_card">
+    <h3>Encadrants</h3>
+    <p>{dashboardStats.encadrants_count}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Active Stages</h3>
+    <p>{dashboardStats.active_stages}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Applicants</h3>
+    <p>{dashboardStats.applicants_count}</p>
+  </div>
+  <div className="statistique_card">
+    <h3>Applicants per Stage</h3>
+    <p>{dashboardStats.ratio}</p>
+  </div>
+</div>
+
+
           </span>
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_addStage ${

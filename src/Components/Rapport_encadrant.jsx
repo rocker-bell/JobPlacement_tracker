@@ -771,8 +771,18 @@ const Rapport_encadrant = () => {
         </div>
          <div className="form-group">
            <label>CV Path</label>
-         <input type="text" name="cv_path" value={candidatureData.cv_path || ""} onChange={handleCandidatureChange} />
-        </div>         <div className="form-group">
+           {candidatureData.cv_path ? (
+              <a 
+                href={`http://localhost:8000/${candidatureData.cv_path}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Voir CV
+              </a>
+            ) : "Aucun"}
+
+        </div>         
+        <div className="form-group">
          <label>Créée le</label>
            <input type="text" name="created_at" value={candidatureData.created_at} readOnly />
         </div>

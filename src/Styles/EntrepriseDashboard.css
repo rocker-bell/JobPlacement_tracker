@@ -152,6 +152,52 @@ nav {
     display: flex;
 }
 
+/* statistique */
+
+/* Container for all stats cards */
+.general_statistique {
+  display: flex;
+  gap: 1rem;           /* space between cards */
+  flex-wrap: wrap;      /* wrap on smaller screens */
+  margin-top: 1rem;
+}
+
+/* Individual statistic card */
+.statistique_card {
+  flex: 1 1 200px;
+                      /* responsive width */
+  background-color: #ffffff;           /* white card */
+  border-radius: 8px;                  /* rounded corners */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* subtle shadow */
+  padding: 1rem;                       /* spacing inside card */
+  text-align: center;                   /* center text */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* smooth hover effect */
+  cursor: default;
+}
+
+/* Hover effect: lift card slightly */
+.statistique_card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Title inside the card */
+.statistique_card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #333333;
+}
+
+/* Value inside the card */
+.statistique_card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #111111;
+}
+
+
+/* stage */
 
 
 .ED_stage_form_wrapper {
@@ -279,11 +325,11 @@ button:hover {
 
 
 .stage-section {
- 
+ /* border: 1px solid black; */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 30px;
-
+  /* min-height: 100%; */
   width: 100%;
   /* min-height: 100vh; */
 
@@ -293,6 +339,7 @@ button:hover {
 
 
 .stage-form {
+  /* border: 1px solid black; */
   min-width: 400px;
    padding: 10px;
   min-height: 300px;
@@ -392,6 +439,21 @@ button:hover {
 .pagination_btns {
   background-color: blue;
 }
+
+/* default */
+
+.general_statistique {
+  border: 1px solid black;
+  width: 100%;
+  height: 100%;
+}
+
+.statistique_card {
+  width: 400px;
+  height: 100%;
+
+}
+
 /* profile */
 
 .profile_form {

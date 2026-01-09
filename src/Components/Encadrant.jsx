@@ -326,7 +326,7 @@ const demissionnerEncadrant = async (encadrantId) => {
 )}
 
 
-        {FetchEncadrant && (
+        {/* {FetchEncadrant && (
   <div className="profile_card_1">
     
     <div className="profile_form_group"> 
@@ -403,7 +403,7 @@ const demissionnerEncadrant = async (encadrantId) => {
 
     <button className="delete profile_actions_btn">demisionner encadrant</button>
   </div>
-)}
+)} */}
       </div>
     </div>
   );
