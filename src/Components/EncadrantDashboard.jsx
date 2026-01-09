@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../Styles/EncadrantDashboard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
-import Logo1 from "../assets/Logo1.svg"
+import Logo1 from "../assets/Logo1.svg";
+import Logout from "../assets/Logout.svg";
 import { User } from "lucide-react";
 
 const EncadrantDashboard = () => {
@@ -441,13 +442,14 @@ useEffect(() => {
                 className="EncadrantDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
               >
-                affectation
+                <img  src="https://img.icons8.com/external-outline-juicy-fish/60/external-work-corruption-outline-outline-juicy-fish.png" alt="external-work-corruption-outline-outline-juicy-fish"  className="UserDashboard_nav_icons"/>
               </li>
               <li
                 className="EncadrantDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_profile")}
               >
-                Profile
+                {/* Profile */}
+                <img  src="https://img.icons8.com/3d-fluency/94/resume.png" className="UserDashboard_nav_icons" alt="resume"/>
               </li>
               {/* <li
                 className="EncadrantDashboard_nav_list"
@@ -455,7 +457,10 @@ useEffect(() => {
               >
                 statistique
               </li> */}
-              <li  className="EncadrantDashboard_nav_list" onClick={handleLogout}>Logout</li>
+              <li  className="EncadrantDashboard_nav_list" onClick={handleLogout}>
+                                <img  src={Logout} className="UserDashboard_nav_icons" alt="resume"/>
+
+              </li>
             </ul>
           </nav>
         </div>

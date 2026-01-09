@@ -110,6 +110,41 @@ const handleRegister = async (e) => {
 };
 
 
+//  const handleRegister = async (e) => {
+//        e.preventDefault();
+
+//     const form = e.target;
+//     const username = form.elements.registerUsername.value.trim();
+//     const email = form.elements.registerEmail.value.trim();
+//     const phonenumber = form.elements.registerPhoneNumber.value.trim();
+//     const password = form.elements.registerPassword.value;
+//     const role = form.elements.role.value;
+
+//     // Validation check
+//     if (!username || !email || !password || !phonenumber || !role) {
+//       return alert('All fields are required!');
+//     }
+
+//     try {
+//       const res = await fetch('http://localhost:3000/register', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ username, email, password, telephone: phonenumber, role })
+//       });
+
+//       const data = await res.json();
+
+//       if (data.success) {
+//         alert('Registration successful! Please check your email to verify your account.');
+//       } else {
+//         alert(data.message || 'Unknown error during registration.');
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       alert('Something went wrong during registration. Please try again.');
+//     }
+//   };
+
 
     return (
         <div className="GETstarted_wrapper">
@@ -147,6 +182,11 @@ const handleRegister = async (e) => {
 
                             <button type="button" className="btn-login-access" onClick={handleLogin}>Login</button>
                         </form>
+                                        <p className="role-choice-NB">
+                                            <Link to="/recoverPassword" className="roles-about-link">
+                                                frogot your password ? recover here !
+                                            </Link>
+                                        </p>
                     </div>
                 )}
 

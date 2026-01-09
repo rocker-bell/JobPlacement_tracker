@@ -1,56 +1,52 @@
 <?php
 
-    $reviews= 'CREATE TABLE reviews (
-        review_id varchar(36) uuid,
-        reviewer_id varchar(36),
-        offre_id varchar(36),
-        typece varchar(20) enum('Like', 'Dislike', 'none')
-        created_at
-        updated_at
-        reviewer_id foreign key references utilisateurs(user_id)
-        offre_id foreing key references offre_stages(offre_id)
+-- 1️⃣ Reviews table
+CREATE TABLE IF NOT EXISTS reviews (
+    review_id CHAR(36) NOT NULL PRIMARY KEY,
+    reviewer_id CHAR(36) NOT NULL,
+    offre_id CHAR(36) NOT NULL,
+    typece ENUM('Like', 'Dislike', 'none') DEFAULT 'none',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (reviewer_id) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (offre_id) REFERENCES offres_stage(offre_id) ON DELETE CASCADE
+);
 
-    )';
+-- 2️⃣ Bookmark table
+CREATE TABLE IF NOT EXISTS bookmark (
+    bookmark_id CHAR(36) NOT NULL PRIMARY KEY,
+    bookmark_user CHAR(36) NOT NULL,
+    offre_id CHAR(36) NOT NULL,
+    type ENUM('Bookmark', 'none') DEFAULT 'none',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (bookmark_user) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (offre_id) REFERENCES offres_stage(offre_id) ON DELETE CASCADE
+);
 
-    $BookMark = 'CREATE TABLE bookmark (
-        bookmark_id  varchar(36) uuid,
-        bookmark_user varchar(36),
-        offre_id  varchar(36).
-        type varchar(20)  enum('Bookmark', 'none')
-        created_at
-        updated_at
-        bookmark_id foreign key references utilisateurs(user_id)
-        offre_id foreing key references offre_stages(offre_id)
-    )';
+-- 3️⃣ Messages table
+CREATE TABLE IF NOT EXISTS messages (
+    message_id CHAR(36) NOT NULL PRIMARY KEY,
+    message_content VARCHAR(300) NOT NULL,
+    sender_id CHAR(36) NOT NULL,
+    receiver_id CHAR(36) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE
+);
 
-
-    $messages =  'CREATE TABLE messages (
-        message_id varchar(36) uuid,
-        message_content varchar(300),
-        sender_id varchar(36).
-        receiver_id varchar(36),
-        created_at
-        updated_at
-        sender_id foreign key references utilisateurs(user_id),
-        receiver_id foreign key references utilisateurs(user_id)
-    )'
-
-    $notification = 'CREATE TABLE notifications (
-        notifications_id varchar(36) uuid,
-        notification_content varchar(36)
-        sender_id varchar(36)
-        receiver_id varchar(36)
-        created_at date default currdate()
-        updated_at
-        sender_id  foreign key references message(sender_id)
-        notification_content foreign key references message(message_id)
-        sender_id  foreign key references message(sender_id)
-        receiver foreign key references message(receiver_id)
-    )'
-
-
-
-
+-- 4️⃣ Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id CHAR(36) NOT NULL PRIMARY KEY,
+    notification_content VARCHAR(255) NOT NULL,
+    sender_id CHAR(36) NOT NULL,
+    receiver_id CHAR(36) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES messages(sender_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES messages(receiver_id) ON DELETE CASCADE
+);
 
 
 ?>

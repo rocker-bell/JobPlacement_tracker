@@ -11,6 +11,7 @@ import Rapports from "./Components/Rapports.jsx";
 import Postuler from "./Components/Postuler.jsx";
 // import Entreprise_dashboard  from "./Components/Empty.jsx";
 import Rapport_encadrant from "./Components/Rapport_encadrant.jsx";
+import Recover_Account from "./Components/RecoverAccount.jsx";
 const App = () => {
   return (
     <>

@@ -10,6 +10,7 @@ import Logo1 from "../assets/Logo1.svg";
 import Profile from "../assets/profile.png";
 import Logout from "../assets/Logout.svg"
 import {MessageSquare, Bell} from "lucide-react";
+import Ajouter from "../assets/Ajouter.gif"
 
 const Entreprise_dashboard = () => {
   // State for active slider and mobile screen size
@@ -623,19 +624,20 @@ useEffect(() => {
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_addStage")}
               >
-                Ajouter Stage
+                <img src={Ajouter} alt=""  className="EntrepriseDashboard_nav_icons" />
               </li>
               <li
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
               >
-                Stages
+                <img className="EntrepriseDashboard_nav_icons" src="https://img.icons8.com/wired/64/lawyer.png" alt="lawyer"/>
               </li>
               <li
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_profile")}
               >
-                <img src={Profile} alt="" className="EntrepriseDashboard_nav_icons"/>
+                {/* <img src={Profile} alt="" className="EntrepriseDashboard_nav_icons"/> */}
+                <img  src="https://img.icons8.com/3d-fluency/94/resume.png" className="UserDashboard_nav_icons" alt="resume"/>
               </li>
               <li
                 className="EntrepiriseDashboard_nav_list"
@@ -681,8 +683,8 @@ useEffect(() => {
 </div> */}
           <div className="general_statistique">
   <div className="statistique_card">
-    <h3>Encadrants</h3>
-    <p>{dashboardStats.encadrants_count}</p>
+    <h3 className="statisque_card_title">Encadrants</h3>
+    <p className="statistique_card_mesure">{dashboardStats.encadrants_count}</p>
   </div>
   <div className="statistique_card">
     <h3>Active Stages</h3>

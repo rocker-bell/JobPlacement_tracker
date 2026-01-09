@@ -477,13 +477,25 @@ const [dashboardStats, setDashboardStats] = useState({
                 className="UserJobBoard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
               >
-                Candidature
+                
+                <img  className="UserJobBoard_nav_icons" src="https://img.icons8.com/ios-filled/50/business.png" alt="business"/>
               </li>
+
+{/*               
+              <li
+                className="UserJobBoard_nav_list"
+                onClick={() => SliderContentHandler("ED_CB_CV")}
+              >
+                <img className="UserJobBoard_nav_icons"  src="https://img.icons8.com/pulsar-gradient/48/parse-from-clipboard.png" alt="parse-from-clipboard"/>
+              </li> */}
+
+              
               <li
                 className="UserJobBoard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_profile")}
               >
-                <img src={Profile} alt="" className="UserDashboard_nav_icons"/>
+                {/* <img src={Profile} alt="" className="UserDashboard_nav_icons"/> */}
+                <img  src="https://img.icons8.com/3d-fluency/94/resume.png" className="UserDashboard_nav_icons" alt="resume"/>
               </li>
               {/* <li
                 className="UserJobBoard_nav_list"

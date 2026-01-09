@@ -156,7 +156,12 @@ nav {
 
 /* Container for all stats cards */
 .general_statistique {
+  width: 100%;
+  height: auto;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 1rem;           /* space between cards */
   flex-wrap: wrap;      /* wrap on smaller screens */
   margin-top: 1rem;
@@ -164,15 +169,37 @@ nav {
 
 /* Individual statistic card */
 .statistique_card {
-  flex: 1 1 200px;
-                      /* responsive width */
-  background-color: #ffffff;           /* white card */
+    display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 150px;
+  min-height: 300px;
+                    
+
+    background: linear-gradient(to top, 
+    #f7f9ff,  
+    #bfd3ff,  
+    #336cf6); 
+
+
   border-radius: 8px;                  /* rounded corners */
   box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* subtle shadow */
   padding: 1rem;                       /* spacing inside card */
   text-align: center;                   /* center text */
   transition: transform 0.2s ease, box-shadow 0.2s ease; /* smooth hover effect */
   cursor: default;
+  cursor: pointer;
+}
+
+.statisque_card_title, .statistique_card_mesure {
+  font-size: larger;
+  font-family: sans-serif;
+  
+}
+
+.statistique_card_mesure {
+  color: green;
 }
 
 /* Hover effect: lift card slightly */
