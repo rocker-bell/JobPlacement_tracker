@@ -71,6 +71,39 @@ const [submittedQuery, setSubmittedQuery] = useState({
 
 
 
+// async function FetchSearchedStage(submittedQuery) {
+//   try {
+//     const response = await fetch(`${BASE_URL}/FetchStagesByJObboardQuery.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: new URLSearchParams({
+//         job: submittedQuery.job,
+//         location: submittedQuery.location,
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log(data);
+
+//     if (data.success) {
+//       setFetchedStages(data.query_data);
+//  if (data.query_data.length > 0) {
+//     setSelectedJob(data.query_data);
+//   } } else {
+//       console.error("API error:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
 async function FetchSearchedStage(submittedQuery) {
   try {
     const response = await fetch(`${BASE_URL}/FetchStagesByJObboardQuery.php`, {
@@ -94,15 +127,22 @@ async function FetchSearchedStage(submittedQuery) {
 
     if (data.success) {
       setFetchedStages(data.query_data);
- if (data.query_data.length > 0) {
-    setSelectedJob(data.query_data);
-  } } else {
+
+      // ✅ Select the first job automatically
+      if (data.query_data.length > 0) {
+        setSelectedJob(data.query_data[0]);
+      } else {
+        setSelectedJob(null);
+      }
+
+    } else {
       console.error("API error:", data.message);
     }
   } catch (err) {
     console.error("Fetch error:", err);
   }
 }
+
 
 
 
@@ -116,6 +156,7 @@ const jobData = FetchedStages.map((stage) => ({
   stage_categories: stage.stage_categorie,
   posted: stage.created_at,
   description: stage.description,
+  competences_requises: stage.competences_requises
 }));
 
 const handleapply = (id) => {
@@ -311,6 +352,10 @@ onClick={() => {
       <h3 className="section-title">Description complète</h3>
       <div className="job-description-text">
         {selectedJob.description}
+      </div>
+       <h3 className="section-title">Competence requises</h3>
+      <div className="job-description-text">
+        {selectedJob.competences_requises}
       </div>
       <button className='selected_job_actions_group'>
                <Bookmark size={20} color="blue" strokeWidth={1.5}  onClick={handleBookmark} />
