@@ -584,9 +584,13 @@
 
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import "../Styles/Rapport_encadrant.css"
+import { ArrowLeft } from "lucide-react";
+
 
 const Rapport_encadrant = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
 
   /* ===================== CANDIDATURE STATE (UNCHANGED) ===================== */
@@ -731,11 +735,17 @@ const Rapport_encadrant = () => {
 
     alert(data.message);
   };
+  const handlereturntoencadrantDash = () => {
+    navigate("/jobboard_Encadrant", {
+  state: { activeSlider: "ED_CB_Stages" }
+});
+
+  } 
 
   /* ===================== UI ===================== */
   return (
     <div className="rapport_encadrant_wrapper">
-      <h2>Détails de la candidature</h2>
+      {/* <h2>Détails de la candidature</h2> */}
 
       {/* <form onSubmit={handleCandidatureSubmit}>
         <input readOnly value={candidatureData.candidature_id} />
@@ -744,33 +754,34 @@ const Rapport_encadrant = () => {
         <button type="submit">Mettre à jour la candidature</button>
       </form> */}
 
-             <h2>Détails de la candidature</h2>
-     <form onSubmit={handleCandidatureSubmit}>
-       <div className="form-group">
-         <label>Candidature ID</label>
-        <input type="text" name="candidature_id" value={candidatureData.candidature_id} readOnly />
+        <ArrowLeft onClick={handlereturntoencadrantDash} className="arrowback-encadrant"/>
+     <form className="form-rapport-encadrant" onSubmit={handleCandidatureSubmit}>
+       <h2>Détails de la candidature</h2>
+       <div className="form-group-rapportencadrant">
+         <label className="form-Rapportencadrant-label">Candidature ID</label>
+        <input type="text" name="candidature_id" className="form-Rapportencadrant-control" value={candidatureData.candidature_id} readOnly />
         </div>
-        <div className="form-group">
-         <label>Stagiaire ID</label>
-         <input type="text" name="stagiaire_id" value={candidatureData.stagiaire_id} onChange={handleCandidatureChange} />        </div>
-        <div className="form-group">
-          <label>Offre ID</label>
-          <input type="text" name="offre_id" value={candidatureData.offre_id} onChange={handleCandidatureChange} />
+        <div className="form-group-rapportencadrant">
+         <label className="form-Rapportencadrant-label">Stagiaire ID</label>
+         <input className="form-Rapportencadrant-control" type="text" name="stagiaire_id" value={candidatureData.stagiaire_id} onChange={handleCandidatureChange} />        </div>
+        <div className="form-group-rapportencadrant">
+          <label className="form-Rapportencadrant-label">Offre ID</label>
+          <input className="form-Rapportencadrant-control" type="text" name="offre_id" value={candidatureData.offre_id} onChange={handleCandidatureChange} />
       </div>
-        <div className="form-group">
-         <label>Statut</label>
-         <select name="statut" value={candidatureData.statut} onChange={handleCandidatureChange}>
+        <div className="form-group-rapportencadrant">
+         <label className="form-Rapportencadrant-label">Statut</label>
+         <select className="form-Rapportencadrant-control" name="statut" value={candidatureData.statut} onChange={handleCandidatureChange}>
             <option value="En_attente">En attente</option>
             <option value="Acceptee">Acceptée</option>
             <option value="Refusee">Refusée</option>
           </select>
         </div>
-         <div className="form-group">
-           <label>Message de motivation</label>
-           <textarea name="message_motivation" value={candidatureData.message_motivation || ""} onChange={handleCandidatureChange}></textarea>
+         <div className="form-group-rapportencadrant">
+           <label className="form-Rapportencadrant-label">Message de motivation</label>
+           <textarea className="form-Rapportencadrant-control" name="message_motivation" value={candidatureData.message_motivation || ""} onChange={handleCandidatureChange}></textarea>
         </div>
-         <div className="form-group">
-           <label>CV Path</label>
+         <div className="form-group-rapportencadrant">
+           <label className="form-Rapportencadrant-label">CV Path</label>
            {candidatureData.cv_path ? (
               <a 
                 href={`http://localhost:8000/${candidatureData.cv_path}`} 
@@ -782,18 +793,18 @@ const Rapport_encadrant = () => {
             ) : "Aucun"}
 
         </div>         
-        <div className="form-group">
-         <label>Créée le</label>
-           <input type="text" name="created_at" value={candidatureData.created_at} readOnly />
+        <div className="form-group-rapportencadrant">
+         <label className="form-Rapportencadrant-label">Créée le</label>
+           <input className="form-Rapportencadrant-control" type="text" name="created_at" value={candidatureData.created_at} readOnly />
         </div>
-       <div className="form-group">
-         <label>Mise à jour</label>
-          <input type="text" name="updated_at" value={candidatureData.updated_at} readOnly />
+       <div className="form-group-rapportencadrant">
+         <label className="form-Rapportencadrant-label">Mise à jour</label>
+          <input className="form-Rapportencadrant-control" type="text" name="updated_at" value={candidatureData.updated_at} readOnly />
        </div>
-        <button type="submit">Mettre à jour la candidature</button>
+        <button type="submit" className="btn-encadrant-rapport-mettreAjour">Mettre à jour la candidature</button>
        </form>
 
-      <h2>Évaluation</h2>
+      {/* <h2>Évaluation</h2> */}
 
       {/* <form onSubmit={handleEvaluationSubmit}>
         <input readOnly value={evaluationData.evaluation_id || ""} />
@@ -811,34 +822,37 @@ const Rapport_encadrant = () => {
         <button type="submit">Enregistrer l’évaluation</button>
       </form> */}
 
+        
+
+<form className="form-rapport-encadrant" onSubmit={handleEvaluationSubmit}>
         <h2>Évaluation</h2>
-
-<form onSubmit={handleEvaluationSubmit}>
-
-  <div className="form-group">
-    <label>Évaluation ID</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Évaluation ID</label>
     <input
       type="text"
       name="evaluation_id"
       value={evaluationData.evaluation_id || ""}
       readOnly
+      className="form-Rapportencadrant-control"
     />
   </div>
 
-  <div className="form-group">
-    <label>Candidature ID</label>
+  <div className="form-group-rapportencadrant">
+    <label  className="form-Rapportencadrant-label">Candidature ID</label>
     <input
       type="text"
       name="candidature_id"
       value={evaluationData.candidature_id}
       readOnly
+      className="form-Rapportencadrant-control"
     />
   </div>
 
   {/* ✅ OFFRE ID INCLUDED (IMPORTANT) */}
-  <div className="form-group">
-    <label>Offre ID</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Offre ID</label>
     <input
+    className="form-Rapportencadrant-control"
       type="text"
       name="offre_id"
       value={evaluationData.offre_id}
@@ -846,9 +860,10 @@ const Rapport_encadrant = () => {
     />
   </div>
 
-  <div className="form-group">
-    <label>Note Entreprise</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Note Entreprise</label>
     <input
+      className="form-Rapportencadrant-control"
       type="number"
       step="0.01"
       name="note_entreprise"
@@ -857,18 +872,20 @@ const Rapport_encadrant = () => {
     />
   </div>
 
-  <div className="form-group">
-    <label>Commentaire Entreprise</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Commentaire Entreprise</label>
     <textarea
+       className="form-Rapportencadrant-control"
       name="commentaire_entreprise"
       value={evaluationData.commentaire_entreprise || ""}
       onChange={handleEvaluationChange}
     />
   </div>
 
-  <div className="form-group">
-    <label>Note Pédagogique</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Note Pédagogique</label>
     <input
+      className="form-Rapportencadrant-control"
       type="number"
       step="0.01"
       name="note_pedagogique"
@@ -877,18 +894,20 @@ const Rapport_encadrant = () => {
     />
   </div>
 
-  <div className="form-group">
-    <label>Commentaire Pédagogique</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Commentaire Pédagogique</label>
     <textarea
+      className="form-Rapportencadrant-control"
       name="commentaire_pedagogique"
       value={evaluationData.commentaire_pedagogique || ""}
       onChange={handleEvaluationChange}
     />
   </div>
 
-  <div className="form-group">
-    <label>Encadrant Pédagogique</label>
+  <div className="form-group-rapportencadrant">
+    <label className="form-Rapportencadrant-label">Encadrant Pédagogique</label>
     <input
+      className="form-Rapportencadrant-control"
       type="text"
       name="encadrant_pedagogique"
       value={evaluationData.encadrant_pedagogique || ""}
@@ -896,9 +915,10 @@ const Rapport_encadrant = () => {
     />
   </div>
 
-  <div className="form-group">
-    <label>Note Finale</label>
+  <div className="form-group-rapportencadrant">
+    <label  className="form-Rapportencadrant-label">Note Finale</label>
     <input
+      className="form-Rapportencadrant-control"
       type="number"
       step="0.01"
       name="note_finale"
@@ -907,7 +927,7 @@ const Rapport_encadrant = () => {
     />
   </div>
 
-  <button type="submit">Enregistrer l'évaluation</button>
+  <button type="submit" className="btn-encadrant-rapport-mettreAjour">Enregistrer l'évaluation</button>
 
 </form>
 

@@ -57,6 +57,9 @@ try {
             'user_id' => $user['user_id'], // This is your UUID
             'email' => $user['email'],
             'role' => $user['role'],
+            'account_status' => $user['account_status'],
+            'password_hash' => $user['password_hash'],
+            'verification_token' => $user['verification_token'],
             'created_at' => $user['created_at']
         ]
     ]);

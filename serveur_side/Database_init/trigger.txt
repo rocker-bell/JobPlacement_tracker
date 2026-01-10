@@ -271,3 +271,23 @@ DELIMITER ;
 
 
 rapport - modification profile - admin - entreprise -update - notification
+
+
+
+
+
+CREATE TABLE Utilisateurs (
+    user_id CHAR(36) PRIMARY KEY,        
+    email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    telephone VARCHAR(20),
+    role ENUM('Stagiaire', 'Entreprise', 'Encadrant', 'Admin') NOT NULL DEFAULT 'Stagiaire',
+    account_status ENUM('Pending', 'Active', 'Verified', 'Blocked') NOT NULL DEFAULT 'Pending',
+    verification_token CHAR(64) UNIQUE,  -- token for email verification
+    token_created_at DATETIME,           -- when the token was generated
+    token_expires_at DATETIME,           -- token expiry (optional)
+    token_used TINYINT(1) DEFAULT 0,     -- 0 = not used, 1 = used
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

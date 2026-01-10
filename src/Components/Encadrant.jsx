@@ -152,7 +152,11 @@ const affecterEncadrant = async (encadrantId) => {
   if (!encadrantId || !stageId) {
     return alert("Encadrant ID or Stage ID is missing");
   }
-
+  const encadrant_data = {
+    encadrantId,
+    stageId
+  }
+  console.log(encadrant_data)
   try {
     const response = await fetch(`${BASE_URL}/AffecterEncadrant.php`, {
       method: "POST",

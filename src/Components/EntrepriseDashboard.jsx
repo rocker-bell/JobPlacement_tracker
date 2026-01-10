@@ -20,6 +20,7 @@ const Entreprise_dashboard = () => {
    const [enterpriseId, setenterpriseId] = useState(localStorage.getItem("user_id"));
   const [editingStageId, setEditingStageId] = useState(null);
 const [editedStage, setEditedStage] = useState({});
+const [logoFile, setLogoFile] = useState(null);
 
 
  
@@ -43,7 +44,8 @@ const [editedStage, setEditedStage] = useState({});
   prenom: "",
   agence_id: "",
   nom_d_agence: "",
-  departement: ""
+  departement: "",
+  
 }
   );
 
@@ -103,7 +105,7 @@ const totalPages = Math.ceil(stages.length / stagesPerPage);
     nom_entreprise: "",
     description: "",
     adresse: "",
-    // logo_path: "",
+    logo_path: "",
     site_web: "",
   });
 
@@ -183,14 +185,54 @@ const handleSaveStage = async (stageId, e) => {
 
 
 
+// async function InsertEnterprise() {
+//   try {
+//     const response = await fetch(`${BASE_URL}/update_entreprise.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: new URLSearchParams(formData) 
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log("Server response:", data.data);
+    
+
+//     if (data.success) {
+//       alert("Entreprise added successfully!");
+//     } else {
+//       alert("Error: " + data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
 async function InsertEnterprise() {
   try {
+    // Create FormData object
+    const data = new FormData();
+    data.append("entreprise_id", formData.entreprise_id);
+    data.append("nom_entreprise", formData.nom_entreprise);
+    data.append("description", formData.description);
+    data.append("adresse", formData.adresse);
+    data.append("site_web", formData.site_web);
+
+    // Only append logo if a new file is selected
+    if (logoFile) {
+      data.append("logo", logoFile);
+    }
+
     const response = await fetch(`${BASE_URL}/update_entreprise.php`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(formData) // <-- encode formData
+      body: data, // <-- send FormData directly
     });
 
     if (!response.ok) {
@@ -198,14 +240,17 @@ async function InsertEnterprise() {
       return;
     }
 
-    const data = await response.json();
-    console.log("Server response:", data.data);
-    
+    const result = await response.json();
+    console.log("Server response:", result);
 
-    if (data.success) {
-      alert("Entreprise added successfully!");
+    if (result.success) {
+      alert("Entreprise updated successfully!");
+      // Optionally, update the UI immediately
+      if (result.logo_path) {
+        setFetchEntreprise(prev => ({ ...prev, logo_path: result.logo_path }));
+      }
     } else {
-      alert("Error: " + data.message);
+      alert("Error: " + result.message);
     }
   } catch (err) {
     console.error("Fetch error:", err);
@@ -338,7 +383,7 @@ useEffect(() => {
   e.preventDefault();
 
 
-   if (Fetchuser.account_status !== "Active") {
+   if (Fetchuser.account_status !== "Verified") {
     alert("Please complete your account activation to submit a stage.");
     SliderContentHandler("ED_CB_profile"); // redirect to profile
     return; // stop further execution
@@ -598,6 +643,9 @@ useEffect(() => {
 
 
  
+  const modifierPassword = () => {
+    navigate('/AccountRecovery')
+  }
 
 
 
@@ -637,7 +685,7 @@ useEffect(() => {
                 onClick={() => SliderContentHandler("ED_CB_profile")}
               >
                 {/* <img src={Profile} alt="" className="EntrepriseDashboard_nav_icons"/> */}
-                <img  src="https://img.icons8.com/3d-fluency/94/resume.png" className="UserDashboard_nav_icons" alt="resume"/>
+                <img  src="https://img.icons8.com/3d-fluency/94/resume.png" className="EntrepriseDashboard_nav_icons" alt="resume"/>
               </li>
               <li
                 className="EntrepiriseDashboard_nav_list"
@@ -1047,6 +1095,121 @@ useEffect(() => {
                   >
                     Content 4: Profile
                     <div>
+
+                       {fetchEntreprise && (
+  <>
+    <div className="profile_form_group">
+  <label className="profile_form_label">Logo:</label>
+
+  {/* Show existing logo */}
+  {fetchEntreprise.logo_path && !logoFile && (
+    <div className="existing-file">
+      <img
+        src={`${BASE_URL}/${fetchEntreprise.logo_path}`}
+        alt="Entreprise Logo"
+        width="120"
+        style={{ borderRadius: "8px" }}
+      />
+    </div>
+  )}
+
+  {/* File input for new logo */}
+  <input
+    type="file"
+    accept="image/*"
+    className="profile_form_control"
+    onChange={(e) => setLogoFile(e.target.files[0])} // store the new file
+  />
+
+  {/* Show selected file name */}
+  {logoFile && <p>Selected file: {logoFile.name}</p>}
+</div>
+    <div className="profile_form_group">
+      <label className="profile_form_label">Entreprise ID:</label>
+      <input
+        type="text"
+        name="entreprise_id"
+        value={formData.entreprise_id}
+        readOnly
+        placeholder={`${UserId}`}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom Entreprise:</label>
+      <input
+        type="text"
+        name="nom_entreprise"
+        value={formData.nom_entreprise}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Description:</label>
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Adresse:</label>
+      <input
+        type="text"
+        name="adresse"
+        value={formData.adresse}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Site Web:</label>
+      <input
+        type="text"
+        name="site_web"
+        value={formData.site_web}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    {/* Company Logo */}
+    
+
+
+    {/* Company Document (Optional) */}
+    {/* <div className="profile_form_group">
+      <label className="profile_form_label">Document:</label>
+
+      {fetchEntreprise.document_path && (
+        <div className="existing-file">
+          <a
+            href={`${BASE_URL}/{fetchEntreprise.document_path}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📄 View current document
+          </a>
+        </div>
+      )}
+
+      <input
+        type="file"
+        accept=".pdf,.doc,.docx"
+        className="profile_form_control"
+        onChange={(e) => setDocumentFile(e.target.files[0])} // store the new document
+      />
+
+      {documentFile && <p>Selected file: {documentFile.name}</p>}
+    </div> */}
+  </>
+)}
                       
               {Fetchuser ? (
           <form onSubmit={handleSubmit} className="profile_form">
@@ -1071,6 +1234,16 @@ useEffect(() => {
                   className="profile_form_control"
                 />
               </div>
+
+              <div className="profile_form_group form-group-password">
+    <label className="profile_form_label">password:</label>
+    <input 
+      className="profile_form_control"  
+      type="password" 
+      value={Fetchuser.password} 
+    />
+    <img className="EntrepriseDashboard_nav_icons nav_icon_password" src="https://img.icons8.com/ios-glyphs/30/create-new.png" alt="create-new" onClick={modifierPassword}/>
+  </div>
 
               <div className="profile_form_group">
                 <label className="profile_form_label">Telephone:</label>
@@ -1135,7 +1308,7 @@ useEffect(() => {
 
             {/* Editable Entreprise Info */}
             
-            {fetchEntreprise ? (
+            {/* {fetchEntreprise ? (
               <>
                 <div className="profile_form_group">
                   <label className="profile_form_label">Entreprise ID:</label>
@@ -1192,7 +1365,10 @@ useEffect(() => {
                   />
                 </div>
               </>
-            ) : null}
+            ) : null} */}
+
+           
+
 
             <button type="submit" className="profile_form_submit_entreprise">Submit account data</button>
             {/* <button type="update" className="profile_form_submit_entreprise">update</button> */}

@@ -294,6 +294,10 @@ const handleChange = (e) => {
 
 
 
+
+
+
+
 async function updateStagiairedata(id) {
   try {
     const formData = new FormData();
@@ -434,6 +438,10 @@ const [dashboardStats, setDashboardStats] = useState({
     fetchStats();
   }, [UserId]);
 
+
+  const modifierPassword = () => {
+    navigate('/AccountRecovery')
+  }
 
   return (
     <div className="UserJobBoard_wrapper">
@@ -1458,6 +1466,107 @@ const [dashboardStats, setDashboardStats] = useState({
             }`}
           >
             Content 4: Profile
+
+            {FetchStagiaire && (
+  <div className="profile_card_1">
+
+    {/* NOM */}
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchStagiaire.nom || ""}
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    {/* PRENOM */}
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchStagiaire.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    {/* CV */}
+    <div className="profile_form_group">
+      <label className="profile_form_label">CV:</label>
+
+      {FetchStagiaire.cv_path && (
+        <div className="existing-file">
+          <a
+            href={`${BASE_URL}/${FetchStagiaire.cv_path}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📄 View current CV
+          </a>
+        </div>
+      )}
+
+      <input
+        type="file"
+        accept=".pdf,.doc,.docx"
+        className="profile_form_control"
+        onChange={(e) => setCvFile(e.target.files[0])}
+      />
+
+      {cvFile && <p>Selected CV: {cvFile.name}</p>}
+    </div>
+
+    {/* PHOTO */}
+    <div className="profile_form_group">
+      <label className="profile_form_label">Photo:</label>
+
+      {FetchStagiaire.photo_path && (
+        <div className="existing-photo">
+          <img
+            src={`${BASE_URL}/${FetchStagiaire.photo_path}`}
+            alt="Profile"
+            width="120"
+            style={{ borderRadius: "8px" }}
+          />
+        </div>
+      )}
+
+      <input
+        type="file"
+        accept="image/*"
+        className="profile_form_control"
+        onChange={(e) => setPhotoFile(e.target.files[0])}
+      />
+
+      {photoFile && <p>Selected photo: {photoFile.name}</p>}
+    </div>
+
+    {/* ACTIONS */}
+    <button
+      className="submit profile_actions_btn"
+      onClick={() => updateStagiairedata(UserId)}
+    >
+      Update stagiaire data
+    </button>
+
+    <button
+      type="button"
+      className="delete_profile_actions_btn"
+      onClick={handleDelete}
+    >
+      Delete Account
+    </button>
+  </div>
+)}
+
            {Fetchuser && (
   // <div className="profile_card">
   //   <strong>User ID:</strong> {Fetchuser.user_id} <br />
@@ -1576,6 +1685,14 @@ const [dashboardStats, setDashboardStats] = useState({
       value={Fetchuser.email} 
     />
   </div>
+  <div className="profile_form_group">
+    <label className="profile_form_label">password:</label>
+    <input 
+      className="profile_form_control" 
+      type="password" 
+      value={Fetchuser.password} 
+    />
+  </div>
 
   <div className="profile_form_group">
     <label className="profile_form_label">Telephone:</label>
@@ -1636,7 +1753,7 @@ const [dashboardStats, setDashboardStats] = useState({
   </div>
 
   <div className="Candidatprofile_btn_actions">
-    <button className="modifier profile_actions_btn">modifier</button>
+    <button className="modifier profile_actions_btn" onClick={modifierPassword}>modifier</button>
   </div>
 </div>
 
@@ -1646,7 +1763,7 @@ const [dashboardStats, setDashboardStats] = useState({
 
      
 
-{FetchStagiaire && (
+{/* {FetchStagiaire && (
   <div className="profile_card_1">
     <div className="profile_form_group"> 
       <label className="profile_form_label">Nom:</label>
@@ -1703,7 +1820,9 @@ const [dashboardStats, setDashboardStats] = useState({
   Delete Account
 </button>
   </div>
-)}
+)} */}
+
+
 
 
 

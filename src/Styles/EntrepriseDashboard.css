@@ -522,6 +522,15 @@ button:hover {
   gap: 5px;
 }
 
+.form-group-password {
+  border: 1px solid black;
+  margin-left: 45px;
+}
+
+.nav_icon_password {
+  cursor: pointer;
+}
+
 .profile_form_submit_entreprise {
   min-width: 100px;
   background-color: blue;

@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../Styles/EncadrantDashboard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
 import Logo1 from "../assets/Logo1.svg";
 import Logout from "../assets/Logout.svg";
-import { User } from "lucide-react";
+import { User, MessageSquare, Bell } from "lucide-react";
 
 const EncadrantDashboard = () => {
+  const location = useLocation()
   // State for active slider and mobile screen size
   const [Fetchuser, setFetchuser] = useState(null);
   const [cvFile, setCvFile] = useState(null);
@@ -22,7 +23,7 @@ const [photoFile, setPhotoFile] = useState(null);
 }
   );
   const [UserId, setUserId] = useState(null);
-  const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
+  const [ActiveSlider, setActiveSlider] = useState( location.state?.activeSlider || "ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
   const [menuActive, setmenuActive] = useState(false);
@@ -414,6 +415,9 @@ useEffect(() => {
 }, [UserId]);
 
 
+  const modifierPassword = () => {
+    navigate('/AccountRecovery')
+  }
 
 
 // affectatiion et candidature
@@ -438,6 +442,12 @@ useEffect(() => {
               >
                 Ajouter Stage
               </li> */}
+              <li className="EncadrantDashboard_nav_list">
+              <MessageSquare size={24} className="EncadrantDashboard_nav_icons" />
+            
+            </li>
+            <li className="EncadrantDashboard_nav_list"><Bell size={24} className="EncadrantDashboard_nav_icons" /></li>
+              
               <li
                 className="EncadrantDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
@@ -755,6 +765,14 @@ useEffect(() => {
                     readOnly
                   />
                 </div>
+                <div className="profile_form_group">
+                <label className="profile_form_label">password:</label>
+                <input 
+                  className="profile_form_control" 
+                  type="password" 
+                  value={Fetchuser.hashed_password} 
+                />
+              </div>
 
                 <div className="profile_form_group">
                   <label className="profile_form_label">Updated At:</label>
@@ -776,7 +794,7 @@ useEffect(() => {
                 </div>
 
                 <div className="Candidatprofile_btn_actions">
-                  <button className="modifier profile_actions_btn">modifier</button>
+                  <button className="modifier profile_actions_btn" onClick={modifierPassword}>modifier</button>
                 </div>
               </div>
 
@@ -891,6 +909,8 @@ useEffect(() => {
         className="profile_form_control"
       />
     </div>
+
+    
 
     <div className="profile_form_group">
       <label className="profile_form_label">Agence ID:</label>

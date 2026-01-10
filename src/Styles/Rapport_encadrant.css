@@ -1,0 +1,56 @@
+.rapport_encadrant_wrapper {
+    border: 1px solid black;
+    padding: 10px;
+    min-width: 500px;
+    min-height: 700px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 35px;
+}
+
+.form-rapport-encadrant {
+    border: 1px solid black;
+      display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group-rapportencadrant {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+
+}
+
+.form-Rapportencadrant-label {
+    width: 150px;
+    height: 45px;
+    border: 1px solid ;
+    text-align: center;
+    display: flex;
+    align-items: center;
+
+}
+
+.form-Rapportencadrant-control {
+    min-width: 300px;
+    max-width: 300px;
+    min-height: 45px;
+    max-height: 100px;
+    text-align: center;
+
+}
+.arrowback-encadrant {
+    cursor: pointer;
+    color: green;
+}
+
+
+.btn-encadrant-rapport-mettreAjour {
+    background-color: blue;
+}

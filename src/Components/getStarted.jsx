@@ -4,6 +4,8 @@ import "../Styles/GetStarted.css";
 
 const GetStarted = () => {
   const location = useLocation()
+   const [verifyemailmsg, setverifyemailmsg] = useState(null);
+   const [loginError, setloginError] = useState(null);
     const [active, setActive] = useState(
          location.state?.active || "login"
     );
@@ -14,101 +16,189 @@ const GetStarted = () => {
    
 
 
-const handleLogin = async () => {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+// const handleLogin = async () => {
 
-  if (!username || !password) return alert("Please fill in all fields");
 
-  try {
-    const res = await fetch("http://localhost:8000/handle_login.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+//   const username = document.getElementById("username").value;
+//   const password = document.getElementById("password").value;
 
-    const data = await res.json();
-    console.log(data);
+//   if (!username || !password) return alert("Please fill in all fields");
 
-    if (!data.success) {
-      return alert(data.message); // Show the error message if login failed
-    }
+//   try {
+//     const res = await fetch("http://localhost:8000/handle_login.php", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ username, password }),
+//     });
 
-    const user_id = data.user_data.user_id; // Get user_id from user_data
-    console.log(user_id);
-    localStorage.setItem("user_id", user_id);
-    console.log(data.user_data);
+//     const data = await res.json();
+//     console.log(data);
 
-    // Redirect based on role inside user_data
-    switch (data.user_data.role) {
-      case "Stagiaire":
-        navigate("/Jobboard_Stagiaire");
-        break;
-      case "Entreprise":
+//     if (!data.success) {
+//       return alert(data.message); // Show the error message if login failed
+//     }
+
+//     const verify_status = data.user_data.account_status;
+    
+//     const user_id = data.user_data.user_id; // Get user_id from user_data
+//     console.log(user_id);
+//     localStorage.setItem("user_id", user_id);
+//     console.log(data.user_data);
+
+//     if(!verify_status === "Verified") {
+//         setverifyemailmsg("check your email verify your account to proceed")
+//     }
+
+//     // Redirect based on role inside user_data
+//     switch (data.user_data.role) {
+//       case "Stagiaire":
+//         navigate("/Jobboard_Stagiaire");
+//         break;
+//       case "Entreprise":
         
-        navigate("/jobboard_Entreprise");
+//         navigate("/jobboard_Entreprise");
 
-        break;
-      case "Encadrant":
-        navigate("/jobboard_Encadrant");
-        break;
-      case "Admin":
-        navigate("/jobboard_admin");
-        break;
-      default:
-        alert("Unknown role");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Login failed. Try again.");
-  }
-};
-
-
+//         break;
+//       case "Encadrant":
+//         navigate("/jobboard_Encadrant");
+//         break;
+//       case "Admin":
+//         navigate("/jobboard_admin");
+//         break;
+//       default:
+//         alert("Unknown role");
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     alert("Login failed. Try again.");
+//   }
+// };
 
 
 
-const handleRegister = async (e) => {
-    e.preventDefault();
 
-    const form = e.target;
-    const username = form.elements.registerUsername.value.trim();
-    const email = form.elements.registerEmail.value.trim();
-    const phonenumber = form.elements.registerPhoneNumber.value.trim();
-    const password = form.elements.registerPassword.value;
-    const role = form.elements.role.value;
 
-    if (!username || !email || !phonenumber || !password || !role) {
-        return alert("All fields are required!");
-    }
+// const handleRegister = async (e) => {
+//     e.preventDefault();
 
-    try {
-        const res = await fetch("http://localhost:8000/handle_register.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, role, registerPhoneNumber: phonenumber })
-        });
+//     const form = e.target;
+//     const username = form.elements.registerUsername.value.trim();
+//     const email = form.elements.registerEmail.value.trim();
+//     const phonenumber = form.elements.registerPhoneNumber.value.trim();
+//     const password = form.elements.registerPassword.value;
+//     const role = form.elements.role.value;
 
-        // Check if response is successful (status code 200-299)
-        if (!res.ok) {
-            throw new Error("Server error: " + res.status);
-        }
+//     if (!username || !email || !phonenumber || !password || !role) {
+//         return alert("All fields are required!");
+//     }
 
-        // Parse JSON response
-        const data = await res.json();
+//     try {
+//         const res = await fetch("http://localhost:8000/handle_register.php", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({ username, email, password, role, registerPhoneNumber: phonenumber })
+//         });
 
-        if (data.success) {
-            alert("Registration successful! Please log in.");
-            setActive("login"); // switch to login tab
-        } else {
-            alert(data.message || "Unknown error during registration.");
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Something went wrong during registration. Please try again.");
-    }
-};
+//         // Check if response is successful (status code 200-299)
+//         if (!res.ok) {
+//             throw new Error("Server error: " + res.status);
+//         }
 
+//         // Parse JSON response
+//         const data = await res.json();
+
+//         if (data.success) {
+//             alert("Registration successful! Please log in.");
+//             setActive("login"); // switch to login tab
+//         } else {
+//             alert(data.message || "Unknown error during registration.");
+//         }
+//     } catch (err) {
+//         console.error(err);
+//         alert("Something went wrong during registration. Please try again.");
+//     }
+// };
+
+const handleActiveVerify = () => {
+    setActive("verify")
+}
+
+// const handleLogin = async () => {
+//   const username = document.getElementById("username").value;
+//   const password = document.getElementById("password").value;
+
+//   if (!username || !password) {
+//     return alert("Please fill in all fields");
+//   }
+
+//   try {
+//     const res = await fetch("http://localhost:8000/handle_login.php", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ username, password }),
+//     });
+
+//     const data = await res.json();
+
+//     if (!data.success) {
+//       return alert(data.message);
+//     }
+
+//     const { account_status, role, user_id } = data.user_data;
+
+//     // 🔒 BLOCK LOGIN IF NOT VERIFIED
+//     if (account_status !== "Verified") {
+//       setverifyemailmsg(
+//   <>
+//     Your account is not verified. Please check your email and verify your account.
+//     <br />
+//     <Link  style={{ color: "#007bff" }} onClick={handleActiveVerify}>
+//       Resend verification email
+//     </Link>
+//   </>
+// );
+
+//       return;
+//     }
+
+//     // ✅ Save user id
+//     localStorage.setItem("user_id", user_id);
+
+//     // 🚀 Redirect by role
+//     switch (role) {
+//       case "Stagiaire":
+//         navigate("/Jobboard_Stagiaire");
+//         break;
+//       case "Entreprise":
+//         navigate("/jobboard_Entreprise");
+//         break;
+//       case "Encadrant":
+//         navigate("/jobboard_Encadrant");
+//         break;
+//       case "Admin":
+//         navigate("/jobboard_admin");
+//         break;
+//       default:
+//         alert("Unknown role");
+//     }
+
+//   } 
+//     catch (err) {
+//   console.error(err);
+//   setloginError(
+//     <>
+//       Your login credentials are wrong, try again or{" "}
+//       <Link
+//         style={{ color: "red", cursor: "pointer" }}
+//         onClick={() => setActive("register")}
+//       >
+//         register if you don't have an account
+//       </Link>
+//     </>
+//   );
+// }
+
+// };
 
 //  const handleRegister = async (e) => {
 //        e.preventDefault();
@@ -135,7 +225,12 @@ const handleRegister = async (e) => {
 //       const data = await res.json();
 
 //       if (data.success) {
-//         alert('Registration successful! Please check your email to verify your account.');
+//         const msg = "Registration successfull, check your email to verify your account"
+//         setverifyemailmsg(msg)
+//         setTimeout(() => {
+//                 setActive("login")
+//         }, 3000);
+        
 //       } else {
 //         alert(data.message || 'Unknown error during registration.');
 //       }
@@ -144,6 +239,174 @@ const handleRegister = async (e) => {
 //       alert('Something went wrong during registration. Please try again.');
 //     }
 //   };
+
+
+
+const handleLogin = async () => {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  if (!username || !password) {
+    setloginError("Please fill in all fields"); // show in form
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:8000/handle_login.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      setloginError(data.message); // ✅ display in form instead of alert
+      return;
+    }
+
+    const { account_status, role, user_id } = data.user_data;
+
+    // Block login if not verified
+    if (account_status !== "Verified") {
+      setverifyemailmsg(
+        <>
+          Your account is not verified. Please check your email and verify your account.
+          <br />
+          <Link style={{ color: "#007bff" }} onClick={handleActiveVerify}>
+            Resend verification email
+          </Link>
+        </>
+      );
+      return;
+    }
+
+    // Clear previous errors
+    setloginError(null);
+    setverifyemailmsg(null);
+
+    // Save user id
+    localStorage.setItem("user_id", user_id);
+
+    // Redirect by role
+    switch (role) {
+      case "Stagiaire":
+        navigate("/Jobboard_Stagiaire");
+        break;
+      case "Entreprise":
+        navigate("/jobboard_Entreprise");
+        break;
+      case "Encadrant":
+        navigate("/jobboard_Encadrant");
+        break;
+      case "Admin":
+        navigate("/jobboard_admin");
+        break;
+      default:
+        setloginError("Unknown role"); // better than alert
+    }
+  } catch (err) {
+    console.error(err);
+    setloginError(
+      <>
+        Your login credentials are wrong, try again or{" "}
+        <Link style={{ color: "red", cursor: "pointer" }} onClick={() => setActive("register")}>
+          register if you don't have an account
+        </Link>
+      </>
+    );
+  }
+};
+
+const handleRegister = async (e) => {
+  e.preventDefault();
+  setverifyemailmsg(null); // reset message
+
+  const form = e.target;
+  const username = form.elements.registerUsername.value.trim();
+  const email = form.elements.registerEmail.value.trim();
+  const phonenumber = form.elements.registerPhoneNumber.value.trim();
+  const password = form.elements.registerPassword.value;
+  const role = form.elements.role.value;
+
+  if (!username || !email || !password || !phonenumber || !role) {
+    setverifyemailmsg("All fields are required.");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username,
+        email,
+        password,
+        telephone: phonenumber,
+        role,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      setverifyemailmsg(data.message || "Registration failed.");
+      return;
+    }
+
+    // ✅ SUCCESS
+    setverifyemailmsg(
+      "Registration successful! Please check your email to verify your account."
+    );
+
+    // Switch to login after 3 seconds
+    setTimeout(() => {
+      setActive("login");
+      setverifyemailmsg(null);
+    }, 3000);
+
+  } catch (err) {
+    console.error(err);
+    setverifyemailmsg("Server error. Please try again later.");
+  }
+};
+
+
+const handleResendVerification = async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("verifyEmail").value.trim();
+  if (!email) return alert("Email is required");
+
+  try {
+    const res = await fetch("http://localhost:3000/resend-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setverifyemailmsg("Verification email sent. Please check your inbox.");
+      setTimeout(() => {
+         navigate("/GetStarted", {
+      state: { active: "login" },
+    });
+      }, 2000);
+    } else {
+      setverifyemailmsg(data.message || "Failed to resend email.");
+    }
+  } catch (err) {
+    console.error(err);
+    setverifyemailmsg("Server error. Try again later.");
+  }
+};
+
+
+const handleActiveRecovery = () => {
+    setActive("recovery")
+}
 
 
     return (
@@ -169,6 +432,17 @@ const handleRegister = async (e) => {
                 {/* 3. Conditionally render the Login Container */}
                 {active === "login" && (
                     <div className="login_container">
+                        {loginError && (
+  <p style={{ color: "red", marginBottom: "10px" }}>
+    {loginError}
+  </p>
+)}
+                        {verifyemailmsg && (
+  <p style={{ color: "red", marginBottom: "10px" }}>
+    {verifyemailmsg}
+  </p>
+)}
+
                         <form action="" className="access_login_form">
                             <div className="form-group-access">
                                 <label htmlFor="username" className="form-label-access">Username or Email</label>
@@ -183,7 +457,7 @@ const handleRegister = async (e) => {
                             <button type="button" className="btn-login-access" onClick={handleLogin}>Login</button>
                         </form>
                                         <p className="role-choice-NB">
-                                            <Link to="/recoverPassword" className="roles-about-link">
+                                            <Link to="/AccountRecovery" className="roles-about-link">
                                                 frogot your password ? recover here !
                                             </Link>
                                         </p>
@@ -195,6 +469,18 @@ const handleRegister = async (e) => {
 
                 {active === "register" && (
     <div className="register_container">
+        {verifyemailmsg && (
+  <p
+    style={{
+      color: verifyemailmsg.includes("successful") ? "green" : "red",
+      marginBottom: "10px",
+      textAlign: "center",
+    }}
+  >
+    {verifyemailmsg}
+  </p>
+)}
+
         <form onSubmit={handleRegister} className="access_register_form">
 
             <div className="form-group-access">
@@ -283,6 +569,49 @@ const handleRegister = async (e) => {
     </div>
 )}
 
+
+
+                    {active === "verify" && (
+  <div className="login_container">
+    {verifyemailmsg && (
+      <p style={{ color: "red", marginBottom: "10px", textAlign: "center" }}>
+        {verifyemailmsg}
+      </p>
+    )}
+
+    <form className="access_login_form" onSubmit={handleResendVerification}>
+      <div className="form-group-access">
+        <label htmlFor="verifyEmail" className="form-label-access">
+          Email address
+        </label>
+        <input
+          type="email"
+          id="verifyEmail"
+          className="form-control-access"
+          required
+        />
+      </div>
+
+      <button type="submit" className="btn-login-access">
+        Resend verification email
+      </button>
+    </form>
+
+    <p className="role-choice-NB">
+      <button
+        onClick={() => setActive("login")}
+        style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer" }}
+      >
+        Back to login
+      </button>
+    </p>
+  </div>
+)}
+
+
+                        {/* {active === "recovery" && (
+                                    
+                        ): ()} */}
             </div>
         </div>
     );
