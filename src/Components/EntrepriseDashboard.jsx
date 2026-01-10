@@ -1,6 +1,3 @@
-
-
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../Styles/EntrepriseDashboard.css";
@@ -806,7 +803,10 @@ useEffect(() => {
     </div>
 
     <div className="ED_stage_form_btn_group">
-      <button type="submit" className="submit-stage">Submit</button>
+      
+      <button type="submit" className="submit-stage">
+        <img className="EntrepriseDashboard_nav_icons"  src="https://img.icons8.com/color/48/submit-progress--v1.png" alt="submit-progress--v1"/>
+      </button>
       <button type="button" onClick={handleCancel} className="cancel-stage">Cancel</button>
     </div>
 

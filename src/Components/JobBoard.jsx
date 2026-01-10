@@ -206,10 +206,10 @@ const handleStar = () => {
         </div>
 
         <div className="nav-right">
-          <div className="nav-icon-group">
+          
             
             <User size={24} className="nav-icon" onClick={handleGetstarted}/>
-          </div>
+          
           <li  className="nav-post-job" onClick={handleGetstarted}>Entreprises / Publier une offre d'emploi</li>
         </div>
       </nav>
@@ -383,7 +383,7 @@ onClick={() => {
                             <p className="footer-text">
                                 {/* Lorem ipsum dolor sit amet consectetur adipisicing elit.
                                 Consequuntur cupiditate ipsum nulla. */}
-                                Where innovation meets reliable service.
+                                the most trusted recrutement service in the market.
                             </p>
                             {/* <ul className="social-list">
                                 <li>Facebook</li>
@@ -417,7 +417,8 @@ onClick={() => {
                             <h2 className="footer-heading">Stay Updated</h2>
                             <form className="subscribe">
                                 <input type="email" placeholder="Your email" className="subscribe-input" />
-                                <img src={submit} className="subscribe-btn" title="subscribe!"/>
+                                {/* <img src={submit} className="subscribe-btn" title="subscribe!"/> */}
+                                <img width="48" height="48" className='send-icon' src="https://img.icons8.com/fluency/48/sent.png" alt="sent"/>
                             </form>
                         </div>
                     </div>

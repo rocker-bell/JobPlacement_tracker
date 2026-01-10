@@ -484,7 +484,7 @@ button:hover {
 /* profile */
 
 .profile_form {
-  /* border: 1px solid black; */
+  border: 1px solid black;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -507,6 +507,7 @@ button:hover {
 }
 
 .profile_form_control {
+  /* border: 1px solid bla; */
   padding: 5px;
   min-width: 250px;
   max-width: 250px;
@@ -523,7 +524,7 @@ button:hover {
 }
 
 .form-group-password {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin-left: 45px;
 }
 

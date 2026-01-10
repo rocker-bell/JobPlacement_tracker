@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MessageSquare, Bell} from "lucide-react";
+import { Search, MessageSquare, Bookmark, Star, Ban, Bell, Building2} from "lucide-react";
 import "../Styles/UserJobBoard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
@@ -485,8 +485,8 @@ const [dashboardStats, setDashboardStats] = useState({
                 className="UserJobBoard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
               >
-                
-                <img  className="UserJobBoard_nav_icons" src="https://img.icons8.com/ios-filled/50/business.png" alt="business"/>
+                <img className="UserJobBoard_nav_icons" src="https://img.icons8.com/ios/50/lawyer.png" alt="lawyer"/>
+                {/* <img  className="UserJobBoard_nav_icons" src="https://img.icons8.com/ios-filled/50/business.png" alt="business"/> */}
               </li>
 
 {/*               
@@ -690,7 +690,7 @@ const [dashboardStats, setDashboardStats] = useState({
     </div> */}
 
 
-    <div className="right-panel">
+    {/* <div className="right-panel">
   {selectedStage ? (
     <div className="stage-detail-form">
       <h2>{selectedStage.titre}</h2>
@@ -795,7 +795,95 @@ const [dashboardStats, setDashboardStats] = useState({
   ) : (
     <p>Select a stage to see details</p>
   )}
+</div> */}
+
+<div className="detail-panel">
+  {selectedStage ? (
+    <>
+      {/* Header */}
+      <div className="detail-header">
+        <h2 className="detail-title">{selectedStage.titre}</h2>
+
+        <div className="detail-company-link">
+          <a href="#">{selectedStage.nom_entreprise}</a> • {selectedStage.emplacement}
+        </div>
+
+        <div className="action-buttons">
+          <button
+            className="btn-apply"
+            onClick={() => handeleposutler(selectedStage.offre_id)}
+          >
+            Postuler maintenant
+          </button>
+          <button className="btn-icon">
+            <Bookmark size={24} />
+          </button>
+          <button className="btn-icon">
+            <Ban size={24} />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="detail-content">
+        {/* Stage type badge */}
+        <h3 className="section-title">Détails du stage</h3>
+        <div style={{ marginBottom: "20px" }}>
+          <span className="badge-gray">
+            <Building2 size={14} /> {selectedStage.type_de_stage}
+          </span>
+        </div>
+
+        {/* Stage category */}
+        <h3 className="section-title">Catégorie</h3>
+        <div className="job-description-text">{selectedStage.stage_categorie}</div>
+
+        {/* Full description */}
+        <h3 className="section-title">Description complète</h3>
+        <div className="job-description-text">{selectedStage.description}</div>
+
+        {/* Dates and duration */}
+        <h3 className="section-title">Détails temporels</h3>
+        <div className="job-description-text">
+          <p>
+            <strong>Date de début:</strong> {selectedStage.date_debut}
+          </p>
+          <p>
+            <strong>Durée (semaines):</strong> {selectedStage.duree_semaines}
+          </p>
+          <p>
+            <strong>Places disponibles:</strong> {selectedStage.nombre_places}
+          </p>
+          <p>
+            <strong>Statut:</strong>{" "}
+            <span className={`status ${selectedStage.statut}`}>
+              {selectedStage.statut}
+            </span>
+          </p>
+        </div>
+
+        {/* Actions */}
+        <button className="selected_job_actions_group">
+          <Bookmark
+            size={20}
+            color="blue"
+            strokeWidth={1.5}
+            onClick={() => console.log("Bookmark clicked")}
+          />
+          <Star
+            size={20}
+            className="text-yellow-500"
+            onClick={() => console.log("Star clicked")}
+          />
+        </button>
+        {/* <button className="Cancdidatstage_btn_actions" onClick={() => handeleposutler(selectedStage.offre_id)}>postuler</button> */}
+      </div>
+    </>
+  ) : (
+    <p>Select a stage to see details</p>
+  )}
 </div>
+
 
   </div>
 </span>
@@ -1388,7 +1476,7 @@ const [dashboardStats, setDashboardStats] = useState({
     </div>
 
     {/* --- RIGHT PANEL: Selected Candidature Detail --- */}
-    <div
+    {/* <div
       className="right-panel"
       style={{ width: "60%", padding: "10px" }}
     >
@@ -1443,18 +1531,85 @@ const [dashboardStats, setDashboardStats] = useState({
               Cancel Candidature
             </button>
 
-            {/* <button
-              className="candidature_rapport"
-              onClick={() => rapportcandidature(selectedCandidature.offre_id)}
-            >
-              Rapport
-            </button> */}
+            
           </div>
         </div>
       ) : (
         <p>Select a candidature to see details</p>
       )}
-    </div>
+    </div> */}
+
+
+    <div className="detail-panel right-panel">
+  {selectedCandidature ? (
+    <>
+      {/* Header */}
+      <div className="detail-header">
+        <h2 className="detail-title">Candidature Details</h2>
+        <div className="action-buttons">
+          <button
+            className="btn-apply"
+            onClick={() => cancelcanidature(selectedCandidature.candidature_id)}
+          >
+            Cancel Candidature
+          </button>
+          {/* <button
+            className="btn-icon"
+            onClick={() => rapportcandidature(selectedCandidature.offre_id)}
+          >
+            Rapport
+          </button> */}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="detail-content">
+        <h3 className="section-title">Candidature Information</h3>
+        <div className="form-group">
+          <label className="form-label">Candidature ID:</label>
+          <span className="form-control">{selectedCandidature.candidature_id}</span>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Offre ID:</label>
+          <span className="form-control">{selectedCandidature.offre_id}</span>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Status:</label>
+          <span className="form-control status">{selectedCandidature.statut}</span>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Message:</label>
+          <span className="form-control">{selectedCandidature.message_motivation}</span>
+        </div>
+
+        {selectedCandidature.cv_path && (
+          <div className="form-group">
+            <label className="form-label">CV:</label>
+            <a
+              className="form-control"
+              href={`${BASE_URL}/${selectedCandidature.cv_path}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View CV
+            </a>
+          </div>
+        )}
+
+        <div className="form-group">
+          <label className="form-label">Applied at:</label>
+          <span className="form-control">{selectedCandidature.created_at}</span>
+        </div>
+      </div>
+    </>
+  ) : (
+    <p>Select a candidature to see details</p>
+  )}
+</div>
+
   </div>
 </span>
 

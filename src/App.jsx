@@ -11,7 +11,8 @@ import Rapports from "./Components/Rapports.jsx";
 import Postuler from "./Components/Postuler.jsx";
 import Rapport_encadrant from "./Components/Rapport_encadrant.jsx";
 import PasswordRecovery from "./Components/PasswordRecovery.jsx";
-
+import AdminDashboard from "./Components/AdminPage.jsx";
+import ContactUs from "./Components/contactPage.jsx";
 const App = () => {
   return (
     <>
@@ -30,6 +31,8 @@ const App = () => {
               <Route path="/Postuler/:id" element={<Postuler/>} />
               <Route path="/EncadrantRapport/:id"  element={<Rapport_encadrant/>}/>
               <Route path="/AccountRecovery"  element={<PasswordRecovery/>} />
+              <Route path="/jobboard_admin"  element={<AdminDashboard/>} />
+              <Route path="/ContactUs" element={<ContactUs/>} />
       </Routes>
 
     </>

@@ -36,7 +36,9 @@
 }
 
 .nav-left, .nav-right {
+  
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 24px;
 }
@@ -79,6 +81,7 @@
 }
 
 .nav-icon-group {
+  border: 1px solid black;
   display: flex;
   gap: 20px;
   align-items: center;
@@ -87,6 +90,9 @@
 .nav-icon {
   cursor: pointer;
   color: #2d2d2d;
+}
+.send-icon {
+  cursor: pointer;
 }
 
 .nav-post-job {

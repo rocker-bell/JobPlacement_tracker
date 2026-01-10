@@ -60,33 +60,127 @@ const Encadrant = () => {
 
   const BASE_URL = "http://localhost:8000"
 
-  async function FetchEncadrantfunction(user_id) {
-  console.log("user id = " + user_id)
-      try {
-        const response = await fetch(`${BASE_URL}/FetchencadrantByAgence.php`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-          },
-          body: new URLSearchParams({ user_id: user_id }), // send user_id
-        });
+  // async function FetchEncadrantfunction(user_id) {
+  // console.log("user id = " + user_id)
+  //     try {
+  //       const response = await fetch(`${BASE_URL}/FetchencadrantByAgence.php`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+  //         },
+  //         body: new URLSearchParams({ user_id: user_id }), // send user_id
+  //       });
   
-        if (!response.ok) {
-          console.error("HTTP error:", response.status);
-          return;
-        }
+  //       if (!response.ok) {
+  //         console.error("HTTP error:", response.status);
+  //         return;
+  //       }
   
-        const data = await response.json();
-        console.log(data)
-        if (data.success) {
-          setFetchEncadrant(data.user_data);
-        } else {
-          console.error("Error from API:", data.message);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
+  //       const data = await response.json();
+  //       console.log(data)
+  //       if (data.success) {
+  //         setFetchEncadrant(data.user_data);
+  //       } else {
+  //         console.error("Error from API:", data.message);
+  //       }
+  //     } catch (err) {
+  //       console.error("Fetch error:", err);
+  //     }
+  //   }
+
+//   async function FetchEncadrantfunction(id) {
+//     console.log(id)
+//   console.log("user id fetch ancadrant = " + id);
+//   const offre_id = id;
+//   try {
+//     const response = await fetch(`${BASE_URL}/FetchencadrantByAgence.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded", // correct content type
+//       },
+//       body: JSON.stringify(offre_id), // sending "offre_id"
+
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log(data);
+//     if (data.success) {
+//       setFetchEncadrant(data.user_data); // Assuming this sets the state
+//     } else {
+//       console.error("Error from API:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
+// async function FetchEncadrantfunction(id) {
+//   console.log("offre_id fetch encadrant = " + id);
+
+//   try {
+//     const response = await fetch(`${BASE_URL}/FetchencadrantByAgence.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json", // send JSON
+//       },
+//       body: JSON.stringify({ offre_id: id }), // send as JSON
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log(data);
+
+//     if (data.success) {
+//       setFetchEncadrant(data.user_data);
+//     } else {
+//       console.error("Error from API:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
+async function FetchEncadrantfunction(id) {
+  console.log("offre_id fetch encadrant = " + id);
+
+  try {
+    const response = await fetch(`${BASE_URL}/FetchencadrantByAgence.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // send JSON
+      },
+      body: JSON.stringify({ offre_id: id }), // send as JSON
+    });
+
+    if (!response.ok) {
+      console.error("HTTP error:", response.status);
+      return;
     }
+
+    const data = await response.json();
+    console.log("API response:", data);
+
+    if (data.success) {
+      setFetchEncadrant(data.user_data); // set full encadrant data
+    } else {
+      console.error("Error from API:", data.message);
+      setFetchEncadrant(null); // clear previous state
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
 
 
 
@@ -95,16 +189,19 @@ const Encadrant = () => {
     setQuery((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    setStageId(id);
-  }, [id]);
+ useEffect(() => {
+  if (id) {
+    FetchEncadrantfunction(id); // pass URL param directly
+  }
+}, [id]); // run whenever URL param changes
+
 
   useEffect(() => {
     const user_id = localStorage.getItem("user_id");
-    if(user_id) {
-        FetchEncadrantfunction(user_id);
-    }
-
+    // if(user_id) {
+    //     FetchEncadrantfunction(st);
+    // }
+    setStageId(id)
    
     
   }, [])
@@ -216,7 +313,7 @@ const demissionnerEncadrant = async (encadrantId) => {
   return (
     <div className="Encadrant_dasboard_ref_entreprise">
       <p className="stage_id_ref_entreprise">
-        stage id is : {stageId}
+        stage id is : {id}
       </p>
 
       <nav className="encadrant_nav">
@@ -254,80 +351,161 @@ const demissionnerEncadrant = async (encadrantId) => {
       <div className="main_encadrant_container">
         <p><strong>Live query:</strong> {Query.encadrant_search_querry}</p>
         <p><strong>Submitted query:</strong> {submitQuerry}</p>
-      </div>
+              
+                {/* {submitQuerry && FetchedSearchedencadrantdata && (
+  <div className="profile_card_1_encadrantEntreprise">
 
-      <div>
-
-        {submitQuerry && FetchedSearchedencadrantdata && (
-  <div className="profile_card_1">
-
-    <div className="profile_form_group"> 
-      <label className="profile_form_label">Nom:</label>
+    <div className="profile_form_group_encadrant"> 
+      <label className="profile_form_label_encadrant">Nom:</label>
       <input
         type="text"
         value={FetchedSearchedencadrantdata.nom || ""}
         readOnly
-        className="profile_form_control"
+        className="profile_form_control_encadrant"
       />
     </div>
 
-    <div className="profile_form_group">
-      <label className="profile_form_label">Prénom:</label>
+    <div className="profile_form_group_encadrant">
+      <label className="profile_form_label_encadrant">Prénom:</label>
       <input
         type="text"
         value={FetchedSearchedencadrantdata.prenom || ""}
         readOnly
-        className="profile_form_control"
+        className="profile_form_control_encadrant"
       />
     </div>
 
-    <div className="profile_form_group">
-      <label className="profile_form_label">Agence ID:</label>
+    <div className="profile_form_group_encadrant">
+      <label className="profile_form_label_encadrant">Agence ID:</label>
       <input
         type="text"
         value={FetchedSearchedencadrantdata.agence_id || ""}
         readOnly
-        className="profile_form_control"
+        className="profile_form_control_encadrant"
       />
     </div>
 
-    <div className="profile_form_group">
-      <label className="profile_form_label">Nom d'agence:</label>
+    <div className="profile_form_group_encadrant">
+      <label className="profile_form_label_encadrant">Nom d'agence:</label>
       <input
         type="text"
         value={FetchedSearchedencadrantdata.nom_d_agence || ""}
         readOnly
-        className="profile_form_control"
+        className="profile_form_control_encadrant"
       />
     </div>
 
     <div className="profile_form_group">
-      <label className="profile_form_label">Département:</label>
+      <label className="profile_form_label_encadrant">Département:</label>
       <input
         type="text"
         value={FetchedSearchedencadrantdata.departement || ""}
         readOnly
-        className="profile_form_control"
+        className="profile_form_control_encadrant"
       />
     </div>
 
-    <button
-      className="submit profile_actions_btn"
+    <div className="profile_form_group_encadrant encadrant_entreprise_profile_btngroupes">
+      <button
+      className="submit profile_actions_btn_encadrant"
       onClick={() => affecterEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
     >
-      affecter encadrant
+      affecter 
     </button>
 
    <button
-  className="delete profile_actions_btn"
+  className="delete profile_actions_btn_encadrant"
   onClick={() => demissionnerEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
 >
-  Démissionner encadrant
+  Démissionner 
 </button>
 
+    </div>
+
+    
+
+  </div>
+)} */}
+
+                    {submitQuerry && FetchedSearchedencadrantdata && (
+  <div className="entrepriseEncadrants_profileCard">
+
+    <div className="entrepriseEncadrants_formGroup"> 
+      <label className="entrepriseEncadrants_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchedSearchedencadrantdata.nom || ""}
+        readOnly
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchedSearchedencadrantdata.prenom || ""}
+        readOnly
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Agence ID:</label>
+      <input
+        type="text"
+        value={FetchedSearchedencadrantdata.agence_id || ""}
+        readOnly
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Nom d'agence:</label>
+      <input
+        type="text"
+        value={FetchedSearchedencadrantdata.nom_d_agence || ""}
+        readOnly
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Département:</label>
+      <input
+        type="text"
+        value={FetchedSearchedencadrantdata.departement || ""}
+        readOnly
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup entrepriseEncadrants_btnGroup">
+      <button
+        className="entrepriseEncadrants_btn entrepriseEncadrants_btnSubmit"
+        onClick={() => affecterEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
+      >
+        Affecter
+      </button>
+
+      <button
+        className="entrepriseEncadrants_btn entrepriseEncadrants_btnDelete"
+        onClick={() => demissionnerEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
+      >
+        Démissionner
+      </button>
+    </div>
 
   </div>
 )}
+
+      </div>
+
+
+
+      <div>
+
+      
 
 
         {/* {FetchEncadrant && (
@@ -400,14 +578,360 @@ const demissionnerEncadrant = async (encadrantId) => {
 
     <button
       className="submit profile_actions_btn"
-      // onClick={() => updateEncadrantdata(UserId)}
+      onClick={() => affecterEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
     >
       affecter encadrant
     </button>
 
-    <button className="delete profile_actions_btn">demisionner encadrant</button>
+    <button className="delete profile_actions_btn" onClick={() => demissionnerEncadrant(FetchedSearchedencadrantdata.encadrant_id)}>demisionner encadrant</button>
   </div>
 )} */}
+{/* 
+{FetchEncadrant && (
+  <div className="profile_card_1_encadrantEntreprise">
+
+    <div className="profile_form_group"> 
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || ""}
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Agence ID:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, agence_id: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom d'agence:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence || ""}
+        placeholder="Entrez votre nom_d_agence"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom_d_agence: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Département:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement || ""}
+        placeholder="Entrez votre departement"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, departement: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <button
+      className="submit profile_actions_btn"
+      onClick={() => affecterEncadrant(FetchEncadrant.encadrant_id)}
+    >
+      Affecter encadrant
+    </button>
+
+    <button
+      className="delete profile_actions_btn"
+      onClick={() => demissionnerEncadrant(FetchEncadrant.encadrant_id)}
+    >
+      Démissionner encadrant
+    </button>
+  </div>
+)} */}
+
+{/* {FetchEncadrant && (
+  <div className="profile_card_1_encadrantEntreprise">
+   
+    <div className="profile_form_group"> 
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || ""} 
+        placeholder="Entrez votre nom"
+        onChange={(e) => setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))}
+        className="profile_form_control"
+      />
+    </div>
+
+   
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) => setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))}
+        className="profile_form_control"
+      />
+    </div>
+
+    
+    <div className="profile_form_group">
+      <label className="profile_form_label">Agence ID:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) => setFetchEncadrant(prev => ({ ...prev, agence_id: e.target.value }))}
+        className="profile_form_control"
+      />
+    </div>
+
+   
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom d'agence:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence || ""}
+        placeholder="Entrez votre nom_d_agence"
+        onChange={(e) => setFetchEncadrant(prev => ({ ...prev, nom_d_agence: e.target.value }))}
+        className="profile_form_control"
+      />
+    </div>
+
+    
+    <div className="profile_form_group">
+      <label className="profile_form_label">Département:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement || ""}
+        placeholder="Entrez votre departement"
+        onChange={(e) => setFetchEncadrant(prev => ({ ...prev, departement: e.target.value }))}
+        className="profile_form_control"
+      />
+    </div>
+
+    
+   <div className="profile_form_group encadrant_entreprise_profile_btngroupes">
+      <button
+      className="submit profile_actions_btn"
+      onClick={() => affecterEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
+    >
+      affecter 
+    </button>
+
+   <button
+  className="delete profile_actions_btn"
+  onClick={() => demissionnerEncadrant(FetchedSearchedencadrantdata.encadrant_id)}
+>
+  Démissionner 
+</button>
+
+    </div>
+  </div>
+)} */}
+
+
+{/* {FetchEncadrant && (
+  <div className="profile_card_1_encadrantEntreprise">
+    
+    <div className="profile_form_group"> 
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || "Unknown"} // show 'Unknown' if no data
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || "Unknown"}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+   
+    <div className="profile_form_group">
+      <label className="profile_form_label">Agence ID:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, agence_id: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom d'agence:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence || "Unknown"}
+        placeholder="Entrez votre nom_d_agence"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom_d_agence: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+   
+    <div className="profile_form_group">
+      <label className="profile_form_label">Département:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement || ""}
+        placeholder="Entrez votre departement"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, departement: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+   
+    <div className="profile_form_group encadrant_entreprise_profile_btngroupes">
+      <button
+        className="submit profile_actions_btn"
+        onClick={() => affecterEncadrant(FetchEncadrant.encadrant_id)}
+      >
+        Affecter
+      </button>
+
+      <button
+        className="delete profile_actions_btn"
+        onClick={() => demissionnerEncadrant(FetchEncadrant.encadrant_id)}
+      >
+        Démissionner
+      </button>
+    </div>
+  </div>
+)} */}
+{FetchEncadrant && (
+  <div className="entrepriseEncadrants_profileCard">
+    
+    <div className="entrepriseEncadrants_formGroup"> 
+      <label className="entrepriseEncadrants_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || "Unknown"} // fallback
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || "Unknown"}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Agence ID:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, agence_id: e.target.value }))
+        }
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Nom d'agence:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence || "Unknown"}
+        placeholder="Entrez votre nom_d_agence"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom_d_agence: e.target.value }))
+        }
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup">
+      <label className="entrepriseEncadrants_label">Département:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement || ""}
+        placeholder="Entrez votre departement"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, departement: e.target.value }))
+        }
+        className="entrepriseEncadrants_input"
+      />
+    </div>
+
+    <div className="entrepriseEncadrants_formGroup entrepriseEncadrants_btnGroup">
+      <button
+        className="entrepriseEncadrants_btn entrepriseEncadrants_btnSubmit"
+        onClick={() => affecterEncadrant(FetchEncadrant.encadrant_id)}
+      >
+        Affecter
+      </button>
+
+      <button
+        className="entrepriseEncadrants_btn entrepriseEncadrants_btnDelete"
+        onClick={() => demissionnerEncadrant(FetchEncadrant.encadrant_id)}
+      >
+        Démissionner
+      </button>
+    </div>
+  </div>
+)}
+
+
+
       </div>
     </div>
   );
