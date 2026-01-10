@@ -188,18 +188,39 @@
   align-items: start;
 } */
 
-.main-grid {
+/* .main-grid {
   border: 1px solid black;
-  display: flex;            /* Flex layout */
-  flex-wrap: wrap;          /* Allow items to wrap to next line if needed */
+  display: flex;            
+  flex-wrap: wrap;         
   gap: 20px;
-  justify-content: center;                /* Space between items */
-  align-items: flex-start;  /* Top align items */
+  justify-content: center;                
+  align-items: flex-start;  
   width: 80%;
-  min-height: 100vh;        /* Optional: ensure full viewport height */
+  min-height: 100vh;        
   box-sizing: border-box;
   padding: 20px;
+} */
+
+.main-grid {
+  border: 1px solid black;
+  display: flex;            
+  flex-wrap: wrap;          
+  gap: 20px;
+  justify-content: center;  
+  align-items: flex-start;  
+  width: 80%;
+  box-sizing: border-box;
+  padding: 20px;
+  min-height: 100vh;         /* Default height when there are items */
+  transition: min-height 0.3s ease; /* Smooth shrink/grow */
 }
+
+/* When no stages fetched, make height lower */
+.main-grid.no-stages {
+  min-height: auto; /* Shrinks to content */
+  height: auto;
+}
+
 
 /* --- LEFT COLUMN: JOB LIST --- */
 .feed-header h2 {

@@ -13,6 +13,8 @@ import Rapport_encadrant from "./Components/Rapport_encadrant.jsx";
 import PasswordRecovery from "./Components/PasswordRecovery.jsx";
 import AdminDashboard from "./Components/AdminPage.jsx";
 import ContactUs from "./Components/contactPage.jsx";
+import AboutUs from "./Components/About.jsx";
+import StageDetails from "./Components/StageDetails";
 const App = () => {
   return (
     <>
@@ -33,6 +35,8 @@ const App = () => {
               <Route path="/AccountRecovery"  element={<PasswordRecovery/>} />
               <Route path="/jobboard_admin"  element={<AdminDashboard/>} />
               <Route path="/ContactUs" element={<ContactUs/>} />
+              <Route path="/About" element={<AboutUs/>}/>
+              <Route path="/StageDetails" element={<StageDetails />} />
       </Routes>
 
     </>

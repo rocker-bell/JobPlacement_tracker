@@ -35,7 +35,7 @@ const [FetchCandidature, setFetchCandidature] = useState(null)
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
   const [menuActive, setmenuActive] = useState(false);
-
+  const [offre, offre_id] = useState(false)
   const [Showmenu, setShowmenu] = useState(false);
   const [candidature_dropdown, setcandidature_dropdown] = useState(false)
   // pagination
@@ -251,6 +251,11 @@ const handleChange = (e) => {
     console.error("Fetch error:", err);
   }
 }
+
+
+// async function FetchOffreById(offre_id) {
+
+// }
 
   
     useEffect(() => {
@@ -846,7 +851,7 @@ const [dashboardStats, setDashboardStats] = useState({
       {/* Header */}
       <div className="detail-header">
         <h2 className="detail-title">{selectedStage.titre}</h2>
-
+          
         <div className="detail-company-link">
           <a href="#">{selectedStage.nom_entreprise}</a> • {selectedStage.emplacement}
         </div>
@@ -1446,7 +1451,7 @@ const [dashboardStats, setDashboardStats] = useState({
         paddingRight: "10px",
       }}
     >
-      {FetchCandidature && FetchCandidature.length > 0 ? (
+      {FetchCandidature && FetchCandidature.length > 0  ? (
         <div className="candidatures_cards_container">
           {/** Slice 3 per page */}
           {FetchCandidature.slice(

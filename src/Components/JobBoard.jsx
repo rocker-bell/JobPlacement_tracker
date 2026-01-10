@@ -69,6 +69,19 @@ const [submittedQuery, setSubmittedQuery] = useState({
     }
 
 
+    const [isMobile, setIsMobile] = useState(false);
+
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 768); // <=768px is mobile
+  };
+
+  handleResize(); // check on mount
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
+
 
 
 // async function FetchSearchedStage(submittedQuery) {
@@ -104,45 +117,136 @@ const [submittedQuery, setSubmittedQuery] = useState({
 //   }
 // }
 
+// async function FetchSearchedStage(submittedQuery) {
+//   try {
+//     const response = await fetch(`${BASE_URL}/FetchStagesByJObboardQuery.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: new URLSearchParams({
+//         job: submittedQuery.job,
+//         location: submittedQuery.location,
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log(data);
+
+//     if (data.success) {
+//       setFetchedStages(data.query_data);
+
+//       // ✅ Select the first job automatically
+//       if (data.query_data.length > 0) {
+//         setSelectedJob(data.query_data[0]);
+//       } else {
+//         setSelectedJob(null);
+//       }
+
+//     } else {
+//       console.error("API error:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+// async function FetchSearchedStage(submittedQuery, isMobile = false) {
+//   try {
+//     const response = await fetch(`${BASE_URL}/FetchStagesByJObboardQuery.php`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//       body: new URLSearchParams({
+//         job: submittedQuery.job,
+//         location: submittedQuery.location,
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       console.error("HTTP error:", response.status);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log(data);
+
+//     if (data.success) {
+//       setFetchedStages(data.query_data);
+
+//       if (!isMobile) {
+//         // Only select the first job automatically on desktop
+//         if (data.query_data.length > 0) {
+//           setSelectedJob(data.query_data[0]);
+//         } else {
+//           setSelectedJob(null);
+//         }
+//       }
+
+//     } else {
+//       console.error("API error:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+
+
+const handleSearch = async () => {
+  const query = { job: jobQuery, location: locationQuery };
+  setSubmittedQuery(query);
+
+  const isMobile = window.innerWidth <= 768;
+
+  // Fetch stages
+  const fetchedData = await FetchSearchedStage(query);
+
+  // On mobile, redirect to StageDetails with the fetched data
+  if (isMobile && fetchedData) {
+    navigate("/StageDetails", { state: { stages: fetchedData, query } });
+  }
+};
+
+// Updated FetchSearchedStage to return data
 async function FetchSearchedStage(submittedQuery) {
   try {
     const response = await fetch(`${BASE_URL}/FetchStagesByJObboardQuery.php`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        job: submittedQuery.job,
-        location: submittedQuery.location,
-      }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(submittedQuery),
     });
 
     if (!response.ok) {
       console.error("HTTP error:", response.status);
-      return;
+      return null;
     }
 
     const data = await response.json();
-    console.log(data);
-
     if (data.success) {
       setFetchedStages(data.query_data);
 
-      // ✅ Select the first job automatically
-      if (data.query_data.length > 0) {
+      // Only select first job on desktop
+      if (window.innerWidth > 768 && data.query_data.length > 0) {
         setSelectedJob(data.query_data[0]);
-      } else {
-        setSelectedJob(null);
       }
 
+      return data.query_data;
     } else {
       console.error("API error:", data.message);
+      return null;
     }
   } catch (err) {
     console.error("Fetch error:", err);
+    return null;
   }
 }
-
 
 
 
@@ -223,7 +327,7 @@ const handleStar = () => {
 
           <div className="search-wrapper">
 
-  {/* Job title input */}
+
   <div className="input-group divider">
     <Search size={20} className="input-icon" strokeWidth={2.5} />
     <input
@@ -235,7 +339,7 @@ const handleStar = () => {
     />
   </div>
 
-  {/* Location input (replaces MapPin) */}
+ 
   <div className="input-group">
     <input
       type="text"
@@ -255,7 +359,7 @@ onClick={() => {
     };
 
     setSubmittedQuery(query);
-    FetchSearchedStage(query); // ✅ THIS WAS MISSING
+    FetchSearchedStage(query); 
   }}
   >
     Lancer la recherche
@@ -263,11 +367,126 @@ onClick={() => {
 
 </div>
 
+{/* <div className="search-wrapper">
+
+
+  <div className="input-group divider">
+    <Search size={20} className="input-icon" strokeWidth={2.5} />
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Intitulé de poste, mots-clés..."
+      value={jobQuery}
+      onChange={(e) => setJobQuery(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const query = { job: jobQuery, location: locationQuery };
+          setSubmittedQuery(query);
+
+          const isMobile = window.innerWidth <= 768;
+          FetchSearchedStage(query);
+
+          if (isMobile) {
+            navigate("/StageDetails", { state: { query } });
+          }
+        }
+      }}
+    />
+  </div>
+
+ 
+  <div className="input-group">
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Ville, région..."
+      value={locationQuery}
+      onChange={(e) => setLocationQuery(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const query = { job: jobQuery, location: locationQuery };
+          setSubmittedQuery(query);
+
+          const isMobile = window.innerWidth <= 768;
+          FetchSearchedStage(query);
+
+          if (isMobile) {
+            navigate("/StageDetails", { state: { query } });
+          }
+        }
+      }}
+    />
+  </div>
+
+  <button
+    className="btn-search-main"
+    onClick={() => {
+      const query = { job: jobQuery, location: locationQuery };
+      setSubmittedQuery(query);
+      
+      const isMobile = window.innerWidth <= 768;
+      FetchSearchedStage(query);
+
+      if (isMobile) {
+        navigate("/StageDetails", { state: { query } });
+      }
+    }}
+  >
+    Lancer la recherche
+  </button>
+
+</div> */}
+
+{/* <div className="search-wrapper">
+  
+  <div className="input-group divider">
+    <Search size={20} className="input-icon" strokeWidth={2.5} />
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Intitulé de poste, mots-clés..."
+      value={jobQuery}
+      onChange={(e) => setJobQuery(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleSearch();
+        }
+      }}
+    />
+  </div>
+
+ 
+  <div className="input-group">
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Ville, région..."
+      value={locationQuery}
+      onChange={(e) => setLocationQuery(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleSearch();
+        }
+      }}
+    />
+  </div>
+
+  <button className="btn-search-main" onClick={handleSearch}>
+    Lancer la recherche
+  </button>
+</div> */}
+
+
+
         </div>
 
 
         {/* --- 3. MAIN GRID --- */}
-        <div className="main-grid">
+        <div className={`main-grid ${FetchedStages.length === 0 ? "no-stages" : ""}`}>
           
        
           <div className="feed-header">
@@ -318,7 +537,7 @@ onClick={() => {
 
               {selectedJob && (
   <div className="detail-panel">
-    {/* Header */}
+   
     <div className="detail-header">
       <h2 className="detail-title">{selectedJob.titre}</h2>
       
@@ -338,9 +557,9 @@ onClick={() => {
       </div>
     </div>
 
-    {/* Content */}
+   
     <div className="detail-content">
-      {/* Job type badge */}
+      
       <h3 className="section-title">Détails du stage</h3>
       <div style={{ marginBottom: '20px' }}>
         <span className="badge-gray">
@@ -348,7 +567,7 @@ onClick={() => {
         </span>
       </div>
 
-      {/* Full description */}
+      
       <h3 className="section-title">Description complète</h3>
       <div className="job-description-text">
         {selectedJob.description}
@@ -397,9 +616,9 @@ onClick={() => {
                             <h2 className="footer-heading">Navigation</h2>
                             <ul className="footer-list">
                                 <Link className="footer-list-links-about" onClick={scrollToTop}>Home</Link>
-                                <Link className="footer-list-links-about" to="/about_us">About us</Link>
+                                <Link className="footer-list-links-about" to="/About">About us</Link>
                                 <Link className="footer-list-links-about" to="/Package_services">services</Link>
-                                <Link className="footer-list-links-about" to="/resume">resume</Link>
+                                <Link className="footer-list-links-about" to="/ContactUs">contactus</Link>
                                
                                 <Link  className="footer-list-links-about" to="/more_projects">Projects</Link>
                                 
