@@ -6,7 +6,7 @@ import menu_active from "../assets/menu_active.svg";
 import Logo1 from "../assets/Logo1.svg";
 import Logout from "../assets/Logout.svg";
 import { User, MessageSquare, Bell } from "lucide-react";
-
+import StatChart from "./StatChart";
 const EncadrantDashboard = () => {
   const location = useLocation()
   // State for active slider and mobile screen size
@@ -485,28 +485,37 @@ useEffect(() => {
             Content 1: Default
 
 
-                  <div className="general_statistique">
-  <div className="statistique_card">
-    <h3>Total Affectations</h3>
-    <p>{dashboardStats.total_affectations}</p>
-  </div>
-  <div className="statistique_card">
-    <h3>Pending Evaluations</h3>
-    <p>{dashboardStats.pending_evaluations}</p>
-  </div>
-  <div className="statistique_card">
-    <h3>Accepted Applicants</h3>
-    <p>{dashboardStats.accepted_applicants}</p>
-  </div>
-  <div className="statistique_card">
-    <h3>Refused Applicants</h3>
-    <p>{dashboardStats.refused_applicants}</p>
-  </div>
-  <div className="statistique_card">
-    <h3>Pending Applicants</h3>
-    <p>{dashboardStats.pending_applicants}</p>
-  </div>
-</div>
+                 <div className="general_statistique">
+      <StatChart
+        title="Total Affectations"
+        value={dashboardStats.total_affectations}
+        color="#4CAF50"
+      />
+
+      <StatChart
+        title="Pending Evaluations"
+        value={dashboardStats.pending_evaluations}
+        color="#FF9800"
+      />
+
+      <StatChart
+        title="Accepted Applicants"
+        value={dashboardStats.accepted_applicants}
+        color="#2196F3"
+      />
+
+      <StatChart
+        title="Refused Applicants"
+        value={dashboardStats.refused_applicants}
+        color="#F44336"
+      />
+
+      <StatChart
+        title="Pending Applicants"
+        value={dashboardStats.pending_applicants}
+        color="#9C27B0"
+      />
+    </div>
 
 
           </span>

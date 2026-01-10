@@ -1,0 +1,61 @@
+npm install chart.js react-chartjs-2
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+import { Bar, Doughnut } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend
+);
+
+
+const barData = {
+  labels: [
+    "Encadrants",
+    "Active Stages",
+    "Applicants",
+    "Applicants / Stage",
+  ],
+  datasets: [
+    {
+      label: "Dashboard Statistics",
+      data: [
+        dashboardStats.encadrants_count,
+        dashboardStats.active_stages,
+        dashboardStats.applicants_count,
+        dashboardStats.ratio,
+      ],
+      backgroundColor: [
+        "#4CAF50",
+        "#2196F3",
+        "#FF9800",
+        "#9C27B0",
+      ],
+    },
+  ],
+};
+
+const barOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+};
+
+
+<Bar data={barData} options={barOptions} />

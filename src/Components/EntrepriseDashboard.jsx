@@ -8,6 +8,7 @@ import Profile from "../assets/profile.png";
 import Logout from "../assets/Logout.svg"
 import {MessageSquare, Bell} from "lucide-react";
 import Ajouter from "../assets/Ajouter.gif"
+import StatChart from "./StatChart";
 
 const Entreprise_dashboard = () => {
   // State for active slider and mobile screen size
@@ -726,7 +727,7 @@ useEffect(() => {
     <p>{dashboardStats.ratio}</p>
   </div>
 </div> */}
-          <div className="general_statistique">
+          {/* <div className="general_statistique">
   <div className="statistique_card">
     <h3 className="statisque_card_title">Encadrants</h3>
     <p className="statistique_card_mesure">{dashboardStats.encadrants_count}</p>
@@ -743,7 +744,33 @@ useEffect(() => {
     <h3>Applicants per Stage</h3>
     <p>{dashboardStats.ratio}</p>
   </div>
-</div>
+</div> */}
+
+<div className="general_statistique">
+      <StatChart
+        title="Encadrants"
+        value={dashboardStats.encadrants_count}
+        color="#4CAF50"
+      />
+
+      <StatChart
+        title="Active Stages"
+        value={dashboardStats.active_stages}
+        color="#2196F3"
+      />
+
+      <StatChart
+        title="Applicants"
+        value={dashboardStats.applicants_count}
+        color="#FF9800"
+      />
+
+      <StatChart
+        title="Applicants / Stage"
+        value={dashboardStats.ratio}
+        color="#9C27B0"
+      />
+    </div>
 
 
           </span>

@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "chart.js": "^4.5.1",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "lucide-react": "^0.562.0",
     "mysql2": "^3.16.0",
     "nodemailer": "^7.0.12",
     "react": "^19.2.0",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",
     "uuid": "^13.0.0"

@@ -156,6 +156,7 @@ nav {
 
 /* Container for all stats cards */
 .general_statistique {
+  
   width: 100%;
   height: auto;
   display: flex;
@@ -170,7 +171,7 @@ nav {
 /* Individual statistic card */
 .statistique_card {
     display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   width: 150px;

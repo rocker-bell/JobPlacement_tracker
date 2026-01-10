@@ -7,7 +7,7 @@ import menu_active from "../assets/menu_active.svg";
 import Logo1 from "../assets/Logo1.svg";
 import Profile from "../assets/profile.png";
 import Logout from "../assets/Logout.svg"
-
+import StatChart from "./StatChart";
 const UserJobBoard = () => {
   // State for active slider and mobile screen size
   const [Fetchuser, setFetchuser] = useState(null);
@@ -527,7 +527,7 @@ const [dashboardStats, setDashboardStats] = useState({
           >
             Content 1: Default
 
-                    <div className="general_statistique">
+                    {/* <div className="general_statistique">
                               <div className="statistique_card">
                                 <h3>Total Applications</h3>
                                 <p>{dashboardStats.total_applications}</p>
@@ -560,7 +560,50 @@ const [dashboardStats, setDashboardStats] = useState({
                                 <h3>Pending Evaluations</h3>
                                 <p>{dashboardStats.pending_evaluations}</p>
                               </div>
-                 </div>
+                 </div> */}
+
+                 <div className="general_statistique">
+      <StatChart
+        title="Total Applications"
+        value={dashboardStats.total_applications}
+        color="#4CAF50"
+      />
+      <StatChart
+        title="Accepted"
+        value={dashboardStats.accepted_applications}
+        color="#2196F3"
+      />
+      <StatChart
+        title="Refused"
+        value={dashboardStats.refused_applications}
+        color="#F44336"
+      />
+      <StatChart
+        title="Pending"
+        value={dashboardStats.pending_applications}
+        color="#FF9800"
+      />
+      <StatChart
+        title="Viewed"
+        value={dashboardStats.viewed_applications}
+        color="#9C27B0"
+      />
+      <StatChart
+        title="Unviewed"
+        value={dashboardStats.unviewed_applications}
+        color="#795548"
+      />
+      <StatChart
+        title="Total Affectations"
+        value={dashboardStats.total_affectations}
+        color="#009688"
+      />
+      <StatChart
+        title="Pending Evaluations"
+        value={dashboardStats.pending_evaluations}
+        color="#607D8B"
+      />
+    </div>
           </span>
          {/* <span
   className={`UserJobBoard_contentAbout ED_CB_addStage ${
