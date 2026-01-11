@@ -1142,32 +1142,47 @@ useEffect(() => {
 
                        {fetchEntreprise && (
   <>
-    <div className="profile_form_group">
+  
+
+                        
+                          <div className="profile_form_group">
   <label className="profile_form_label">Logo:</label>
 
-  {/* Show existing logo */}
-  {fetchEntreprise.logo_path && !logoFile && (
-    <div className="existing-file">
+  {/* Show existing logo or newly selected file */}
+  <div className="existing-file">
+    {logoFile ? (
+      // Preview newly selected file immediately
       <img
-        src={`${BASE_URL}/${fetchEntreprise.logo_path}`}
+        src={URL.createObjectURL(logoFile)}
+        alt="New Logo Preview"
+        width="120"
+        style={{ borderRadius: "8px" }}
+      />
+    ) : fetchEntreprise.logo_path ? (
+      // Show existing logo from backend, cache-busted
+      <img
+        src={`${BASE_URL}/${fetchEntreprise.logo_path}?t=${Date.now()}`}
         alt="Entreprise Logo"
         width="120"
         style={{ borderRadius: "8px" }}
       />
-    </div>
-  )}
+    ) : (
+      <p>No logo available</p>
+    )}
+  </div>
 
   {/* File input for new logo */}
   <input
     type="file"
     accept="image/*"
     className="profile_form_control"
-    onChange={(e) => setLogoFile(e.target.files[0])} // store the new file
+    onChange={(e) => setLogoFile(e.target.files[0])}
   />
 
-  {/* Show selected file name */}
+  {/* Optional: show selected file name */}
   {logoFile && <p>Selected file: {logoFile.name}</p>}
 </div>
+
     <div className="profile_form_group">
       <label className="profile_form_label">Entreprise ID:</label>
       <input
@@ -1430,6 +1445,8 @@ useEffect(() => {
             }`}
           >
             Content 5: Statistiques
+
+            
           </span>
 
           

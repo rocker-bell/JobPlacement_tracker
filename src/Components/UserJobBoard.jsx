@@ -143,7 +143,7 @@ const paginatedCandidatures = FetchCandidature?.slice(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id})
       });
-      con
+      
     } catch (err) {
       console.error("Failed to register disconnect:", err);
     }
@@ -401,7 +401,7 @@ const handleChange = (e) => {
     
   }
 
-  const handeleposutler = (id) => {
+  const handlePostuler = (id) => {
 
       alert("stage id = " + id)
       navigate(`/Postuler/${id}`)
@@ -1074,7 +1074,7 @@ const [dashboardStats, setDashboardStats] = useState({
         <div className="action-buttons">
           <button
             className="btn-apply"
-            onClick={() => handeleposutler(selectedStage.offre_id)}
+            onClick={() =>  handlePostuler(selectedStage.offre_id)}
           >
             Postuler maintenant
           </button>

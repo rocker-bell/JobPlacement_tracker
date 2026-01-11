@@ -9,6 +9,7 @@ import Logout from "../assets/Logout.svg"
 import {MessageSquare, Bell} from "lucide-react";
 import Ajouter from "../assets/Ajouter.gif"
 import StatChart from "./StatChart";
+import CandidatureMap from "./CandidatureMap.jsx"
 
 
 const AdminDashboard = () => {
@@ -1269,6 +1270,8 @@ const [dashboardStats, setDashboardStats] = useState({
             }`}
           >
             Content 5: Statistiques
+
+            <CandidatureMap />
           </span>
 
           

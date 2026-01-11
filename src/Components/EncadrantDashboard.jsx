@@ -569,7 +569,7 @@ useEffect(() => {
   <p>Il n’y a pas d’affectation pour le moment.</p>
 )} */}
 
-{Affectation && Affectation.length > 0 ? (
+{/* {Affectation && Affectation.length > 0 ? (
   <div>
     {Affectation.map(affect => (
       <div
@@ -586,6 +586,26 @@ useEffect(() => {
       </div>
     ))}
   </div>
+) : (
+  <p>Il n’y a pas d’affectation pour le moment.</p>
+)} */}
+
+
+{Affectation && Affectation.length > 0 ? (
+  Affectation.map(affect => (
+    <div
+      key={affect.affectation_id}
+      className={`affectation-card ${
+        selectedAffectation?.affectation_id === affect.affectation_id ? "active" : ""
+      }`}
+      onClick={() => handleAffectationClick(affect)}
+    >
+      <p><strong>Affectation ID:</strong> {affect.affectation_id}</p>
+      <p><strong>Encadrant ID:</strong> {affect.encadrant_id}</p>
+      <p><strong>Offre ID:</strong> {affect.offre_id || "Non assignée"}</p>
+      <p><strong>Status:</strong> {affect.affectation_status}</p>
+    </div>
+  ))
 ) : (
   <p>Il n’y a pas d’affectation pour le moment.</p>
 )}
