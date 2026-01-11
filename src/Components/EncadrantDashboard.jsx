@@ -279,10 +279,27 @@ async function fetchAffectation(user_id) {
     setActiveSlider(sliderName);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user_id");
-    navigate("/")
+  const handleLogout = async () => {
+  const user_id = localStorage.getItem("user_id");
+  // const connection_id = localStorage.getItem("connection_id"); // store this on login
+
+  if (user_id) {
+    try {
+      await fetch("http://localhost:8000/handle_logout.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id})
+      });
+      con
+    } catch (err) {
+      console.error("Failed to register disconnect:", err);
+    }
   }
+
+  localStorage.removeItem("user_id");
+  // localStorage.removeItem("connection_id");
+  navigate("/");
+};
 
 
 

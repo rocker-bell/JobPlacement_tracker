@@ -165,6 +165,17 @@ $Logs_Systeme = "
     );
 ";
 
+
+$connections_log = 'CREATE TABLE UserConnections (
+    id CHAR(36) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    connect_at DATETIME NOT NULL,
+    disconnected_at DATETIME NULL,
+    ip_address VARCHAR(45) NULL,
+    FOREIGN KEY (user_id) REFERENCES Utilisateurs(user_id)
+);';
+
+
 // --- EXECUTION ---
 $tables = [
     $Utilisateurs,

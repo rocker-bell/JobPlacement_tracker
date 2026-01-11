@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $stagiaire_id = $_POST['stagiaire_id'] ?? null;
 $nom = $_POST['nom'] ?? null;
 $prenom = $_POST['prenom'] ?? null;
+$emplacement = $_POST['emplacement'] ?? null;
 
 if (!$stagiaire_id) {
     echo json_encode(['success' => false, 'message' => 'Missing stagiaire_id']);
@@ -69,12 +70,14 @@ try {
             UPDATE StagiaireAccounts
             SET nom = :nom,
                 prenom = :prenom,
+                emplacement = :emplacement,
                 cv_path = COALESCE(:cv_path, cv_path),
                 photo_path = COALESCE(:photo_path, photo_path)
             WHERE stagiaire_id = :stagiaire_id
         ");
         $stmt_update->bindParam(':nom', $nom);
         $stmt_update->bindParam(':prenom', $prenom);
+         $stmt_update->bindParam(':emplacement', $emplacement);
         $stmt_update->bindParam(':cv_path', $cv_path);
         $stmt_update->bindParam(':photo_path', $photo_path);
         $stmt_update->bindParam(':stagiaire_id', $stagiaire_id);

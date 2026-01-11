@@ -551,6 +551,7 @@ const handleActiveRecovery = () => {
     <option value="Stagiaire">Stagiaire</option>
     <option value="Entreprise">Entreprise</option>
     <option value="Encadrant">Encadrant</option>
+    <option value="Admin">Admin</option>
 </select>
 
             </div>

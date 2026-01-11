@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>D3 World Map</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <style>
+    .country {
+      fill: lightgray;
+      stroke: white;
+      stroke-width: 0.5px;
+    }
+  </style>
+</head>
+<body>
+<script>
+  const width = 900;
+  const height = 900;
+
+  const svg = d3.select('body')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+  const g = svg.append('g');
+
+  // Create a geoPath generator
+  const projection = d3.geoNaturalEarth1()
+                       .scale(170)
+                       .translate([width / 2, height / 2]);
+
+  const path = d3.geoPath().projection(projection);
+
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
+    .then(data => {
+      // Fix typo: "datat" -> "data"
+      const countries = topojson.feature(data, data.objects.countries);
+
+      g.selectAll('path')
+       .data(countries.features)
+       .enter()
+       .append('path')
+       .attr('class', 'country')
+       .attr('d', path);
+    })
+    .catch(error => console.error(error));
+</script>
+</body>
+</html> 
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Morocco Map</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center; /* center horizontally */
+      align-items: center;     /* center vertically */
+      background-color: #f0f0f0;
+    }
+
+    .map {
+      border: 1px solid black;
+      background-color: white;
+    }
+
+    .country {
+      fill: lightgreen;
+      stroke: black;
+      stroke-width: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="map"></div>
+
+<script>
+  const width = 600;  // smaller width for better centering
+  const height = 600;
+
+  // Correct selector: .map for class
+  const svg = d3.select('.map')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+  const g = svg.append('g');
+
+  // Projection centered on Morocco
+  const projection = d3.geoMercator()
+                       .center([-7, 31])
+                       .scale(2000)
+                       .translate([width / 2, height / 2]);
+
+  const path = d3.geoPath().projection(projection);
+
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
+    .then(data => {
+      const countries = topojson.feature(data, data.objects.countries).features;
+
+      // Morocco only (ISO numeric code 504)
+      const morocco = countries.filter(d => d.id === "504");
+
+      g.selectAll('path')
+       .data(morocco)
+       .enter()
+       .append('path')
+       .attr('class', 'country')
+       .attr('d', path);
+    })
+    .catch(error => console.error(error));
+</script>
+</body>
+</html>

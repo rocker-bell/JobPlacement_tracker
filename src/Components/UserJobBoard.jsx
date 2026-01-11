@@ -23,6 +23,7 @@ const [FetchedQuery, setFetchedQuery] = useState([]);
 const [FetchStagiaire, setFetchStagiaire] = useState({
   nom: "",
   prenom: "",
+  emplacement: "",
   cv_path: "",
   photo_path: ""
 });
@@ -37,7 +38,9 @@ const [FetchCandidature, setFetchCandidature] = useState(null)
   const [menuActive, setmenuActive] = useState(false);
   const [offre, offre_id] = useState(false)
   const [Showmenu, setShowmenu] = useState(false);
-  const [candidature_dropdown, setcandidature_dropdown] = useState(false)
+  const [candidature_dropdown, setcandidature_dropdown] = useState(false);
+  const [SuggestedStageOffers, SetSuggestedStageOffers] = useState([]);
+
   // pagination
 
 
@@ -52,6 +55,13 @@ const paginatedStages = FetchedQuery.slice(
   currentPage * stagesPerPage
 
   
+);
+
+const totalSuggestedPages = Math.ceil((SuggestedStageOffers?.length ?? 0) / stagesPerPage);
+
+const paginatedSuggested = SuggestedStageOffers.slice(
+  (currentPage - 1) * stagesPerPage,
+  currentPage * stagesPerPage
 );
 
 // pagination
@@ -117,10 +127,32 @@ const paginatedCandidatures = FetchCandidature?.slice(
     setActiveSlider(sliderName);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user_id");
-    navigate("/")
+  // const handleLogout = () => {
+  //   localStorage.removeItem("user_id");
+  //   navigate("/")
+  // }
+
+  const handleLogout = async () => {
+  const user_id = localStorage.getItem("user_id");
+  // const connection_id = localStorage.getItem("connection_id"); // store this on login
+
+  if (user_id) {
+    try {
+      await fetch("http://localhost:8000/handle_logout.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id})
+      });
+      con
+    } catch (err) {
+      console.error("Failed to register disconnect:", err);
+    }
   }
+
+  localStorage.removeItem("user_id");
+  // localStorage.removeItem("connection_id");
+  navigate("/");
+};
 
   
  async function FetchStagiairefunction(user_id) {
@@ -185,6 +217,84 @@ const paginatedCandidatures = FetchCandidature?.slice(
   }
 }
 
+
+// async function  fetchSuggestedStages(user_id) {
+
+
+// }
+
+
+// async function fetchSuggestedStages(user_id) {
+//   try {
+//     const formData = new FormData();
+//     formData.append("stagiaire_id", user_id);
+
+//     const response = await fetch(`${BASE_URL}/fetch_stages.php`, {
+//       method: "POST",
+//       body: formData,
+//     });
+
+//     const data = await response.json();
+
+//     if (data.success) {
+//       console.log("Suggested stages:", data.stages);
+//       // You can update state here
+//       // setSuggestedStages(data.stages)
+//       SetSuggestedStageOffers(data.stages)
+//     } else {
+//       console.error("Error fetching stages:", data.message);
+//     }
+//   } catch (err) {
+//     console.error("Fetch error:", err);
+//   }
+// }
+
+// async function fetchSuggestedStages(user_id) {
+//     try {
+//       const formData = new FormData();
+//       formData.append("stagiaire_id", user_id);
+
+//       const response = await fetch(`${BASE_URL}/FetchStagesByAddress.php`, {
+//         method: "POST",
+//         body: formData,
+//       });
+
+//       const data = await response.json();
+//       if (data.success) {
+//         SetSuggestedStageOffers(data.stages); // <-- will be an array
+//         console.log("suggested stages :", SuggestedStageOffers)
+//       } else {
+//         SetSuggestedStageOffers([]); // empty array if no stages
+//       }
+//     } catch (err) {
+//       console.error("Fetch error:", err);
+//       SetSuggestedStageOffers([]); // fallback
+//     }
+//   }
+
+async function fetchSuggestedStages(user_id) {
+  try {
+    const formData = new FormData();
+    formData.append("stagiaire_id", user_id);
+
+    const response = await fetch(`${BASE_URL}/FetchStagesByAddress.php`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      SetSuggestedStageOffers(data.stages);
+      console.log("Fetched stages from server:", data.stages); // log here
+    } else {
+      SetSuggestedStageOffers([]);
+      console.log("No stages found");
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+    SetSuggestedStageOffers([]);
+  }
+}
 
 
 
@@ -266,6 +376,7 @@ const handleChange = (e) => {
       if (user_id) {
         FetchuserData(user_id); // actually call the function
         FetchStagiairefunction(user_id);
+        fetchSuggestedStages(user_id)
         
         fetchCandidatures(user_id);
       }
@@ -309,6 +420,7 @@ async function updateStagiairedata(id) {
     formData.append("stagiaire_id", id);
     formData.append("nom", FetchStagiaire.nom);
     formData.append("prenom", FetchStagiaire.prenom);
+    formData.append("emplacement", FetchStagiaire.emplacement)
 
     if (cvFile) formData.append("cv_file", cvFile);
     if (photoFile) formData.append("photo_file", photoFile);
@@ -321,6 +433,10 @@ async function updateStagiairedata(id) {
     const data = await response.json();
     if (data.success) {
       alert("Stagiaire updated successfully!");
+      window.location.reload()
+      setTimeout(() => {
+        SliderContentHandler("ED_CB_profile")
+      }, 3000);
     } else {
       alert("Failed to update stagiaire: " + data.message);
     }
@@ -510,12 +626,12 @@ const [dashboardStats, setDashboardStats] = useState({
                 {/* <img src={Profile} alt="" className="UserDashboard_nav_icons"/> */}
                 <img  src="https://img.icons8.com/3d-fluency/94/resume.png" className="UserDashboard_nav_icons" alt="resume"/>
               </li>
-              {/* <li
+              <li
                 className="UserJobBoard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_statistiques")}
               >
                 statistique
-              </li> */}
+              </li>
               <li  className="UserJobBoard_nav_list" onClick={handleLogout}>
                   <img src={Logout} alt="" className="UserDashboard_nav_icons" />
               </li>
@@ -530,44 +646,280 @@ const [dashboardStats, setDashboardStats] = useState({
               ActiveSlider === "ED_CB_default" ? "Active" : ""
             }`}
           >
-            Content 1: Default
+            Content 1: Default Suggested stages
 
-                    {/* <div className="general_statistique">
-                              <div className="statistique_card">
-                                <h3>Total Applications</h3>
-                                <p>{dashboardStats.total_applications}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Accepted</h3>
-                                <p>{dashboardStats.accepted_applications}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Refused</h3>
-                                <p>{dashboardStats.refused_applications}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Pending</h3>
-                                <p>{dashboardStats.pending_applications}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Viewed</h3>
-                                <p>{dashboardStats.viewed_applications}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Unviewed</h3>
-                                <p>{dashboardStats.unviewed_applications}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Total Affectations</h3>
-                                <p>{dashboardStats.total_affectations}</p>
-                              </div>
-                              <div className="statistique_card">
-                                <h3>Pending Evaluations</h3>
-                                <p>{dashboardStats.pending_evaluations}</p>
-                              </div>
-                 </div> */}
+            {/* <div className="stages-container">
+     
+      <div className="left-panel">
+        {SuggestedStageOffers.length > 0 ? (
+          <>
+            {paginatedStages.map((stage) => (
+              <div
+                key={stage.offre_id}
+                className={`stage-card ${
+                  selectedStage?.offre_id === stage.offre_id ? "active" : ""
+                }`}
+                onClick={() => setSelectedStage(stage)}
+              >
+                <h3>{stage.titre}</h3>
+                <p>
+                  <strong>Location:</strong> {stage.emplacement}
+                </p>
+                <p>
+                  <strong>Type:</strong> {stage.type_de_stage}
+                </p>
+              </div>
+            ))}
 
-                 <div className="general_statistique">
+           
+            {totalPages > 1 && (
+              <div className="pagination">
+                {Array.from({ length: totalPages }, (_, idx) => (
+                  <button
+                    key={idx + 1}
+                    className={currentPage === idx + 1 ? "active" : ""}
+                    onClick={() => setCurrentPage(idx + 1)}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <p>No stages found</p>
+        )}
+      </div>
+
+      
+      <div className="detail-panel">
+        {selectedStage ? (
+          <>
+            
+            <div className="detail-header">
+              <h2 className="detail-title">{selectedStage.titre}</h2>
+
+              <div className="detail-company-link">
+                <a href="#">{selectedStage.nom_entreprise}</a> •{" "}
+                {selectedStage.emplacement}
+              </div>
+
+              <div className="action-buttons">
+                <button
+                  className="btn-apply"
+                  onClick={() => handlePostuler(selectedStage.offre_id)}
+                >
+                  Postuler maintenant
+                </button>
+                <button className="btn-icon">
+                  <Bookmark size={24} />
+                </button>
+                <button className="btn-icon">
+                  <Ban size={24} />
+                </button>
+              </div>
+            </div>
+
+            
+            <div className="detail-content">
+             
+              <h3 className="section-title">Détails du stage</h3>
+              <div style={{ marginBottom: "20px" }}>
+                <span className="badge-gray">
+                  <Building2 size={14} /> {selectedStage.type_de_stage}
+                </span>
+              </div>
+
+              <h3 className="section-title">Catégorie</h3>
+              <div className="job-description-text">
+                {selectedStage.stage_categorie}
+              </div>
+
+             
+              <h3 className="section-title">Description complète</h3>
+              <div className="job-description-text">
+                {selectedStage.description}
+              </div>
+
+             
+              <h3 className="section-title">Détails temporels</h3>
+              <div className="job-description-text">
+                <p>
+                  <strong>Date de début:</strong> {selectedStage.date_debut}
+                </p>
+                <p>
+                  <strong>Durée (semaines):</strong> {selectedStage.duree_semaines}
+                </p>
+                <p>
+                  <strong>Places disponibles:</strong> {selectedStage.nombre_places}
+                </p>
+                <p>
+                  <strong>Statut:</strong>{" "}
+                  <span className={`status ${selectedStage.statut}`}>
+                    {selectedStage.statut}
+                  </span>
+                </p>
+              </div>
+
+             
+              <button className="selected_job_actions_group">
+                <Bookmark
+                  size={20}
+                  color="blue"
+                  strokeWidth={1.5}
+                  onClick={() => console.log("Bookmark clicked")}
+                />
+                <Star
+                  size={20}
+                  className="text-yellow-500"
+                  onClick={() => console.log("Star clicked")}
+                />
+              </button>
+            </div>
+          </>
+        ) : (
+          <p>Select a stage to see details</p>
+        )}
+      </div>
+    </div> */}
+
+    <div className="stages-container">
+  {/* --- LEFT PANEL: Paginated Stage List --- */}
+  <div className="left-panel">
+  {(SuggestedStageOffers?.length ?? 0) > 0 ? (
+    <>
+      {paginatedSuggested.map((stage) => (
+        <div
+          key={stage.offre_id}
+          className={`stage-card ${
+            selectedStage?.offre_id === stage.offre_id ? "active" : ""
+          }`}
+          onClick={() => setSelectedStage(stage)}
+        >
+          <h3>{stage.titre}</h3>
+          <p><strong>Location:</strong> {stage.emplacement}</p>
+          <p><strong>Type:</strong> {stage.type_de_stage}</p>
+        </div>
+      ))}
+
+      {/* Pagination */}
+      {totalSuggestedPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalSuggestedPages }, (_, idx) => (
+            <button
+              key={idx + 1}
+              className={currentPage === idx + 1 ? "active" : ""}
+              onClick={() => setCurrentPage(idx + 1)}
+            >
+              {idx + 1}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  ) : (
+    <p>No stages found</p>
+  )}
+</div>
+
+
+  {/* --- RIGHT PANEL: Stage Details --- */}
+  <div className="detail-panel">
+    {selectedStage ? (
+      <>
+        {/* Header */}
+        <div className="detail-header">
+          <h2 className="detail-title">{selectedStage.titre}</h2>
+
+          <div className="detail-company-link">
+            <a href="#">{selectedStage.nom_entreprise}</a> •{" "}
+            {selectedStage.emplacement}
+          </div>
+
+          <div className="action-buttons">
+            <button
+              className="btn-apply"
+              onClick={() => handlePostuler(selectedStage.offre_id)}
+            >
+              Postuler maintenant
+            </button>
+            <button className="btn-icon">
+              <Bookmark size={24} />
+            </button>
+            <button className="btn-icon">
+              <Ban size={24} />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="detail-content">
+          {/* Stage type badge */}
+          <h3 className="section-title">Détails du stage</h3>
+          <div style={{ marginBottom: "20px" }}>
+            <span className="badge-gray">
+              <Building2 size={14} /> {selectedStage.type_de_stage}
+            </span>
+          </div>
+
+          {/* Category */}
+          <h3 className="section-title">Catégorie</h3>
+          <div className="job-description-text">
+            {selectedStage.stage_categorie}
+          </div>
+
+          {/* Full description */}
+          <h3 className="section-title">Description complète</h3>
+          <div className="job-description-text">{selectedStage.description}</div>
+
+          {/* Dates and duration */}
+          <h3 className="section-title">Détails temporels</h3>
+          <div className="job-description-text">
+            <p>
+              <strong>Date de début:</strong> {selectedStage.date_debut}
+            </p>
+            <p>
+              <strong>Durée (semaines):</strong> {selectedStage.duree_semaines}
+            </p>
+            <p>
+              <strong>Places disponibles:</strong> {selectedStage.nombre_places}
+            </p>
+            <p>
+              <strong>Statut:</strong>{" "}
+              <span className={`status ${selectedStage.statut}`}>
+                {selectedStage.statut}
+              </span>
+            </p>
+          </div>
+
+          {/* Actions */}
+          <button className="selected_job_actions_group">
+            <Bookmark
+              size={20}
+              color="blue"
+              strokeWidth={1.5}
+              onClick={() => console.log("Bookmark clicked")}
+            />
+            <Star
+              size={20}
+              className="text-yellow-500"
+              onClick={() => console.log("Star clicked")}
+            />
+          </button>
+        </div>
+      </>
+    ) : (
+      <p>Select a stage to see details</p>
+    )}
+  </div>
+</div>
+
+
+
+
+
+                   
+                 {/* <div className="general_statistique">
       <StatChart
         title="Total Applications"
         value={dashboardStats.total_applications}
@@ -608,7 +960,7 @@ const [dashboardStats, setDashboardStats] = useState({
         value={dashboardStats.pending_evaluations}
         color="#607D8B"
       />
-    </div>
+    </div> */}
           </span>
          {/* <span
   className={`UserJobBoard_contentAbout ED_CB_addStage ${
@@ -706,144 +1058,7 @@ const [dashboardStats, setDashboardStats] = useState({
       )}
     </div>
 
-    {/* --- RIGHT PANEL: Selected Stage Details --- */}
-    {/* <div className="right-panel">
-      {selectedStage ? (
-        <div className="stage-detail">
-          <h2>{selectedStage.titre}</h2>
-          <p><strong>Company:</strong> {selectedStage.entreprise_id}</p>
-          <p><strong>Location:</strong> {selectedStage.emplacement}</p>
-          <p><strong>Type:</strong> {selectedStage.type_de_stage}</p>
-          <p><strong>Category:</strong> {selectedStage.stage_categorie}</p>
-          <p><strong>Description:</strong> {selectedStage.description}</p>
-          <p><strong>Start Date:</strong> {selectedStage.date_debut}</p>
-          <p><strong>Duration:</strong> {selectedStage.duree_semaines} weeks</p>
-          <p><strong>Available Places:</strong> {selectedStage.nombre_places}</p>
-          <p>
-            <strong>Status:</strong>{" "}
-            <span className={`status ${selectedStage.statut}`}>
-              {selectedStage.statut}
-            </span>
-          </p>
-          <button
-            className="Cancdidatstage_btn_actions"
-            onClick={() => handeleposutler(selectedStage.offre_id)}
-          >
-            Postuler
-          </button>
-        </div>
-      ) : (
-        <p>Select a stage to see details</p>
-      )}
-    </div> */}
-
-
-    {/* <div className="right-panel">
-  {selectedStage ? (
-    <div className="stage-detail-form">
-      <h2>{selectedStage.titre}</h2>
-
-      <div className="form-group">
-        <label className="form-label">Company:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={selectedStage.entreprise_id}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Location:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={selectedStage.emplacement}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Type:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={selectedStage.type_de_stage}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Category:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={selectedStage.stage_categorie}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Description:</label>
-        <textarea
-          className="form-control"
-          value={selectedStage.description}
-          readOnly
-          rows={4}
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Start Date:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={selectedStage.date_debut}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Duration (weeks):</label>
-        <input
-          type="number"
-          className="form-control"
-          value={selectedStage.duree_semaines}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Available Places:</label>
-        <input
-          type="number"
-          className="form-control"
-          value={selectedStage.nombre_places}
-          readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Status:</label>
-        <input
-          type="text"
-          className={`form-control status ${selectedStage.statut}`}
-          value={selectedStage.statut}
-          readOnly
-        />
-      </div>
-
-      <button
-        className="candidature-btn"
-        onClick={() => handeleposutler(selectedStage.offre_id)}
-      >
-        Postuler
-      </button>
-    </div>
-  ) : (
-    <p>Select a stage to see details</p>
-  )}
-</div> */}
+    
 
 <div className="detail-panel">
   {selectedStage ? (
@@ -1701,6 +1916,19 @@ const [dashboardStats, setDashboardStats] = useState({
       />
     </div>
 
+      <div className="profile_form_group">
+      <label className="profile_form_label">Emplacement(address):</label>
+      <input
+        type="text"
+        value={FetchStagiaire.emplacement || ""}
+        placeholder="Entrez votre Address"
+        onChange={(e) =>
+          setFetchStagiaire(prev => ({ ...prev, emplacement: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
     {/* CV */}
     <div className="profile_form_group">
       <label className="profile_form_label">CV:</label>
@@ -2030,13 +2258,59 @@ const [dashboardStats, setDashboardStats] = useState({
 
 
           </span>
-          {/* <span
+          <span
             className={`UserJobBoard_contentAbout ED_CB_statistiques ${
               ActiveSlider === "ED_CB_statistiques" ? "Active" : ""
             }`}
           >
-            Content 5: Statistiques
-          </span> */}
+            Content 5: Statistiques :
+
+
+             <div className="general_statistique">
+      <StatChart
+        title="Total Applications"
+        value={dashboardStats.total_applications}
+        color="#4CAF50"
+      />
+      <StatChart
+        title="Accepted"
+        value={dashboardStats.accepted_applications}
+        color="#2196F3"
+      />
+      <StatChart
+        title="Refused"
+        value={dashboardStats.refused_applications}
+        color="#F44336"
+      />
+      <StatChart
+        title="Pending"
+        value={dashboardStats.pending_applications}
+        color="#FF9800"
+      />
+      <StatChart
+        title="Viewed"
+        value={dashboardStats.viewed_applications}
+        color="#9C27B0"
+      />
+      <StatChart
+        title="Unviewed"
+        value={dashboardStats.unviewed_applications}
+        color="#795548"
+      />
+      <StatChart
+        title="Total Affectations"
+        value={dashboardStats.total_affectations}
+        color="#009688"
+      />
+      <StatChart
+        title="Pending Evaluations"
+        value={dashboardStats.pending_evaluations}
+        color="#607D8B"
+      />
+    </div>
+
+
+          </span>
         </div>
       </div>
 

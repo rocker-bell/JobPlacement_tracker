@@ -1,4 +1,4 @@
-.EntrepriseDashboard_wrapper {
+.AdminDashboard_wrapper {
     width: 100%;
     min-height: 100vh;
     display: flex;
@@ -11,7 +11,7 @@
     /* overflow-y: hidden;   */
 }
 
-.EntrepiriseDashboard_container {
+.AdminDashboard_container {
     width: 95%;
     min-height: 100%;
     display: flex;
@@ -30,30 +30,30 @@
   cursor: pointer;
 }
 
-.EntrepiriseDashboard_sideNav {
+.AdminDashboard_sideNav {
      width: 100%;
    height: 15%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    flex-direction: column;
-    /* border: 4px dashed green; */
+    flex-direction: row;
+    border: 4px dashed green;
 }
 
 
-nav {
+.nav-admin {
     width: 100%;
     height: 100%;
     /* border: 4px solid red; */
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 }
 
 
-.EntrepriseDashboard_nav_icons {
+.AdminDashboard_nav_icons {
   width: 35px;
   height: 35px;
 }
@@ -71,14 +71,14 @@ nav {
     display: block;
 }
 
-.EntrepiriseDashboard_navLists.Active {
+.AdminDashboard_navLists.Active {
     display: flex;
 }
 
 
 
 
-.EntrepiriseDashboard_navLists {
+.AdminDashboard_navLists {
   /* border: 1px solid black; */
     min-width: 50%;
     min-height: 50%;
@@ -116,7 +116,7 @@ nav {
 
 
 
-.EntrepiriseDashboard_nav_list {
+.AdminDashboard_nav_list {
     
         min-width: 70px;
         /* border: 1px solid black; */
@@ -127,7 +127,7 @@ nav {
         cursor: pointer;
 }
 
-.EntrepiriseDashboard_NavContentSlider {
+.AdminDashboard_NavContentSlider {
     width: 100%;
     min-height: 100%;
     display: flex;
@@ -138,7 +138,7 @@ nav {
     flex-wrap: wrap;
 }
 
-.EntrepiriseDashboard_contentAbout {
+.AdminDashboard_contentAbout {
     display: none;
     width: 100%;
     min-height: 100%;
@@ -166,6 +166,14 @@ nav {
   gap: 1rem;           /* space between cards */
   flex-wrap: wrap;      /* wrap on smaller screens */
   margin-top: 1rem;
+}
+
+.stages_statistique {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: row;
 }
 
 /* Individual statistic card */
@@ -560,7 +568,7 @@ footer {
 
 
 @media screen and (max-width: 768px) {
-  .EntrepiriseDashboard_sideNav {
+  .AdminDashboard_sideNav {
     min-width: 100%;
     /* border: 3px solid black; */
     /* min-height: 15%; */
@@ -568,7 +576,7 @@ footer {
     display: flex;
     flex-wrap: wrap;
   }
-    .EntrepiriseDashboard_container {
+    .AdminDashboard_container {
         
         display: flex;
         justify-content: center;
@@ -584,7 +592,7 @@ footer {
       flex-direction: row;
     }
 
-    .EntrepiriseDashboard_navLists {
+    .AdminDashboard_navLists {
     /* border: 1px solid black; */
     width: 100%;
     height: 100%;
@@ -598,7 +606,7 @@ footer {
     
 }
 
-    .EntrepiriseDashboard_sideNav {
+    .AdminDashboard_sideNav {
         width: 100%;
         height: auto;
         display: flex;
