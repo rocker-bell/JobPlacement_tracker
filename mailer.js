@@ -498,7 +498,8 @@ app.post("/register", (req, res) => {
 
     // Insert user into the Users table with a "Pending" account status
     const query = `
-        INSERT INTO Utilisateurs (user_id, email, username, password_hash, telephone, role, account_status, verification_token, token_created_at, token_expires_at)
+        INSERT INTO utilisateurs 
+        (user_id, email, username, password_hash, telephone, role, account_status, verification_token, token_created_at, token_expires_at) 
         VALUES (?, ?, ?, ?, ?, ?, 'Pending', ?, NOW(), ?)
     `;
 

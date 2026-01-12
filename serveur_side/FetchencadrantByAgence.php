@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $db->prepare("
         SELECT e.*
         FROM affectation a
-        JOIN Encadrants e ON a.encadrant_id = e.encadrant_id
+        JOIN encadrant_account e ON a.encadrant_id = e.encadrant_id
         WHERE a.offre_id = :offre_id
         LIMIT 1
     ");

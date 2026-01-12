@@ -21,7 +21,7 @@ if (!$query) {
 try {
     $stmt = $db->prepare("
         SELECT *
-        FROM Encadrants
+        FROM encadrant_account
         WHERE TRIM(encadrant_id) = :query
            OR TRIM(agence_id) = :query
            OR TRIM(nom_d_agence) = :query

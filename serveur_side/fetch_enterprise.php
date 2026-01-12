@@ -37,7 +37,7 @@ if (!$user_id) {
 try {
     $stmt = $db->prepare("
         SELECT *
-        FROM Entreprises
+        FROM entreprise_account
         WHERE entreprise_id = :user_id
         LIMIT 1
     ");

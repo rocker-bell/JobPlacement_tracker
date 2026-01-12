@@ -24,7 +24,7 @@ if (!$stagiaire_id) {
 
 try {
     // 1. Get stagiaire's emplacement
-    $stmt = $db->prepare("SELECT emplacement FROM StagiaireAccounts WHERE stagiaire_id = :stagiaire_id");
+    $stmt = $db->prepare("SELECT emplacement FROM stagiaire_accounts WHERE stagiaire_id = :stagiaire_id");
     $stmt->bindParam(':stagiaire_id', $stagiaire_id);
     $stmt->execute();
     $stagiaire = $stmt->fetch(PDO::FETCH_ASSOC);

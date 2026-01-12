@@ -51,7 +51,7 @@ const [submittedQuery, setSubmittedQuery] = useState({
 
 
   const handleContactus = () => {
-    navigate("/contact")
+    navigate("/ContactUs")
 }
 
 

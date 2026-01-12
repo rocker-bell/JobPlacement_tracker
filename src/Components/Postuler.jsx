@@ -230,14 +230,14 @@ const Postuler = () => {
     
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/fetch_profile.php`, {
+        const res = await fetch(`${BASE_URL}/fetchStagiaireProfile.php`, {
           method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ user_id: userId }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId }),
         });
 
         const data = await res.json();
-        setuserinfo(data.user_data);
+        setuserinfo(data.user);
       } catch (err) {
         console.error("Failed to fetch user info:", err);
       }

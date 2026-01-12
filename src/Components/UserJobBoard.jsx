@@ -32,6 +32,7 @@ const [FetchCandidature, setFetchCandidature] = useState(null)
 
 
   const [UserId, setUserId] = useState(null);
+  const [IsEditing, setIsEditing] = useState(false)
   const [ActiveSlider, setActiveSlider] = useState("ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
@@ -40,6 +41,8 @@ const [FetchCandidature, setFetchCandidature] = useState(null)
   const [Showmenu, setShowmenu] = useState(false);
   const [candidature_dropdown, setcandidature_dropdown] = useState(false);
   const [SuggestedStageOffers, SetSuggestedStageOffers] = useState([]);
+
+  const toggleEdit = () => setIsEditing((prev) => !prev);
 
   // pagination
 
@@ -83,7 +86,26 @@ const paginatedCandidatures = FetchCandidature?.slice(
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const dropdownTimeoutRef = useRef(null);
 
+useEffect(() => {
+      const user_id = localStorage.getItem("user_id");
+      setUserId(user_id);
+      // setenterpriseId(user_id)
+  
+      if (user_id) {
+        fetchStagiaireProfile(user_id);
+         
+        fetchSuggestedStages(user_id)
+        
+        fetchCandidatures(user_id);
+      }
 
+
+      if(submittedQuery) {
+        FetchSearchedStage(submittedQuery)
+      }
+
+     
+    }, []);
   const toggleDropdown = (candidatureId) => {
   // If clicking the same card, close it
   if (openDropdownId === candidatureId) {
@@ -155,34 +177,67 @@ const paginatedCandidatures = FetchCandidature?.slice(
 };
 
   
- async function FetchStagiairefunction(user_id) {
-  console.log("user id = " + user_id)
-      try {
-        const response = await fetch(`${BASE_URL}/Stagiairefetch.php`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-          },
-          body: new URLSearchParams({ user_id: user_id }), // send user_id
-        });
+//  async function FetchStagiairefunction(user_id) {
+//   console.log("user id = " + user_id)
+//       try {
+//         const response = await fetch(`${BASE_URL}/Stagiairefetch.php`, {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+//           },
+//           body: new URLSearchParams({ user_id: user_id }), // send user_id
+//         });
   
-        if (!response.ok) {
-          console.error("HTTP error:", response.status);
-          return;
-        }
+//         if (!response.ok) {
+//           console.error("HTTP error:", response.status);
+//           return;
+//         }
   
-        const data = await response.json();
-        console.log(data)
-        if (data.success) {
-          setFetchStagiaire(data.user_data);
-        } else {
-          console.error("Error from API:", data.message);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
+//         const data = await response.json();
+//         console.log(data)
+//         if (data.success) {
+//           setFetchStagiaire(data.user_data);
+//         } else {
+//           console.error("Error from API:", data.message);
+//         }
+//       } catch (err) {
+//         console.error("Fetch error:", err);
+//       }
+//     }
+ async function fetchStagiaireProfile(user_id) {
+ 
+
+  if (!user_id) {
+    console.error("User ID not found in localStorage");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/fetchStagiaireProfile.php`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user_id: user_id })
       }
+    );
+
+    const result = await response.json();
+    console.log("fetched user", result)
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to fetch profile");
     }
 
+    // ✅ Your data is inside result.data
+    setFetchuser(result.user);
+
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+}
 
 
     async function fetchCandidatures(user_id) {
@@ -224,53 +279,6 @@ const paginatedCandidatures = FetchCandidature?.slice(
 // }
 
 
-// async function fetchSuggestedStages(user_id) {
-//   try {
-//     const formData = new FormData();
-//     formData.append("stagiaire_id", user_id);
-
-//     const response = await fetch(`${BASE_URL}/fetch_stages.php`, {
-//       method: "POST",
-//       body: formData,
-//     });
-
-//     const data = await response.json();
-
-//     if (data.success) {
-//       console.log("Suggested stages:", data.stages);
-//       // You can update state here
-//       // setSuggestedStages(data.stages)
-//       SetSuggestedStageOffers(data.stages)
-//     } else {
-//       console.error("Error fetching stages:", data.message);
-//     }
-//   } catch (err) {
-//     console.error("Fetch error:", err);
-//   }
-// }
-
-// async function fetchSuggestedStages(user_id) {
-//     try {
-//       const formData = new FormData();
-//       formData.append("stagiaire_id", user_id);
-
-//       const response = await fetch(`${BASE_URL}/FetchStagesByAddress.php`, {
-//         method: "POST",
-//         body: formData,
-//       });
-
-//       const data = await response.json();
-//       if (data.success) {
-//         SetSuggestedStageOffers(data.stages); // <-- will be an array
-//         console.log("suggested stages :", SuggestedStageOffers)
-//       } else {
-//         SetSuggestedStageOffers([]); // empty array if no stages
-//       }
-//     } catch (err) {
-//       console.error("Fetch error:", err);
-//       SetSuggestedStageOffers([]); // fallback
-//     }
-//   }
 
 async function fetchSuggestedStages(user_id) {
   try {
@@ -368,26 +376,7 @@ const handleChange = (e) => {
 // }
 
   
-    useEffect(() => {
-      const user_id = localStorage.getItem("user_id");
-      setUserId(user_id);
-      // setenterpriseId(user_id)
-  
-      if (user_id) {
-        FetchuserData(user_id); // actually call the function
-        FetchStagiairefunction(user_id);
-        fetchSuggestedStages(user_id)
-        
-        fetchCandidatures(user_id);
-      }
-
-
-      if(submittedQuery) {
-        FetchSearchedStage(submittedQuery)
-      }
-
-     
-    }, []);
+   
 
   const handleClickMenu = () => {
     setmenuActive(true);
@@ -418,9 +407,9 @@ async function updateStagiairedata(id) {
   try {
     const formData = new FormData();
     formData.append("stagiaire_id", id);
-    formData.append("nom", FetchStagiaire.nom);
-    formData.append("prenom", FetchStagiaire.prenom);
-    formData.append("emplacement", FetchStagiaire.emplacement)
+    formData.append("nom", Fetchuser.nom);
+    formData.append("prenom", Fetchuser.prenom);
+    formData.append("emplacement", Fetchuser.emplacement)
 
     if (cvFile) formData.append("cv_file", cvFile);
     if (photoFile) formData.append("photo_file", photoFile);
@@ -564,6 +553,13 @@ const [dashboardStats, setDashboardStats] = useState({
     navigate('/AccountRecovery')
   }
 
+  const saveChangesProfile = () => {
+
+  }
+
+
+   
+
   return (
     <div className="UserJobBoard_wrapper">
       <div className="UserJobBoard_container">
@@ -648,140 +644,7 @@ const [dashboardStats, setDashboardStats] = useState({
           >
             Content 1: Default Suggested stages
 
-            {/* <div className="stages-container">
-     
-      <div className="left-panel">
-        {SuggestedStageOffers.length > 0 ? (
-          <>
-            {paginatedStages.map((stage) => (
-              <div
-                key={stage.offre_id}
-                className={`stage-card ${
-                  selectedStage?.offre_id === stage.offre_id ? "active" : ""
-                }`}
-                onClick={() => setSelectedStage(stage)}
-              >
-                <h3>{stage.titre}</h3>
-                <p>
-                  <strong>Location:</strong> {stage.emplacement}
-                </p>
-                <p>
-                  <strong>Type:</strong> {stage.type_de_stage}
-                </p>
-              </div>
-            ))}
-
-           
-            {totalPages > 1 && (
-              <div className="pagination">
-                {Array.from({ length: totalPages }, (_, idx) => (
-                  <button
-                    key={idx + 1}
-                    className={currentPage === idx + 1 ? "active" : ""}
-                    onClick={() => setCurrentPage(idx + 1)}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-              </div>
-            )}
-          </>
-        ) : (
-          <p>No stages found</p>
-        )}
-      </div>
-
-      
-      <div className="detail-panel">
-        {selectedStage ? (
-          <>
-            
-            <div className="detail-header">
-              <h2 className="detail-title">{selectedStage.titre}</h2>
-
-              <div className="detail-company-link">
-                <a href="#">{selectedStage.nom_entreprise}</a> •{" "}
-                {selectedStage.emplacement}
-              </div>
-
-              <div className="action-buttons">
-                <button
-                  className="btn-apply"
-                  onClick={() => handlePostuler(selectedStage.offre_id)}
-                >
-                  Postuler maintenant
-                </button>
-                <button className="btn-icon">
-                  <Bookmark size={24} />
-                </button>
-                <button className="btn-icon">
-                  <Ban size={24} />
-                </button>
-              </div>
-            </div>
-
-            
-            <div className="detail-content">
-             
-              <h3 className="section-title">Détails du stage</h3>
-              <div style={{ marginBottom: "20px" }}>
-                <span className="badge-gray">
-                  <Building2 size={14} /> {selectedStage.type_de_stage}
-                </span>
-              </div>
-
-              <h3 className="section-title">Catégorie</h3>
-              <div className="job-description-text">
-                {selectedStage.stage_categorie}
-              </div>
-
-             
-              <h3 className="section-title">Description complète</h3>
-              <div className="job-description-text">
-                {selectedStage.description}
-              </div>
-
-             
-              <h3 className="section-title">Détails temporels</h3>
-              <div className="job-description-text">
-                <p>
-                  <strong>Date de début:</strong> {selectedStage.date_debut}
-                </p>
-                <p>
-                  <strong>Durée (semaines):</strong> {selectedStage.duree_semaines}
-                </p>
-                <p>
-                  <strong>Places disponibles:</strong> {selectedStage.nombre_places}
-                </p>
-                <p>
-                  <strong>Statut:</strong>{" "}
-                  <span className={`status ${selectedStage.statut}`}>
-                    {selectedStage.statut}
-                  </span>
-                </p>
-              </div>
-
-             
-              <button className="selected_job_actions_group">
-                <Bookmark
-                  size={20}
-                  color="blue"
-                  strokeWidth={1.5}
-                  onClick={() => console.log("Bookmark clicked")}
-                />
-                <Star
-                  size={20}
-                  className="text-yellow-500"
-                  onClick={() => console.log("Star clicked")}
-                />
-              </button>
-            </div>
-          </>
-        ) : (
-          <p>Select a stage to see details</p>
-        )}
-      </div>
-    </div> */}
+          =
 
     <div className="stages-container">
   {/* --- LEFT PANEL: Paginated Stage List --- */}
@@ -918,98 +781,9 @@ const [dashboardStats, setDashboardStats] = useState({
 
 
 
-                   
-                 {/* <div className="general_statistique">
-      <StatChart
-        title="Total Applications"
-        value={dashboardStats.total_applications}
-        color="#4CAF50"
-      />
-      <StatChart
-        title="Accepted"
-        value={dashboardStats.accepted_applications}
-        color="#2196F3"
-      />
-      <StatChart
-        title="Refused"
-        value={dashboardStats.refused_applications}
-        color="#F44336"
-      />
-      <StatChart
-        title="Pending"
-        value={dashboardStats.pending_applications}
-        color="#FF9800"
-      />
-      <StatChart
-        title="Viewed"
-        value={dashboardStats.viewed_applications}
-        color="#9C27B0"
-      />
-      <StatChart
-        title="Unviewed"
-        value={dashboardStats.unviewed_applications}
-        color="#795548"
-      />
-      <StatChart
-        title="Total Affectations"
-        value={dashboardStats.total_affectations}
-        color="#009688"
-      />
-      <StatChart
-        title="Pending Evaluations"
-        value={dashboardStats.pending_evaluations}
-        color="#607D8B"
-      />
-    </div> */}
+        
           </span>
-         {/* <span
-  className={`UserJobBoard_contentAbout ED_CB_addStage ${
-    ActiveSlider === "ED_CB_addStage" ? "Active" : ""
-  }`}
->
-  Content 2:  stage content :
-  
-
-{Array.isArray(FetchedQuery) && FetchedQuery.length > 0 ? (
-  FetchedQuery.map((stage) => (
-    <div key={stage.offre_id} className="stage_card">
-      
-      <h2>{stage.titre}</h2>
-
-      <p><strong>Type:</strong> {stage.type_de_stage}</p>
-      <p><strong>Category:</strong> {stage.stage_categorie}</p>
-      <p><strong>Description:</strong> {stage.description}</p>
-
-      <p><strong>Skills Required:</strong> {stage.competences_requises}</p>
-
-      <p><strong>Start Date:</strong> {stage.date_debut}</p>
-      <p><strong>Duration (weeks):</strong> {stage.duree_semaines}</p>
-
-      <p><strong>Available Places:</strong> {stage.nombre_places}</p>
-      <p><strong>Location:</strong> {stage.emplacement}</p>
-
-      <p>
-        <strong>Status:</strong>{" "}
-        <span className={`status ${stage.statut}`}>
-          {stage.statut}
-        </span>
-      </p>
-
-      <small>
-        <strong>Created:</strong> {stage.created_at} <br />
-        <strong>Updated:</strong> {stage.updated_at}
-      </small>
-      <button className="Cancdidatstage_btn_actions" onClick={() => handeleposutler(stage.offre_id)}>postuler</button>
-
-    </div>
-  ))
-) : (
-  <p>No results found</p>
-)}
-
-
-</span> */}
-
+       
 
 <span
   className={`UserJobBoard_contentAbout ED_CB_addStage ${
@@ -1152,497 +926,6 @@ const [dashboardStats, setDashboardStats] = useState({
 </span>
 
 
-          {/* <span
-            className={`UserJobBoard_contentAbout ED_CB_Stages  ${
-              ActiveSlider === "ED_CB_Stages" ? "Active" : ""
-            }`}
-          >
-            Mes candidature:
-
-           
-
-    {FetchCandidature && FetchCandidature.length > 0 ? (
-  FetchCandidature.map((candidature) => (
-    <div key={candidature.candidature_id} className="candidature-card">
-      <p><strong>Offre ID:</strong> {candidature.offre_id}</p>
-      <p><strong>Status:</strong> {candidature.statut}</p>
-      <p><strong>Message:</strong> {candidature.message_motivation}</p>
-
-      {candidature.cv_path && (
-        <a
-          href={`${BASE_URL}/${candidature.cv_path}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View CV
-        </a>
-      )}
-
-      <p>
-        <small>Applied at: {candidature.created_at}</small>
-      </p>
-
-      <div className="UserjobBoard_candidatureactions">
-        
-        <button
-  type="button"
-  className={`stage_drop_down ${
-    openDropdownId === candidature.candidature_id ? "Active" : ""
-  }`}
-  onClick={() => toggleDropdown(candidature.candidature_id)}
->
-  ...
-</button>
-
-        <div
-          className={`candidature_actions ${
-            openDropdownId === candidature.candidature_id ? "Active" : ""
-          }`}
-        >
-          <button className="cancel_candidature" onClick={() => cancelcanidature(candidature.offre_id)}>cancel candidature</button>
-          <button className="candidature_rapport" onClick={() => rapportcandidature(candidature.offre_id)}>rapport</button>
-        </div>
-      </div>
-    </div>
-  ))
-) : (
-  <p>No candidatures found.</p>
-)}
-
-
-          </span> */}
-
-          {/* <span
-  className={`UserJobBoard_contentAbout ED_CB_Stages ${
-    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
-  }`}
->
-  Mes candidature:
-
-  <div className="candidatures-container" style={{ display: 'flex', gap: '20px' }}>
-   
-    <div className="left-panel" style={{ width: '40%', maxHeight: '500px', overflowY: 'auto' }}>
-      {FetchCandidature && FetchCandidature.length > 0 ? (
-        <div className="candidatures_cards_container">
-          {paginatedCandidatures.map((candidature) => (
-            <div
-              key={candidature.candidature_id}
-              className={`candidature-card ${
-                selectedCandidature?.candidature_id === candidature.candidature_id ? 'active' : ''
-              }`}
-              onClick={() => setSelectedCandidature(candidature)}
-            >
-              <p><strong>Offre ID:</strong> {candidature.offre_id}</p>
-              <p><strong>Status:</strong> {candidature.statut}</p>
-              <p><strong>Message:</strong> {candidature.message_motivation}</p>
-              {candidature.cv_path && (
-                <a
-                  href={`${BASE_URL}/${candidature.cv_path}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View CV
-                </a>
-              )}
-              <p><small>Applied at: {candidature.created_at}</small></p>
-            </div>
-          ))}
-
-          
-          {totalPagesCandidatures > 1 && (
-            <div className="pagination" style={{ marginTop: '10px' }}>
-              {Array.from({ length: totalPagesCandidatures }, (_, idx) => (
-                <button
-                  key={idx + 1}
-                  className={currentPageCandidature === idx + 1 ? 'active' : ''}
-                  onClick={() => setCurrentPageCandidature(idx + 1)}
-                >
-                  {idx + 1}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <p>No candidatures found.</p>
-      )}
-    </div>
-
-   
-    <div className="right-panel" style={{ width: '60%', borderLeft: '1px solid #ccc', padding: '10px' }}>
-      {selectedCandidature ? (
-        <div className="candidature-detail">
-          <h2>Candidature Details</h2>
-          <p><strong>Offre ID:</strong> {selectedCandidature.offre_id}</p>
-          <p><strong>Status:</strong> {selectedCandidature.statut}</p>
-          <p><strong>Message:</strong> {selectedCandidature.message_motivation}</p>
-          {selectedCandidature.cv_path && (
-            <a
-              href={`${BASE_URL}/${selectedCandidature.cv_path}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View CV
-            </a>
-          )}
-          <p><small>Applied at: {selectedCandidature.created_at}</small></p>
-
-          <div className="UserjobBoard_candidatureactions">
-            <button
-              className="cancel_candidature"
-              onClick={() => cancelcanidature(selectedCandidature.offre_id)}
-            >
-              Cancel Candidature
-            </button>
-            <button
-              className="candidature_rapport"
-              onClick={() => rapportcandidature(selectedCandidature.offre_id)}
-            >
-              Rapport
-            </button>
-          </div>
-        </div>
-      ) : (
-        <p>Select a candidature to see details</p>
-      )}
-    </div>
-  </div>
-</span> */}
-
-  {/* <span
-  className={`UserJobBoard_contentAbout ED_CB_Stages ${
-    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
-  }`}
->
-  Mes candidature:
-
-  <div
-    className="candidatures-container"
-    style={{ display: "flex", gap: "20px" }}
-  >
- 
-    <div
-      className="left-panel"
-      style={{ width: "40%", maxHeight: "500px", overflowY: "auto" }}
-    >
-      {FetchCandidature && FetchCandidature.length > 0 ? (
-        <div className="candidatures_cards_container">
-          {paginatedCandidatures.map((candidature) => (
-            <div
-              key={candidature.candidature_id}
-              className={`candidature-card ${
-                selectedCandidature?.candidature_id ===
-                candidature.candidature_id
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() => setSelectedCandidature(candidature)}
-            >
-              <div className="form-column">
-                <div className="form-group">
-                  <label className="form-label">Offre ID:</label>
-                  <span className="form-control">
-                    {candidature.offre_id}
-                  </span>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Status:</label>
-                  <span className="form-control">
-                    {candidature.statut}
-                  </span>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Message:</label>
-                  <span className="form-control">
-                    {candidature.message_motivation}
-                  </span>
-                </div>
-
-                {candidature.cv_path && (
-                  <div className="form-group">
-                    <label className="form-label">CV:</label>
-                    <a
-                      className="form-control"
-                      href={`${BASE_URL}/${candidature.cv_path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View CV
-                    </a>
-                  </div>
-                )}
-
-                <div className="form-group">
-                  <label className="form-label">Applied at:</label>
-                  <span className="form-control">
-                    {candidature.created_at}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          
-          {totalPagesCandidatures > 1 && (
-            <div className="pagination" style={{ marginTop: "10px" }}>
-              {Array.from(
-                { length: totalPagesCandidatures },
-                (_, idx) => (
-                  <button
-                    key={idx + 1}
-                    className={
-                      currentPageCandidature === idx + 1
-                        ? "active"
-                        : ""
-                    }
-                    onClick={() =>
-                      setCurrentPageCandidature(idx + 1)
-                    }
-                  >
-                    {idx + 1}
-                  </button>
-                )
-              )}
-            </div>
-          )}
-        </div>
-      ) : (
-        <p>No candidatures found.</p>
-      )}
-    </div>
-
-    
-    <div
-      className="right-panel"
-      style={{
-        width: "60%",
-        borderLeft: "1px solid #ccc",
-        padding: "10px",
-      }}
-    >
-      {selectedCandidature ? (
-        <div className="candidature-detail form-column">
-          <h2>Candidature Details</h2>
-           <div className="form-group">
-            <label className="form-label">Candidature_id:</label>
-            <span className="form-control">
-              {selectedCandidature.candidature_id}
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Offre ID:</label>
-            <span className="form-control">
-              {selectedCandidature.offre_id}
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Status:</label>
-            <span className="form-control">
-              {selectedCandidature.statut}
-            </span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Message:</label>
-            <span className="form-control">
-              {selectedCandidature.message_motivation}
-            </span>
-          </div>
-
-          {selectedCandidature.cv_path && (
-            <div className="form-group">
-              <label className="form-label">CV:</label>
-              <a
-                className="form-control"
-                href={`${BASE_URL}/${selectedCandidature.cv_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View CV
-              </a>
-            </div>
-          )}
-
-          <div className="form-group">
-            <label className="form-label">Applied at:</label>
-            <span className="form-control">
-              {selectedCandidature.created_at}
-            </span>
-          </div>
-
-          <div className="UserjobBoard_candidatureactions">
-            <button
-              className="cancel_candidature"
-              onClick={() =>
-                cancelcanidature(selectedCandidature.offre_id)
-              }
-            >
-              Cancel Candidature
-            </button>
-
-            <button
-              className="candidature_rapport"
-              onClick={() =>
-                rapportcandidature(selectedCandidature.offre_id)
-              }
-            >
-              Rapport
-            </button>
-          </div>
-        </div>
-      ) : (
-        <p>Select a candidature to see details</p>
-      )}
-    </div>
-  </div>
-</span> */}
-{/* <span
-  className={`UserJobBoard_contentAbout ED_CB_Stages ${
-    ActiveSlider === "ED_CB_Stages" ? "Active" : ""
-  }`}
->
-  Mes candidature:
-
-  <div
-    className="candidatures-container"
-    
-  >
-    
-    <div
-      className="left-panel"
-      style={{ width: "40%", maxHeight: "500px", overflowY: "auto" }}
-    >
-      {FetchCandidature && FetchCandidature.length > 0 ? (
-        <div className="candidatures_cards_container">
-         
-          {FetchCandidature.slice(
-            (currentPageCandidature - 1) * 3,
-            currentPageCandidature * 3
-          ).map((candidature) => (
-            <div
-              key={candidature.candidature_id}
-              className={`candidature-card ${
-                selectedCandidature?.candidature_id === candidature.candidature_id
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() => setSelectedCandidature(candidature)}
-            >
-              <div className="form-column">
-                <div className="form-group">
-                  <label className="form-label">offre_id:</label>
-                  <span className="form-control">{candidature.offre_id}</span>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Status:</label>
-                  <span className="form-control">{candidature.statut}</span>
-                </div>
-
-               
-
-                <div className="form-group">
-                  <label className="form-label">Applied at:</label>
-                  <span className="form-control">{candidature.created_at}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          
-          {Math.ceil(FetchCandidature.length / 3) > 1 && (
-            <div className="pagination" style={{ marginTop: "10px" }}>
-              {Array.from({ length: Math.ceil(FetchCandidature.length / 3) }, (_, idx) => (
-                <button
-                  key={idx + 1}
-                  className={currentPageCandidature === idx + 1 ? "active" : ""}
-                  onClick={() => setCurrentPageCandidature(idx + 1)}
-                >
-                  {idx + 1}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <p>No candidatures found.</p>
-      )}
-    </div>
-
-    
-    <div
-      className="right-panel"
-      style={{ width: "60%", borderLeft: "1px solid #ccc", padding: "10px" }}
-    >
-      {selectedCandidature ? (
-        <div className="candidature-detail form-column">
-          <h2>Candidature Details</h2>
-
-          <div className="form-group">
-            <label className="form-label">Candidature ID:</label>
-            <span className="form-control">{selectedCandidature.candidature_id}</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Offre ID:</label>
-            <span className="form-control">{selectedCandidature.offre_id}</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Status:</label>
-            <span className="form-control">{selectedCandidature.statut}</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Message:</label>
-            <span className="form-control">{selectedCandidature.message_motivation}</span>
-          </div>
-
-          {selectedCandidature.cv_path && (
-            <div className="form-group">
-              <label className="form-label">CV:</label>
-              <a
-                className="form-control"
-                href={`${BASE_URL}/${selectedCandidature.cv_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View CV
-              </a>
-            </div>
-          )}
-
-          <div className="form-group">
-            <label className="form-label">Applied at:</label>
-            <span className="form-control">{selectedCandidature.created_at}</span>
-          </div>
-
-          <div className="UserjobBoard_candidatureactions">
-            <button
-              className="cancel_candidature"
-              onClick={() => cancelcanidature(selectedCandidature.offre_id)}
-            >
-              Cancel Candidature
-            </button>
-
-            <button
-              className="candidature_rapport"
-              onClick={() => rapportcandidature(selectedCandidature.offre_id)}
-            >
-              Rapport
-            </button>
-          </div>
-        </div>
-      ) : (
-        <p>Select a candidature to see details</p>
-      )}
-    </div>
-  </div>
-</span> */}
 
       <span
   className={`UserJobBoard_contentAbout ED_CB_Stages ${
@@ -1738,69 +1021,6 @@ const [dashboardStats, setDashboardStats] = useState({
       )}
     </div>
 
-    {/* --- RIGHT PANEL: Selected Candidature Detail --- */}
-    {/* <div
-      className="right-panel"
-      style={{ width: "60%", padding: "10px" }}
-    >
-      {selectedCandidature ? (
-        <div className="candidature-detail form-column">
-          <h2>Candidature Details</h2>
-
-          <div className="form-group">
-            <label className="form-label">Candidature ID:</label>
-            <span className="form-control">{selectedCandidature.candidature_id}</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Offre ID:</label>
-            <span className="form-control">{selectedCandidature.offre_id}</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Status:</label>
-            <span className="form-control">{selectedCandidature.statut}</span>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Message:</label>
-            <span className="form-control">{selectedCandidature.message_motivation}</span>
-          </div>
-
-          {selectedCandidature.cv_path && (
-            <div className="form-group">
-              <label className="form-label">CV:</label>
-              <a
-                className="form-control"
-                href={`${BASE_URL}/${selectedCandidature.cv_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View CV
-              </a>
-            </div>
-          )}
-
-          <div className="form-group">
-            <label className="form-label">Applied at:</label>
-            <span className="form-control">{selectedCandidature.created_at}</span>
-          </div>
-
-          <div className="UserjobBoard_candidatureactions">
-            <button
-              className="cancel_candidature"
-              onClick={() => cancelcanidature(selectedCandidature.candidature_id)}
-            >
-              Cancel Candidature
-            </button>
-
-            
-          </div>
-        </div>
-      ) : (
-        <p>Select a candidature to see details</p>
-      )}
-    </div> */}
 
 
     <div className="detail-panel right-panel">
@@ -1885,375 +1105,601 @@ const [dashboardStats, setDashboardStats] = useState({
           >
             Content 4: Profile
 
-            {FetchStagiaire && (
-  <div className="profile_card_1">
 
-    {/* NOM */}
-    <div className="profile_form_group">
-      <label className="profile_form_label">Nom:</label>
-      <input
-        type="text"
-        value={FetchStagiaire.nom || ""}
-        placeholder="Entrez votre nom"
-        onChange={(e) =>
-          setFetchStagiaire(prev => ({ ...prev, nom: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
+             {/* <div>
+      {Fetchuser && (
+        <div className="profile_card">
+          <div className="profile_form_group">
+            <label className="profile_form_label">User ID:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.user_id}
+              readOnly
+            />
+          </div>
 
-    {/* PRENOM */}
-    <div className="profile_form_group">
-      <label className="profile_form_label">Prénom:</label>
-      <input
-        type="text"
-        value={FetchStagiaire.prenom || ""}
-        placeholder="Entrez votre prénom"
-        onChange={(e) =>
-          setFetchStagiaire(prev => ({ ...prev, prenom: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
+          <div className="profile_form_group">
+            <label className="profile_form_label">Stagiaire ID:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.stagiaire_id}
+              readOnly
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Email:</label>
+            <input
+              className="profile_form_control"
+              type="email"
+              value={Fetchuser.email}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Username:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.username}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Telephone:</label>
+            <input
+              className="profile_form_control"
+              type="tel"
+              value={Fetchuser.telephone}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Role:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.role}
+              readOnly
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Account Status:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.account_status}
+              readOnly
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Nom:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.nom || ""}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Prénom:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.prenom || ""}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">CV Path:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.cv_path || ""}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Photo Path:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.photo_path || ""}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Emplacement:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.emplacement || ""}
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Created At:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.created_at}
+              readOnly
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Updated At:</label>
+            <input
+              className="profile_form_control"
+              type="text"
+              value={Fetchuser.updated_at}
+              readOnly
+            />
+          </div>
+
+          <div className="Candidatprofile_btn_actions">
+            <button
+              className="modifier profile_actions_btn"
+              onClick={modifierPassword}
+            >
+              Modifier Password
+            </button>
+          </div>
+        </div>
+      )}
+    </div> */}
+
+
+    {/* <div>
+  {Fetchuser && (
+    <div className="profile_card">
+
+      
+      <div className="Candidatprofile_btn_actions">
+        <button
+          className="profile_actions_btn"
+          onClick={() => setIsediting(!Isediting)}
+        >
+          {Isediting ? "Cancel Editing" : "Edit Profile"}
+        </button>
+      </div>
 
       <div className="profile_form_group">
-      <label className="profile_form_label">Emplacement(address):</label>
-      <input
-        type="text"
-        value={FetchStagiaire.emplacement || ""}
-        placeholder="Entrez votre Address"
-        onChange={(e) =>
-          setFetchStagiaire(prev => ({ ...prev, emplacement: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
+        <label className="profile_form_label">User ID:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.user_id}
+          readOnly
+        />
+      </div>
 
-    {/* CV */}
-    <div className="profile_form_group">
-      <label className="profile_form_label">CV:</label>
+      <div className="profile_form_group">
+        <label className="profile_form_label">Stagiaire ID:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.stagiaire_id}
+          readOnly
+        />
+      </div>
 
-      {FetchStagiaire.cv_path && (
-        <div className="existing-file">
-          <a
-            href={`${BASE_URL}/${FetchStagiaire.cv_path}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            📄 View current CV
-          </a>
-        </div>
-      )}
+      <div className="profile_form_group">
+        <label className="profile_form_label">Email:</label>
+        <input
+          className="profile_form_control"
+          type="email"
+          value={Fetchuser.email}
+          readOnly={!Isediting} 
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, email: e.target.value }))
+          }
+        />
+      </div>
 
-      <input
-        type="file"
-        accept=".pdf,.doc,.docx"
-        className="profile_form_control"
-        onChange={(e) => setCvFile(e.target.files[0])}
-      />
+      <div className="profile_form_group">
+        <label className="profile_form_label">Username:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.username}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, username: e.target.value }))
+          }
+        />
+      </div>
 
-      {cvFile && <p>Selected CV: {cvFile.name}</p>}
-    </div>
-
-    {/* PHOTO */}
-    <div className="profile_form_group">
-      <label className="profile_form_label">Photo:</label>
-
-      {FetchStagiaire.photo_path && (
-        <div className="existing-photo">
-          <img
-            src={`${BASE_URL}/${FetchStagiaire.photo_path}`}
-            alt="Profile"
-            width="120"
-            style={{ borderRadius: "8px" }}
-          />
-        </div>
-      )}
-
-      <input
-        type="file"
-        accept="image/*"
-        className="profile_form_control"
-        onChange={(e) => setPhotoFile(e.target.files[0])}
-      />
-
-      {photoFile && <p>Selected photo: {photoFile.name}</p>}
-    </div>
-
-    {/* ACTIONS */}
-    <button
-      className="submit profile_actions_btn"
-      onClick={() => updateStagiairedata(UserId)}
-    >
-      Update stagiaire data
-    </button>
-
-    <button
-      type="button"
-      className="delete_profile_actions_btn"
-      onClick={handleDelete}
-    >
-      Delete Account
-    </button>
-  </div>
-)}
-
-           {Fetchuser && (
-  // <div className="profile_card">
-  //   <strong>User ID:</strong> {Fetchuser.user_id} <br />
-  //   <strong>Email:</strong> {Fetchuser.email} <br />
-  //   <strong>Telephone:</strong> {Fetchuser.telephone} <br />
-  //   <strong>Role:</strong> {Fetchuser.role} <br />
-  //   <strong>Account Status:</strong> {Fetchuser.account_status} <br />
-  //   <strong>Created At:</strong> {Fetchuser.created_at} <br />
-  //   <strong>Updated At:</strong> {Fetchuser.updated_at} <br />
-  //   <strong>Username:</strong> {Fetchuser.username} <br />
-  //     <div className="Candidatprofile_btn_actions">
-  //             <button className="modifier profile_actions_btn">modifier</button>
-              
-  //     </div>
-  // </div>
-
-//   <div className="profile_card">
-//   <label className="profile_form_label">
-//     User ID:
-//     <input 
-//       className="profile_form_control" 
-//       type="text" 
-//       value={Fetchuser.user_id} 
-//       readOnly 
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Email:
-//     <input 
-//       className="profile_form_control" 
-//       type="email" 
-//       value={Fetchuser.email} 
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Telephone:
-//     <input 
-//       className="profile_form_control" 
-//       type="tel" 
-//       value={Fetchuser.telephone} 
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Role:
-//     <input 
-//       className="profile_form_control" 
-//       type="text" 
-//       value={Fetchuser.role} 
-//       readOnly
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Account Status:
-//     <input 
-//       className="profile_form_control" 
-//       type="text" 
-//       value={Fetchuser.account_status} 
-//       readOnly
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Created At:
-//     <input 
-//       className="profile_form_control" 
-//       type="text" 
-//       value={Fetchuser.created_at} 
-//       readOnly
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Updated At:
-//     <input 
-//       className="profile_form_control" 
-//       type="text" 
-//       value={Fetchuser.updated_at} 
-//       readOnly
-//     />
-//   </label>
-  
-//   <label className="profile_form_label">
-//     Username:
-//     <input 
-//       className="profile_form_control" 
-//       type="text" 
-//       value={Fetchuser.username} 
-//     />
-//   </label>
-
-//   <div className="Candidatprofile_btn_actions">
-//     <button className="modifier profile_actions_btn">modifier</button>
-//   </div>
-// </div>
-
-<div className="profile_card">
-  <div className="profile_form_group">
-    <label className="profile_form_label">User ID:</label>
-    <input 
-      className="profile_form_control" 
-      type="text" 
-      value={Fetchuser.user_id} 
-      readOnly 
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Email:</label>
-    <input 
-      className="profile_form_control" 
-      type="email" 
-      value={Fetchuser.email} 
-    />
-  </div>
-  <div className="profile_form_group">
-    <label className="profile_form_label">password:</label>
-    <input 
-      className="profile_form_control" 
-      type="password" 
-      value={Fetchuser.password} 
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Telephone:</label>
-    <input 
-      className="profile_form_control" 
-      type="tel" 
-      value={Fetchuser.telephone} 
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Role:</label>
-    <input 
-      className="profile_form_control" 
-      type="text" 
-      value={Fetchuser.role} 
-      readOnly
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Account Status:</label>
-    <input 
-      className="profile_form_control" 
-      type="text" 
-      value={Fetchuser.account_status} 
-      readOnly
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Created At:</label>
-    <input 
-      className="profile_form_control" 
-      type="text" 
-      value={Fetchuser.created_at} 
-      readOnly
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Updated At:</label>
-    <input 
-      className="profile_form_control" 
-      type="text" 
-      value={Fetchuser.updated_at} 
-      readOnly
-    />
-  </div>
-
-  <div className="profile_form_group">
-    <label className="profile_form_label">Username:</label>
-    <input 
-      className="profile_form_control" 
-      type="text" 
-      value={Fetchuser.username} 
-    />
-  </div>
-
-  <div className="Candidatprofile_btn_actions">
-    <button className="modifier profile_actions_btn" onClick={modifierPassword}>modifier</button>
-  </div>
-</div>
-
-
-)}
-
+      <div className="profile_form_group">
+        <label className="profile_form_label">Telephone:</label>
+        <input
+          className="profile_form_control"
+          type="tel"
+          value={Fetchuser.telephone}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, telephone: e.target.value }))
+          }
+        />
+      </div>
 
      
+      <div className="profile_form_group">
+        <label className="profile_form_label">Role:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.role}
+          readOnly
+        />
+      </div>
 
-{/* {FetchStagiaire && (
-  <div className="profile_card_1">
-    <div className="profile_form_group"> 
-      <label className="profile_form_label">Nom:</label>
-      <input
-        type="text"
-        value={FetchStagiaire.nom || ""}
-        placeholder="Entrez votre nom"
-        onChange={(e) =>
-          setFetchStagiaire(prev => ({ ...prev, nom: e.target.value }))
-        }
-        className="profile_form_control"
-      />
+      <div className="profile_form_group">
+        <label className="profile_form_label">Account Status:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.account_status}
+          readOnly
+        />
+      </div>
+
+     
+      <div className="profile_form_group">
+        <label className="profile_form_label">Nom:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.nom || ""}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, nom: e.target.value }))
+          }
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Prénom:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.prenom || ""}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, prenom: e.target.value }))
+          }
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">CV Path:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.cv_path || ""}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, cv_path: e.target.value }))
+          }
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Photo Path:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.photo_path || ""}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, photo_path: e.target.value }))
+          }
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Emplacement:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.emplacement || ""}
+          readOnly={!Isediting}
+          onChange={(e) =>
+            setFetchuser(prev => ({ ...prev, emplacement: e.target.value }))
+          }
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Created At:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.created_at}
+          readOnly
+        />
+      </div>
+
+      <div className="profile_form_group">
+        <label className="profile_form_label">Updated At:</label>
+        <input
+          className="profile_form_control"
+          type="text"
+          value={Fetchuser.updated_at}
+          readOnly
+        />
+      </div>
+
+   
+      <div className="Candidatprofile_btn_actions">
+        {Isediting && (
+          <button
+            className="profile_actions_btn"
+            onClick={() => {
+              
+              console.log("Save updated data", Fetchuser);
+              setIsediting(false);
+            }}
+          >
+            Save Changes
+          </button>
+        )}
+
+        <button
+          className="modifier profile_actions_btn"
+          onClick={modifierPassword}
+        >
+          Modifier Password
+        </button>
+      </div>
     </div>
+  )}
+</div> */}
 
-    <div className="profile_form_group">
-      <label className="profile_form_label">Prénom:</label>
-      <input
-        type="text"
-        value={FetchStagiaire.prenom || ""}
-        placeholder="Entrez votre prénom"
-        onChange={(e) =>
-          setFetchStagiaire(prev => ({ ...prev, prenom: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
+   <div className="profile_container">
+      {Fetchuser && (
+        <div className="profile_card">
+          <div className="profile_form_group">
+            <label className="profile_form_label">Photo:</label>
+            {Fetchuser.photo_path && !IsEditing && (
+              <div className="existing-photo">
+                <img
+                  src={`${BASE_URL}/${Fetchuser.photo_path}`}
+                  alt="Profile"
+                  width="120"
+                  style={{ borderRadius: "8px" }}
+                />
+              </div>
+            )}
+            {IsEditing && (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="profile_form_control"
+                  onChange={(e) => setPhotoFile(e.target.files[0])}
+                />
+                {photoFile && <p>Selected photo: {photoFile.name}</p>}
+              </>
+            )}
+          </div>
+          {/* User ID */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">User ID:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.user_id}
+              readOnly
+            />
+          </div>
 
-  
+          {/* Stagiaire ID */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Stagiaire ID:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.stagiaire_id}
+              readOnly
+            />
+          </div>
 
-    <div className="profile_form_group">
-  <label className="profile_form_label">CV:</label>
-  <input
-    type="file"
-    onChange={(e) => setCvFile(e.target.files[0])} // store actual file
-    className="profile_form_control"
-  />
-</div>
+          {/* Email */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Email:</label>
+            <input
+              type="email"
+              className="profile_form_control"
+              value={Fetchuser.email}
+              readOnly={!IsEditing}
+              onChange={(e) =>
+                setFetchuser((prev) => ({ ...prev, email: e.target.value }))
+              }
+            />
+          </div>
 
-<div className="profile_form_group">
-  <label className="profile_form_label">Photo:</label>
-  <input
-    type="file"
-    onChange={(e) => setPhotoFile(e.target.files[0])} // store actual file
-    className="profile_form_control"
-  />
-</div>
+          {/* Username */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Username:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.username}
+              readOnly={!IsEditing}
+              onChange={(e) =>
+                setFetchuser((prev) => ({ ...prev, username: e.target.value }))
+              }
+            />
+          </div>
 
-     <button className="submit profile_actions_btn"  onClick={() => updateStagiairedata(UserId)}>update stagiaire data</button>
-      <button
-  type="button"
-  className="delete_profile_actions_btn"
+          {/* Telephone */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Telephone:</label>
+            <input
+              type="tel"
+              className="profile_form_control"
+              value={Fetchuser.telephone}
+              readOnly={!IsEditing}
+              onChange={(e) =>
+                setFetchuser((prev) => ({ ...prev, telephone: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Role */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Role:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.role}
+              readOnly
+            />
+          </div>
+
+          {/* Account Status */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Account Status:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.account_status}
+              readOnly
+            />
+          </div>
+
+          {/* Nom */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Nom:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.nom || ""}
+              readOnly={!IsEditing}
+              onChange={(e) =>
+                setFetchuser((prev) => ({ ...prev, nom: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Prénom */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Prénom:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.prenom || ""}
+              readOnly={!IsEditing}
+              onChange={(e) =>
+                setFetchuser((prev) => ({ ...prev, prenom: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* CV */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">CV:</label>
+            {Fetchuser.cv_path && !IsEditing && (
+              <div className="existing-file">
+                <a
+                  href={`${BASE_URL}/${Fetchuser.cv_path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📄 View current CV
+                </a>
+              </div>
+            )}
+            {IsEditing && (
+              <>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  className="profile_form_control"
+                  onChange={(e) => setCvFile(e.target.files[0])}
+                />
+                {cvFile && <p>Selected CV: {cvFile.name}</p>}
+              </>
+            )}
+          </div>
+
+          {/* Photo */}
+          
+
+          {/* Emplacement */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Emplacement:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.emplacement || ""}
+              readOnly={!IsEditing}
+              onChange={(e) =>
+                setFetchuser((prev) => ({ ...prev, emplacement: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Created / Updated At */}
+          <div className="profile_form_group">
+            <label className="profile_form_label">Created At:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.created_at}
+              readOnly
+            />
+          </div>
+
+          <div className="profile_form_group">
+            <label className="profile_form_label">Updated At:</label>
+            <input
+              type="text"
+              className="profile_form_control"
+              value={Fetchuser.updated_at}
+              readOnly
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="Candidatprofile_btn_actions">
+            <button
+              className="profile_actions_btn"
+              onClick={toggleEdit}
+            >
+              {IsEditing ? "Cancel Edit" : "Edit Profile"}
+            </button>
+
+            {IsEditing && (
+              <button
+
+                className="profile_actions_btn"
+                onClick={() => updateStagiairedata(Fetchuser.stagiaire_id)}
+              >
+                Save Changes
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      <img
+  width="48"
+  height="48"
+  src="https://img.icons8.com/color/48/minus.png"
+  alt="remove"
   onClick={handleDelete}
->
-  Delete Account
-</button>
-  </div>
-)} */}
+  className="remove_account_btn"
+  title="Remove account"
+/>
 
+    </div>
 
+    
 
 
 

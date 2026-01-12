@@ -19,8 +19,8 @@ const Entreprise_dashboard = () => {
   const [editingStageId, setEditingStageId] = useState(null);
 const [editedStage, setEditedStage] = useState({});
 const [logoFile, setLogoFile] = useState(null);
- const [IsEditing, setIsEditing] = useState(false)
- const toggleEdit = () => setIsEditing((prev) => !prev);
+
+
  
   
   
@@ -98,14 +98,14 @@ const totalPages = Math.ceil(stages.length / stagesPerPage);
  
 
 
-  // const [formData, setFormData] = useState({
-  //   entreprise_id: localStorage.getItem("user_id") || "",
-  //   nom_entreprise: "",
-  //   description: "",
-  //   adresse: "",
-  //   logo_path: "",
-  //   site_web: "",
-  // });
+  const [formData, setFormData] = useState({
+    entreprise_id: localStorage.getItem("user_id") || "",
+    nom_entreprise: "",
+    description: "",
+    adresse: "",
+    logo_path: "",
+    site_web: "",
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -256,40 +256,26 @@ async function InsertEnterprise() {
 }
 
 
-//  async function fetchEntrepriseProfile(user_id) {
- 
+const fetchentreprise = async (userId) => {
+  const response = await fetch("http://localhost:8000/fetch_enterprise.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user_id: userId, // 👈 ONLY this
+    }),
+  });
 
-//   if (!user_id) {
-//     console.error("User ID not found in localStorage");
-//     return;
-//   }
+  const data = await response.json();
 
-//   try {
-//     const response = await fetch(
-//       `${BASE_URL}/fetchEntrepriseProfile.php`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({ user_id: user_id })
-//       }
-//     );
+  if (data.success) {
+    setFetchEntreprise(data.data);
+  } else {
+    setFetchEntreprise(null);
+  }
+};
 
-//     const result = await response.json();
-//     console.log("fetched user", result.user)
-
-//     if (!response.ok) {
-//       throw new Error(result.error || "Failed to fetch profile");
-//     }
-
-//     // ✅ Your data is inside result.data
-//     setFetchuser(result.user);
-
-//   } catch (error) {
-//     console.error("Fetch error:", error);
-//   }
-// }
 
   // Handle screen resizing to adjust the mobile state
 
@@ -312,115 +298,32 @@ async function InsertEnterprise() {
 
   // fetch user
   const BASE_URL = "http://localhost:8000"
-    async function fetchEntrepriseProfile(user_id) {
- 
-
-  if (!user_id) {
-    console.error("User ID not found in localStorage");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `${BASE_URL}/fetchEntrepriseProfile.php`,
-      {
+   async function FetchuserData(userId) {
+    try {
+      const response = await fetch(`${BASE_URL}/fetch_profile.php`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
         },
-        body: JSON.stringify({ user_id: user_id })
+        body: new URLSearchParams({ user_id: userId }), // send user_id
+      });
+
+      if (!response.ok) {
+        console.error("HTTP error:", response.status);
+        return;
       }
-    );
 
-    const result = await response.json();
-    console.log("fetched user", result)
-
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to fetch profile");
-    }
-
-    // ✅ Your data is inside result.data
-    setFetchuser(result.user);
-
-  } catch (error) {
-    console.error("Fetch error:", error);
-  }
-}
-
-// async function updateEntrepriseData(id) {
-//   try {
-//     const formData = new FormData();
-
-//     formData.append("entreprise_id", id);
-//     formData.append("email", Fetchuser.email ?? "");
-//     formData.append("username", Fetchuser.username ?? "");
-//     formData.append("telephone", Fetchuser.telephone ?? "");
-//     formData.append("nom_entreprise", Fetchuser.nom_entreprise ?? "");
-//     formData.append("description", Fetchuser.description ?? "");
-//     formData.append("adresse", Fetchuser.adresse ?? "");
-//     formData.append("site_web", Fetchuser.site_web ?? "");
-
-//     if (logoFile) formData.append("logo_path", logoFile);
-
-//     const response = await fetch(`${BASE_URL}/update_entreprise.php`, {
-//       method: "POST",
-//       body: formData,
-//     });
-
-//     const data = await response.json();
-//     console.log("UPDATE RESPONSE:", data);
-
-//     if (data.success) {
-//       alert("Entreprise updated successfully!");
-//       setIsEditing(false);
-//     } else {
-//       alert("Failed to update entreprise: " + data.message);
-//     }
-//   } catch (err) {
-//     console.error("Fetch error:", err);
-//   }
-// }
-
-async function updateEntrepriseData(id) {
-  try {
-    const formData = new FormData();
-
-    formData.append("entreprise_id", id);
-    formData.append("email", Fetchuser.email ?? "");
-    formData.append("username", Fetchuser.username ?? "");
-    formData.append("telephone", Fetchuser.telephone ?? "");
-    formData.append("nom_entreprise", Fetchuser.nom_entreprise ?? "");
-    formData.append("description", Fetchuser.description ?? "");
-    formData.append("adresse", Fetchuser.adresse ?? "");
-    formData.append("site_web", Fetchuser.site_web ?? "");
-
-    if (logoFile) {
-      formData.append("logo", logoFile); // ✅ This key MUST be 'logo'
-    }
-
-    const response = await fetch(`${BASE_URL}/update_entreprise.php`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-    console.log("UPDATE RESPONSE:", data);
-
-    if (data.success) {
-      alert("Entreprise updated successfully!");
-      setIsEditing(false);
-
-      // Update logo preview if new logo uploaded
-      if (data.logo_path) {
-        setFetchuser(prev => ({ ...prev, logo_path: data.logo_path }));
+      const data = await response.json();
+      if (data.success) {
+        setFetchuser(data.user_data);
+      } else {
+        console.error("Error from API:", data.message);
       }
-    } else {
-      alert("Failed to update entreprise: " + data.message);
+    } catch (err) {
+      console.error("Fetch error:", err);
     }
-  } catch (err) {
-    console.error("Fetch error:", err);
   }
-}
+
 
 
   // Function to handle the slider change
@@ -448,18 +351,17 @@ async function updateEntrepriseData(id) {
 };
 
 
-//   useEffect(() => {
-//   if (fetchEntrepriseProfile) {
-//     setFormData({
-//       entreprise_id: Fetchuser.entreprise_id,
-//       nom_entreprise: Fetchuser.nom_entreprise ?? "",
-//       description: Fetchuser.description ?? "",
-//       adresse: Fetchuser.adresse ?? "",
-//       site_web: Fetchuser.site_web ?? "",
-//       logo_path: 
-//     });
-//   }
-// }, [fetchEntreprise]);
+  useEffect(() => {
+  if (fetchEntreprise) {
+    setFormData({
+      entreprise_id: fetchEntreprise.entreprise_id,
+      nom_entreprise: fetchEntreprise.nom_entreprise ?? "",
+      description: fetchEntreprise.description ?? "",
+      adresse: fetchEntreprise.adresse ?? "",
+      site_web: fetchEntreprise.site_web ?? "",
+    });
+  }
+}, [fetchEntreprise]);
 
 
 
@@ -719,8 +621,8 @@ const handleDelete = () => {
     setenterpriseId(user_id)
 
     if (user_id) {
-      fetchEntrepriseProfile(user_id); // actually call the function
-      // fetchentreprise(user_id)
+      FetchuserData(user_id); // actually call the function
+      fetchentreprise(user_id)
       
     }
   }, []);
@@ -1236,216 +1138,306 @@ useEffect(() => {
                     }`}
                   >
                     Content 4: Profile
+                    <div>
 
-                    <div className="profile_container">
-  {Fetchuser && (
-    <div className="profile_card">
+                       {fetchEntreprise && (
+  <>
+  
 
-      {/* Logo */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Logo:</label>
-        {Fetchuser.logo_path && !IsEditing && (
-          <img
-            src={`${BASE_URL}/${Fetchuser.logo_path}`}
-            alt="Entreprise Logo"
-            width="120"
-            style={{ borderRadius: "8px" }}
-          />
-        )}
+                        
+                          <div className="profile_form_group">
+  <label className="profile_form_label">Logo:</label>
 
-        {IsEditing && (
-          <input
-            type="file"
-            accept="image/*"
-            className="profile_form_control"
-            onChange={(e) => setLogoFile(e.target.files[0])} // reuse photoFile state
-          />
-        )}
-      </div>
+  {/* Show existing logo or newly selected file */}
+  <div className="existing-file">
+    {logoFile ? (
+      // Preview newly selected file immediately
+      <img
+        src={URL.createObjectURL(logoFile)}
+        alt="New Logo Preview"
+        width="120"
+        style={{ borderRadius: "8px" }}
+      />
+    ) : fetchEntreprise.logo_path ? (
+      // Show existing logo from backend, cache-busted
+      <img
+        src={`${BASE_URL}/${fetchEntreprise.logo_path}?t=${Date.now()}`}
+        alt="Entreprise Logo"
+        width="120"
+        style={{ borderRadius: "8px" }}
+      />
+    ) : (
+      <p>No logo available</p>
+    )}
+  </div>
 
-      {/* Entreprise ID */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Entreprise ID:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.entreprise_id}
-          readOnly
-        />
-      </div>
+  {/* File input for new logo */}
+  <input
+    type="file"
+    accept="image/*"
+    className="profile_form_control"
+    onChange={(e) => setLogoFile(e.target.files[0])}
+  />
 
-      {/* Email */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Email:</label>
-        <input
-          type="email"
-          className="profile_form_control"
-          value={Fetchuser.email || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, email: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Username */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Username:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.username || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, username: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Telephone */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Telephone:</label>
-        <input
-          type="tel"
-          className="profile_form_control"
-          value={Fetchuser.telephone || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, telephone: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Role */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Role:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.role}
-          readOnly
-        />
-      </div>
-
-      {/* Account Status */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Account Status:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.account_status}
-          readOnly
-        />
-      </div>
-
-      {/* Nom Entreprise */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Nom de l'entreprise:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.nom_entreprise || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, nom_entreprise: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Description */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Description:</label>
-        <textarea
-          className="profile_form_control"
-          value={Fetchuser.description || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, description: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Adresse */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Adresse:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.adresse || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, adresse: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Site Web */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Site Web:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.site_web || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, site_web: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Date */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Date:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.date || ""}
-          readOnly
-        />
-      </div>
-
-      {/* Created At */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Created At:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.created_at}
-          readOnly
-        />
-      </div>
-
-      {/* Buttons */}
-      <div className="Candidatprofile_btn_actions">
-        <button className="profile_actions_btn" onClick={toggleEdit}>
-          {IsEditing ? "Cancel Edit" : "Edit Profile"}
-        </button>
-
-        {IsEditing && (
-          <button
-            className="profile_actions_btn"
-            onClick={() => updateEntrepriseData(Fetchuser.entreprise_id)}
-          >
-            Save Changes
-          </button>
-        )}
-      </div>
-
-    </div>
-  )}
-          <img
-  width="48"
-  height="48"
-  src="https://img.icons8.com/color/48/minus.png"
-  alt="remove"
-  onClick={handleDelete}
-  className="remove_account_btn"
-  title="Remove account"
-/>
-
+  {/* Optional: show selected file name */}
+  {logoFile && <p>Selected file: {logoFile.name}</p>}
 </div>
 
-                   
+    <div className="profile_form_group">
+      <label className="profile_form_label">Entreprise ID:</label>
+      <input
+        type="text"
+        name="entreprise_id"
+        value={formData.entreprise_id}
+        readOnly
+        placeholder={`${UserId}`}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Nom Entreprise:</label>
+      <input
+        type="text"
+        name="nom_entreprise"
+        value={formData.nom_entreprise}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Description:</label>
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Adresse:</label>
+      <input
+        type="text"
+        name="adresse"
+        value={formData.adresse}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Site Web:</label>
+      <input
+        type="text"
+        name="site_web"
+        value={formData.site_web}
+        onChange={handleChange}
+        className="profile_form_control"
+      />
+    </div>
+
+    {/* Company Logo */}
+    
+
+
+    {/* Company Document (Optional) */}
+    {/* <div className="profile_form_group">
+      <label className="profile_form_label">Document:</label>
+
+      {fetchEntreprise.document_path && (
+        <div className="existing-file">
+          <a
+            href={`${BASE_URL}/{fetchEntreprise.document_path}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📄 View current document
+          </a>
+        </div>
+      )}
+
+      <input
+        type="file"
+        accept=".pdf,.doc,.docx"
+        className="profile_form_control"
+        onChange={(e) => setDocumentFile(e.target.files[0])} // store the new document
+      />
+
+      {documentFile && <p>Selected file: {documentFile.name}</p>}
+    </div> */}
+  </>
+)}
+                      
+              {Fetchuser ? (
+          <form onSubmit={handleSubmit} className="profile_form">
+
+            <div className="profile_user_info">
+              <div className="profile_form_group">
+                <label className="profile_form_label">User ID:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.user_id || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Email:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.email || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group form-group-password">
+    <label className="profile_form_label">password:</label>
+    <input 
+      className="profile_form_control"  
+      type="password" 
+      value={Fetchuser.password} 
+    />
+    <img className="EntrepriseDashboard_nav_icons nav_icon_password" src="https://img.icons8.com/ios-glyphs/30/create-new.png" alt="create-new" onClick={modifierPassword}/>
+  </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Telephone:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.telephone || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Role:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.role || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Account Status:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.account_status || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Created At:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.created_at || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Updated At:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.updated_at || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+
+              <div className="profile_form_group">
+                <label className="profile_form_label">Username:</label>
+                <input
+                  type="text"
+                  value={Fetchuser?.username || ""}
+                  readOnly
+                  className="profile_form_control"
+                />
+              </div>
+            </div>
+
+            {/* Editable Entreprise Info */}
+            
+            {/* {fetchEntreprise ? (
+              <>
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Entreprise ID:</label>
+                  <input
+                    type="text"
+                    name="entreprise_id"
+                    value={formData.entreprise_id}
+                    readOnly
+                    placeholder={`${UserId}`}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Nom Entreprise:</label>
+                  <input
+                    type="text"
+                    name="nom_entreprise"
+                    value={formData.nom_entreprise}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Description:</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Adresse:</label>
+                  <input
+                    type="text"
+                    name="adresse"
+                    value={formData.adresse}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+
+                <div className="profile_form_group">
+                  <label className="profile_form_label">Site Web:</label>
+                  <input
+                    type="text"
+                    name="site_web"
+                    value={formData.site_web}
+                    onChange={handleChange}
+                    className="profile_form_control"
+                  />
+                </div>
+              </>
+            ) : null} */}
+
+           
+
+
+            <button type="submit" className="profile_form_submit_entreprise">Submit account data</button>
+            {/* <button type="update" className="profile_form_submit_entreprise">update</button> */}
+          </form>
+        ) : (
+          <p>Loading user data...</p>
+        )}
+                <button className="btn_delete_account" onClick={handleDelete}>delete account</button>
+
+                    </div>
                   </span>
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_statistiques ${

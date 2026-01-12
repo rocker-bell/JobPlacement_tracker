@@ -59,7 +59,7 @@ if (isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ER
 
 try {
     // Check if stagiaire exists
-    $stmt_check = $db->prepare("SELECT * FROM StagiaireAccounts WHERE stagiaire_id = :stagiaire_id");
+    $stmt_check = $db->prepare("SELECT * FROM stagiaire_accounts WHERE stagiaire_id = :stagiaire_id");
     $stmt_check->bindParam(':stagiaire_id', $stagiaire_id);
     $stmt_check->execute();
     $existing = $stmt_check->fetch(PDO::FETCH_ASSOC);
@@ -67,7 +67,7 @@ try {
     if ($existing) {
         // Update existing stagiaire
         $stmt_update = $db->prepare("
-            UPDATE StagiaireAccounts
+            UPDATE stagiaire_accounts
             SET nom = :nom,
                 prenom = :prenom,
                 emplacement = :emplacement,

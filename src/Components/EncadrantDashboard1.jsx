@@ -27,15 +27,13 @@ const [photoFile, setPhotoFile] = useState(null);
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [CancelAddStage, setCancelAddStage] = useState(false)
   const [menuActive, setmenuActive] = useState(false);
-    const [IsEditing, setIsEditing] = useState(false);
+
   const [Showmenu, setShowmenu] = useState(false);
   const [Affectation, setAffectation] = useState(null);
   const [OffreId, setOffreId] = useState(null);
   const [Candidatures, setCandidatures] = useState([]);
   const [expandedAffectation, setExpandedAffectation] = useState(null);
   const [selectedAffectation, setSelectedAffectation] = useState(null);
- const toggleEdit = () => setIsEditing((prev) => !prev);
-
   const handleAffectationClick = (affect) => {
   setSelectedAffectation(affect);
   setOffreId(affect.offre_id);
@@ -53,94 +51,55 @@ const [photoFile, setPhotoFile] = useState(null);
   const BASE_URL = "http://localhost:8000";
 
 
-  //  async function FetchEncadrantfunction(user_id) {
-  // console.log("user id = " + user_id)
-  //     try {
-  //       const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-  //         },
-  //         body: new URLSearchParams({ user_id: user_id }), // send user_id
-  //       });
+   async function FetchEncadrantfunction(user_id) {
+  console.log("user id = " + user_id)
+      try {
+        const response = await fetch(`${BASE_URL}/Encadrantfetch.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+          },
+          body: new URLSearchParams({ user_id: user_id }), // send user_id
+        });
   
-  //       if (!response.ok) {
-  //         console.error("HTTP error:", response.status);
-  //         return;
-  //       }
+        if (!response.ok) {
+          console.error("HTTP error:", response.status);
+          return;
+        }
   
-  //       const data = await response.json();
-  //       console.log(data)
-  //       if (data.success) {
-  //         setFetchEncadrant(data.user_data);
-  //       } else {
-  //         console.error("Error from API:", data.message);
-  //       }
-  //     } catch (err) {
-  //       console.error("Fetch error:", err);
-  //     }
-  //   }
-
-
-//     async function updateEncadrantdata(id) {
-//   try {
-//     const formData = new FormData();
-//     formData.append("encadrant_id", id);
-//     formData.append("nom", FetchEncadrant.nom);
-//     formData.append("prenom", FetchEncadrant.prenom);
-//     formData.append("agence_id", FetchEncadrant.agence_id);
-//     formData.append("nom_d_agence", FetchEncadrant.nom_d_agence);
-//     formData.append("departement", FetchEncadrant.departement);
-
-   
-//     if (photoFile) formData.append("photo_file", photoFile);
-
-
-//     const response = await fetch(`${BASE_URL}/Encadrant_update.php`, {
-//       method: "POST",
-//       body: formData, // no need for headers, fetch sets multipart automatically
-//     });
-
-//     const data = await response.json();
-//     console.log("response :", data)
-//     if (data.success) {
-//       alert("encadrant updated successfully!");
-//     } else {
-//       alert("Failed to update encadrant: " + data.message);
-//     }
-//   } catch (err) {
-//     console.error("Fetch error:", err);
-//   }
-// }
-
-
-
-async function updateEncadrantdata(id) {
-  try {
-    const formData = new FormData();
-
-    formData.append("encadrant_id", id);
-    formData.append("nom", Fetchuser.nom ?? "");
-    formData.append("prenom", Fetchuser.prenom ?? "");
-    formData.append("agence_id", Fetchuser.agence_id ?? "");
-    formData.append("nom_d_agence", Fetchuser.nom_d_agence ?? "");
-    formData.append("departement", Fetchuser.departement ?? "");
-
-    if (photoFile) {
-      formData.append("photo_file", photoFile);
+        const data = await response.json();
+        console.log(data)
+        if (data.success) {
+          setFetchEncadrant(data.user_data);
+        } else {
+          console.error("Error from API:", data.message);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
     }
 
-    const response = await fetch(`${BASE_URL}/EncadrantsUpdate.php`, {
+
+    async function updateEncadrantdata(id) {
+  try {
+    const formData = new FormData();
+    formData.append("encadrant_id", id);
+    formData.append("nom", FetchEncadrant.nom);
+    formData.append("prenom", FetchEncadrant.prenom);
+    formData.append("agence_id", FetchEncadrant.agence_id);
+    formData.append("nom_d_agence", FetchEncadrant.nom_d_agence);
+    formData.append("departement", FetchEncadrant.departement);
+
+  
+
+    const response = await fetch(`${BASE_URL}/Encadrant_update.php`, {
       method: "POST",
-      body: formData,
+      body: formData, // no need for headers, fetch sets multipart automatically
     });
 
     const data = await response.json();
-    console.log("UPDATE RESPONSE:", data);
-
     if (data.success) {
-      alert("Encadrant updated successfully!");
-      setIsEditing(false);
+      alert("encadrant updated successfully!");
     } else {
       alert("Failed to update encadrant: " + data.message);
     }
@@ -148,7 +107,6 @@ async function updateEncadrantdata(id) {
     console.error("Fetch error:", err);
   }
 }
-
 
 // async function fetchAffectation(user_id) {
 //   try {
@@ -357,68 +315,32 @@ async function fetchAffectation(user_id) {
 
 
   
-    //  async function FetchuserData(userId) {
-    //   try {
-    //     const response = await fetch(`${BASE_URL}/fetch_profile.php`, {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
-    //       },
-    //       body: new URLSearchParams({ user_id: userId }), // send user_id
-    //     });
+     async function FetchuserData(userId) {
+      try {
+        const response = await fetch(`${BASE_URL}/fetch_profile.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded", // must match PHP POST
+          },
+          body: new URLSearchParams({ user_id: userId }), // send user_id
+        });
   
-    //     if (!response.ok) {
-    //       console.error("HTTP error:", response.status);
-    //       return;
-    //     }
+        if (!response.ok) {
+          console.error("HTTP error:", response.status);
+          return;
+        }
   
-    //     const data = await response.json();
-    //     if (data.success) {
-    //       setFetchuser(data.user_data);
-    //     } else {
-    //       console.error("Error from API:", data.message);
-    //     }
-    //   } catch (err) {
-    //     console.error("Fetch error:", err);
-    //   }
-    // }
-  
- async function fetchEncadrantProfile(user_id) {
- 
-
-  if (!user_id) {
-    console.error("User ID not found in localStorage");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `${BASE_URL}/fetchEncadrantProfile.php`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_id: user_id })
+        const data = await response.json();
+        if (data.success) {
+          setFetchuser(data.user_data);
+        } else {
+          console.error("Error from API:", data.message);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
       }
-    );
-
-    const result = await response.json();
-    console.log("fetched user", result)
-
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to fetch profile");
     }
-
-    // ✅ Your data is inside result.data
-    setFetchuser(result.user);
-
-  } catch (error) {
-    console.error("Fetch error:", error);
-  }
-}
-
-
+  
     useEffect(() => {
       const user_id = localStorage.getItem("user_id");
       setUserId(user_id);
@@ -428,9 +350,9 @@ async function fetchAffectation(user_id) {
       // fetchCandidatures(OffreId)
   
       if (user_id) {
-         fetchEncadrantProfile(user_id) // actually call the function
+        FetchuserData(user_id); // actually call the function
         fetchAffectation(user_id)
-        // FetchEncadrantfunction(user_id);
+        FetchEncadrantfunction(user_id);
       }
     }, []);
 
@@ -829,7 +751,7 @@ useEffect(() => {
             }`}
           >
             Content 4: Profile
-            {/* {Fetchuser && (
+           {Fetchuser && (
   
               <div className="profile_card">
                 <div className="profile_form_group">
@@ -926,6 +848,85 @@ useEffect(() => {
               )}
 
 
+     
+
+{/* {FetchEncadrant && (
+  <div className="profile_card_1">
+    <div className="profile_form_group"> 
+      <label className="profile_form_label">Nom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom || ""}
+        placeholder="Entrez votre nom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">Prénom:</label>
+      <input
+        type="text"
+        value={FetchEncadrant.prenom || ""}
+        placeholder="Entrez votre prénom"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">agence_id :</label>
+      <input
+        type="text"
+        value={FetchEncadrant.agence_id  || ""}
+        placeholder="Entrez votre agence_id"
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+     <div className="profile_form_group">
+      <label className="profile_form_label">nom_d_agence :</label>
+      <input
+        type="text"
+        value={FetchEncadrant.nom_d_agence  || ""}
+        placeholder="Entrez votre nom_d_agence "
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+
+    <div className="profile_form_group">
+      <label className="profile_form_label">departement :</label>
+      <input
+        type="text"
+        value={FetchEncadrant.departement  || ""}
+        placeholder="Entrez votre departement "
+        onChange={(e) =>
+          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
+        }
+        className="profile_form_control"
+      />
+    </div>
+
+  
+
+   
+
+     <button className="submit profile_actions_btn"  onClick={() => updateEncadrantdata(UserId)}>update stagiaire data</button>
+      <button className="delete profile_actions_btn">delete account</button>
+  </div>
+)} */}
+
 {FetchEncadrant && (
   <div className="profile_card_1">
     
@@ -1003,6 +1004,7 @@ useEffect(() => {
       Update Encadrant Data
     </button>
 
+    {/* <button type="delete" className="delete profile_actions_btn" onClick={() => DeleteAccount(userId)}>Delete Account</button> */}
         <button
   type="button"
   className="delete_profile_actions_btn"
@@ -1012,255 +1014,7 @@ useEffect(() => {
 </button>
 
   </div>
-)}  */}
-
-
-          <div className="profile_container">
-  {Fetchuser && (
-    <div className="profile_card">
-
-      {/* Photo */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Photo:</label>
-
-        {Fetchuser.photo_path && !IsEditing && (
-          <img
-            src={`${BASE_URL}/${Fetchuser.photo_path}`}
-            alt="Encadrant"
-            width="120"
-            style={{ borderRadius: "8px" }}
-          />
-        )}
-
-        {IsEditing && (
-          <input
-            type="file"
-            accept="image/*"
-            className="profile_form_control"
-            onChange={(e) => setPhotoFile(e.target.files[0])}
-          />
-        )}
-      </div>
-
-      {/* User ID */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">User ID:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.user_id}
-          readOnly
-        />
-      </div>
-
-      {/* Encadrant ID */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Encadrant ID:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.encadrant_id}
-          readOnly
-        />
-      </div>
-
-      {/* Email */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Email:</label>
-        <input
-          type="email"
-          className="profile_form_control"
-          value={Fetchuser.email || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, email: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Username */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Username:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.username || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, username: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Telephone */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Telephone:</label>
-        <input
-          type="tel"
-          className="profile_form_control"
-          value={Fetchuser.telephone || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, telephone: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Role */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Role:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.role}
-          readOnly
-        />
-      </div>
-
-      {/* Account Status */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Account Status:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.account_status}
-          readOnly
-        />
-      </div>
-
-      {/* Nom */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Nom:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.nom || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, nom: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Prenom */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Prénom:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.prenom || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, prenom: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Agence ID */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Agence ID:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.agence_id || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, agence_id: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Nom d'agence */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Nom de l'agence:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.nom_d_agence || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, nom_d_agence: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Département */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Département:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.departement || ""}
-          readOnly={!IsEditing}
-          onChange={(e) =>
-            setFetchuser(prev => ({ ...prev, departement: e.target.value }))
-          }
-        />
-      </div>
-
-      {/* Status */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Status Encadrant:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.status_d_encadrant || ""}
-          readOnly
-        />
-      </div>
-
-      {/* Date */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Date:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.date || ""}
-          readOnly
-        />
-      </div>
-
-      {/* Created At */}
-      <div className="profile_form_group">
-        <label className="profile_form_label">Created At:</label>
-        <input
-          type="text"
-          className="profile_form_control"
-          value={Fetchuser.created_at}
-          readOnly
-        />
-      </div>
-           <div className="Candidatprofile_btn_actions">
-            <button
-              className="profile_actions_btn"
-              onClick={toggleEdit}
-            >
-              {IsEditing ? "Cancel Edit" : "Edit Profile"}
-            </button>
-
-            {IsEditing && (
-              <button
-
-                className="profile_actions_btn"
-                onClick={() => updateEncadrantdata(Fetchuser.encadrant_id)}
-              >
-                Save Changes
-              </button>
-            )}
-          </div>
-    </div>
-  )}
-          <img
-  width="48"
-  height="48"
-  src="https://img.icons8.com/color/48/minus.png"
-  alt="remove"
-  onClick={handleDelete}
-  className="remove_account_btn"
-  title="Remove account"
-/>
-
-</div>
+)}
 
 
           </span>

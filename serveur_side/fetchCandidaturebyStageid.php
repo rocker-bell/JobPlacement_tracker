@@ -26,7 +26,7 @@ try {
     $stmt = $db->prepare("
         SELECT c.*, s.nom, s.prenom, s.cv_path, s.photo_path
         FROM Candidatures c
-        JOIN StagiaireAccounts s ON c.stagiaire_id = s.stagiaire_id
+        JOIN stagiaire_accounts s ON c.stagiaire_id = s.stagiaire_id
         WHERE c.offre_id = :offre_id
     ");
     $stmt->bindParam(':offre_id', $offre_id);

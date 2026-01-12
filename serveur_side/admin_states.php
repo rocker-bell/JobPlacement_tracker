@@ -158,7 +158,7 @@ $ActiveAccounts_count = (int)$ActiveAccounts_stmt->fetch(PDO::FETCH_ASSOC)['acti
 /* ====== 6️⃣ Count all encadrants ====== */
 $encadrants_stmt = $db->prepare("
     SELECT COUNT(DISTINCT e.encadrant_id) AS encadrants_count
-    FROM encadrants e
+    FROM encadrant_account e
     JOIN Affectation a ON e.encadrant_id = a.encadrant_id
     JOIN offres_stage os ON a.offre_id = os.offre_id
 ");

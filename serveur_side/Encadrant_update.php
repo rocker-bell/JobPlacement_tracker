@@ -18,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get POST data
 $encadrant_id     = $_POST['encadrant_id'] ?? null;
-$nom              = $_POST['nom'] ?? null;
-$prenom           = $_POST['prenom'] ?? null;
-$agence_id        = $_POST['agence_id'] ?? null;
-$nom_d_agence     = $_POST['nom_d_agence'] ?? null;
-$departement      = $_POST['departement'] ?? null;
+$nom              = $_POST['nom'] ?? $nom;
+$prenom           = $_POST['prenom'] ?? $prenom;
+$agence_id        = $_POST['agence_id'] ?? $agence_id;
+$nom_d_agence     = $_POST['nom_d_agence'] ?? $departement;
+$departement      = $_POST['departement'] ?? $status_d_encadrant;
 $status_d_encadrant = "Active";
 
 if (!$encadrant_id) {
@@ -32,7 +32,7 @@ if (!$encadrant_id) {
 
 try {
     // Check if encadrant exists
-    $stmt_check = $db->prepare("SELECT * FROM Encadrants WHERE encadrant_id = :encadrant_id");
+    $stmt_check = $db->prepare("SELECT * FROM encadrant_account WHERE encadrant_id = :encadrant_id");
     $stmt_check->bindParam(':encadrant_id', $encadrant_id);
     $stmt_check->execute();
     $existing = $stmt_check->fetch(PDO::FETCH_ASSOC);
@@ -40,7 +40,7 @@ try {
     if ($existing) {
         // Update existing encadrant
         $stmt_update = $db->prepare("
-            UPDATE Encadrants
+            UPDATE encadrant_account
             SET nom = :nom,
                 prenom = :prenom,
                 agence_id = :agence_id,
@@ -61,12 +61,12 @@ try {
         ]);
 
         // ✅ Set account_status in Utilisateurs to 'Active'
-        $stmt_user = $db->prepare("
-            UPDATE Utilisateurs
-            SET account_status = 'Active'
-            WHERE user_id = :user_id
-        ");
-        $stmt_user->execute([':user_id' => $encadrant_id]);
+        // $stmt_user = $db->prepare("
+        //     UPDATE Utilisateurs
+        //     SET account_status = 'Active'
+        //     WHERE user_id = :user_id
+        // ");
+        // $stmt_user->execute([':user_id' => $encadrant_id]);
 
         echo json_encode(['success' => true, 'message' => 'Encadrant updated and account activated']);
 

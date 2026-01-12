@@ -20,6 +20,20 @@
 
 }
 
+.profile_container {
+  border: 1px solid black;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: self-start;
+  flex-direction: row;
+
+}
+
+.remove_account_btn {
+  cursor: pointer;
+}
+
 .UserJobBoard_sideNav {
     width: 100%;
     height: 15%;

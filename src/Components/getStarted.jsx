@@ -328,6 +328,14 @@ const handleRegister = async (e) => {
   const phonenumber = form.elements.registerPhoneNumber.value.trim();
   const password = form.elements.registerPassword.value;
   const role = form.elements.role.value;
+  const data = {
+    username,
+    email,
+    phonenumber,
+    password,
+    role
+  }
+  console.log("register data", data)
 
   if (!username || !email || !password || !phonenumber || !role) {
     setverifyemailmsg("All fields are required.");
