@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MessageSquare, Bookmark, Star, Ban, Bell, Building2} from "lucide-react";
+import { Search, MessageSquare, Bookmark, Ban, Bell, Building2} from "lucide-react";
 import "../Styles/UserJobBoard.css";
 import menu from "../assets/menu.svg";
 import menu_active from "../assets/menu_active.svg";
@@ -14,6 +14,8 @@ const UserJobBoard = () => {
   const [Query, setQuery] = useState({
   stage_search_querry: ""
 });
+
+const [Msg, setMsg] = useState("")
   
 const [cvFile, setCvFile] = useState(null);
 const [photoFile, setPhotoFile] = useState(null);
@@ -30,6 +32,7 @@ const [FetchStagiaire, setFetchStagiaire] = useState({
 
 const [FetchCandidature, setFetchCandidature] = useState(null)
 
+  const [notifications, setNotifications] = useState([]);
 
   const [UserId, setUserId] = useState(null);
   const [IsEditing, setIsEditing] = useState(false)
@@ -41,10 +44,73 @@ const [FetchCandidature, setFetchCandidature] = useState(null)
   const [Showmenu, setShowmenu] = useState(false);
   const [candidature_dropdown, setcandidature_dropdown] = useState(false);
   const [SuggestedStageOffers, SetSuggestedStageOffers] = useState([]);
+  const [bookmarkedStages, setBookmarkedStages] = useState({});
+
 
   const toggleEdit = () => setIsEditing((prev) => !prev);
 
   // pagination
+
+
+   const [lastFetched, setLastFetched] = useState(null); // keep track of last fetch time
+const [hasNewNotification, setHasNewNotification] = useState(false);
+
+  // Function to fetch notifications
+  async function fetchNotification() {
+    try {
+      const response = await fetch(`${BASE_URL}/AfficherNotification.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: localStorage.getItem("user_id"),
+          date: lastFetched, // fetch only new notifications
+        })
+      });
+
+      const res = await response.json();
+      console.log("response :", res)
+      // if (res.success && res.notifications.length > 0) {
+      //   // Update state with new notifications
+      //   setNotifications(prev => [...res.notifications, ...prev]);
+      //   // Update last fetched timestamp
+      //   const latestTime = res.notifications[0].created_at; 
+      //   setLastFetched(latestTime);
+      // }
+      if (res.success && res.notifications.length > 0) {
+  setNotifications(prev => {
+    const existingIds = new Set(prev.map(n => n.notification_id));
+
+    const newOnes = res.notifications.filter(
+      n => !existingIds.has(n.notification_id)
+    );
+
+    return [...newOnes, ...prev];
+
+    if (newOnes.length > 0) {
+  setHasNewNotification(true);
+  setTimeout(() => setHasNewNotification(false), 600);
+}
+
+  });
+
+  setLastFetched(res.notifications[0].created_at);
+}
+
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  }
+
+
+   useEffect(() => {
+    fetchNotification(); // initial fetch
+
+    const interval = setInterval(() => {
+      fetchNotification(); // poll every 10 seconds
+    }, 10000);
+
+    return () => clearInterval(interval); // cleanup on unmount
+  }, []); // empty dependency → run once on mount
 
 
   const [currentPage, setCurrentPage] = useState(1); // for pagination
@@ -553,9 +619,106 @@ const [dashboardStats, setDashboardStats] = useState({
     navigate('/AccountRecovery')
   }
 
-  const saveChangesProfile = () => {
+  // const saveChangesProfile = () => {
 
+  // }
+
+// async function bookmarkstage(id) {
+//   try {
+//     const response = await fetch(`${BASE_URL}/BookMarkStage`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ offre_id: id }),
+//     });
+
+//     const res_msg = await response.json();
+
+//     if (res_msg.success === true) {
+//       setMsg(
+//         <p className="stage-bookmark-msg">
+//           Your stage has been bookmarked!{" "}
+//           <Link to="/bookmarks">You can find it here</Link>
+//         </p>
+//       );
+//     } else {
+//       setMsg("Error bookmarking stage");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     setMsg("Server error. Please try again.");
+//   }
+// }
+
+
+// async function saveBookmarkFunction(offre_id) {
+//   const boookmarkdata = {
+//     offre_id,
+//     UserId
+//   }
+//   console.log("bookmark data", boookmarkdata)
+//   const response = await fetch(`${BASE_URL}/handle_bookmark.php`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       offre_id: offre_id,
+//       user_id: UserId, // 👈 from auth / context / state
+//     }),
+//   });
+
+
+//   const res = await response.json();
+//   console.log("bookMark response ", res)
+
+//   if (res.success) {
+//     setMsg(
+//       res.bookmarked
+//         ? "Stage bookmarked!"
+//         : "Bookmark removed!"
+//     );
+//   } else {
+//     setMsg(res.message);
+//   }
+// }
+
+async function saveBookmarkFunction(offre_id) {
+  try {
+    const response = await fetch(`${BASE_URL}/handle_bookmark.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        offre_id,
+        user_id: UserId, // your logged-in user
+      }),
+    });
+
+    const res = await response.json();
+
+    setMsg(res.message);
+    setTimeout(() => {
+      setMsg(null);
+    }, 3000);
+
+    if (res.success) {
+      // toggle icon color based on backend
+      setBookmarkedStages(prev => ({
+        ...prev,
+        [offre_id]: res.bookmarked, // true if bookmarked, false if removed
+      }));
+    }
+  } catch (err) {
+    console.error(err);
+    setMsg("Something went wrong");
   }
+}
+
+
+
+const handleBookmark = (id) => {
+  saveBookmarkFunction(id);
+};
+
 
 
    
@@ -594,7 +757,23 @@ const [dashboardStats, setDashboardStats] = useState({
                           <MessageSquare size={24} className="UserJobBoard_nav_icons" />
                         
                         </li>
-                        <li className="UserJobBoard_nav_list"><Bell size={24} className="UserJobBoard_nav_icons" /></li>
+                        <li
+  className="EncadrantDashboard_nav_list"
+  onClick={() => {
+    SliderContentHandler("ED_CB_notifications");
+    setHasNewNotification(false); // stop shake when opened
+  }}
+>
+  <div className={`bell-wrapper ${hasNewNotification ? "new" : ""}`}>
+    <Bell size={24} className="EncadrantDashboard_nav_icons" />
+
+    {notifications.length > 0 && (
+      <span className="bell-badge">
+        {notifications.length}
+      </span>
+    )}
+  </div>
+</li>
 
               {/* </li> */}
               
@@ -644,7 +823,8 @@ const [dashboardStats, setDashboardStats] = useState({
           >
             Content 1: Default Suggested stages
 
-          =
+          =   {Msg && <p>{Msg}</p>}
+
 
     <div className="stages-container">
   {/* --- LEFT PANEL: Paginated Stage List --- */}
@@ -706,12 +886,23 @@ const [dashboardStats, setDashboardStats] = useState({
             >
               Postuler maintenant
             </button>
-            <button className="btn-icon">
+            {/* <button className="btn-icon">
               <Bookmark size={24} />
             </button>
             <button className="btn-icon">
               <Ban size={24} />
-            </button>
+            </button> */}
+            <button className="job-bookmark-star-actions">
+                  {/* <Bookmark size={20} color="blue" strokeWidth={1.5} onClick={() => handleBookmark(selectedStage.offre_id)} /> */}
+                  <Bookmark
+  size={20}
+  color={bookmarkedStages[selectedStage.offre_id] ? "gold" : "blue"} // gold if bookmarked
+  strokeWidth={1.5}
+  onClick={() => handleBookmark(selectedStage.offre_id)}
+/>
+
+                  
+                </button>
           </div>
         </div>
 
@@ -756,19 +947,7 @@ const [dashboardStats, setDashboardStats] = useState({
           </div>
 
           {/* Actions */}
-          <button className="selected_job_actions_group">
-            <Bookmark
-              size={20}
-              color="blue"
-              strokeWidth={1.5}
-              onClick={() => console.log("Bookmark clicked")}
-            />
-            <Star
-              size={20}
-              className="text-yellow-500"
-              onClick={() => console.log("Star clicked")}
-            />
-          </button>
+         
         </div>
       </>
     ) : (
@@ -782,6 +961,36 @@ const [dashboardStats, setDashboardStats] = useState({
 
 
         
+          </span>
+
+
+          <span
+            className={`UserJobBoard_contentAbout ED_CB_notifications ${
+              ActiveSlider === "ED_CB_notifications" ? "Active" : ""
+            }`}
+          >
+
+            content : notification
+
+            <div className="notifications-panel">
+  <h4 className="notifications-title">Notifications</h4>
+
+  {notifications.length === 0 && (
+    <p className="no-notifications">No notifications</p>
+  )}
+
+  {notifications.map((notif) => (
+    <div key={notif.notification_id} className="notification-card">
+      <p className="notification-text">
+        {notif.notification_content}
+      </p>
+      <span className="notification-time">
+        {new Date(notif.created_at).toLocaleString()}
+      </span>
+    </div>
+  ))}
+</div>
+
           </span>
        
 
@@ -900,19 +1109,7 @@ const [dashboardStats, setDashboardStats] = useState({
         </div>
 
         {/* Actions */}
-        <button className="selected_job_actions_group">
-          <Bookmark
-            size={20}
-            color="blue"
-            strokeWidth={1.5}
-            onClick={() => console.log("Bookmark clicked")}
-          />
-          <Star
-            size={20}
-            className="text-yellow-500"
-            onClick={() => console.log("Star clicked")}
-          />
-        </button>
+        
         {/* <button className="Cancdidatstage_btn_actions" onClick={() => handeleposutler(selectedStage.offre_id)}>postuler</button> */}
       </div>
     </>
@@ -1468,10 +1665,10 @@ const [dashboardStats, setDashboardStats] = useState({
             {Fetchuser.photo_path && !IsEditing && (
               <div className="existing-photo">
                 <img
+                  className="photo-class"
                   src={`${BASE_URL}/${Fetchuser.photo_path}`}
                   alt="Profile"
-                  width="120"
-                  style={{ borderRadius: "8px" }}
+                 
                 />
               </div>
             )}
@@ -1488,7 +1685,7 @@ const [dashboardStats, setDashboardStats] = useState({
             )}
           </div>
           {/* User ID */}
-          <div className="profile_form_group">
+          {/* <div className="profile_form_group">
             <label className="profile_form_label">User ID:</label>
             <input
               type="text"
@@ -1496,7 +1693,7 @@ const [dashboardStats, setDashboardStats] = useState({
               value={Fetchuser.user_id}
               readOnly
             />
-          </div>
+          </div> */}
 
           {/* Stagiaire ID */}
           <div className="profile_form_group">

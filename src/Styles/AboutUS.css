@@ -29,6 +29,12 @@
   margin-bottom: 60px;
 }
 
+.contact-msg-style {
+  font-weight: bold;
+  color: #43a047;
+}
+
+
 .about-mission h2,
 .about-features h2,
 .about-team h2,

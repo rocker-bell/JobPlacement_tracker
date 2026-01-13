@@ -22,6 +22,7 @@ const [photoFile, setPhotoFile] = useState(null);
   departement: ""
 }
   );
+  const [notifications, setNotifications] = useState([]);
   const [UserId, setUserId] = useState(null);
   const [ActiveSlider, setActiveSlider] = useState( location.state?.activeSlider || "ED_CB_default"); // Set default slider
   const [IsMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -354,7 +355,27 @@ async function fetchAffectation(user_id) {
 
   }
 
+  // async function fetchNotification() {
+  //   const response = await fetch(`${BASE_URL}/AfficherNotification.php`, {
+  //     method: 'POST',
+  //     headers:{'Content-type' : 'application/json'},
+  //     body:JSON.stringify({
+  //       user_id:
+  //       date:
+  //     })
 
+
+  //   })
+
+  //   const res = response.json()
+  //   if (res.success) {
+  //       setNotifications(res.notification)
+  //   }
+
+  //   else {
+
+  //   }
+  // }
 
   
     //  async function FetchuserData(userId) {
@@ -382,6 +403,126 @@ async function fetchAffectation(user_id) {
     //     console.error("Fetch error:", err);
     //   }
     // }
+
+
+//     async function fetchNotification(lastFetchedDate = null) {
+//   try {
+//     const response = await fetch(`${BASE_URL}/AfficherNotification.php`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({
+//         user_id: localStorage.getItem("user_id"),
+//         date: lastFetchedDate // send last fetched timestamp, or null for all
+//       })
+//     });
+
+//     const res = await response.json();
+//     console.log(res)
+
+//     if (res.success) {
+//       setNotifications(res.notifications); // assuming backend returns "notifications"
+//     } else {
+//       console.warn("No notifications or error:", res.message);
+//     }
+//   } catch (err) {
+//     console.error("Error fetching notifications:", err);
+//   }
+// }
+
+
+
+ const [lastFetched, setLastFetched] = useState(null); // keep track of last fetch time
+const [hasNewNotification, setHasNewNotification] = useState(false);
+
+  // Function to fetch notifications
+  async function fetchNotification() {
+    try {
+      const response = await fetch(`${BASE_URL}/AfficherNotification.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: localStorage.getItem("user_id"),
+          date: lastFetched, // fetch only new notifications
+        })
+      });
+
+      const res = await response.json();
+      console.log("response :", res)
+      // if (res.success && res.notifications.length > 0) {
+      //   // Update state with new notifications
+      //   setNotifications(prev => [...res.notifications, ...prev]);
+      //   // Update last fetched timestamp
+      //   const latestTime = res.notifications[0].created_at; 
+      //   setLastFetched(latestTime);
+      // }
+      if (res.success && res.notifications.length > 0) {
+  setNotifications(prev => {
+    const existingIds = new Set(prev.map(n => n.notification_id));
+
+    const newOnes = res.notifications.filter(
+      n => !existingIds.has(n.notification_id)
+    );
+
+    return [...newOnes, ...prev];
+
+    if (newOnes.length > 0) {
+  setHasNewNotification(true);
+  setTimeout(() => setHasNewNotification(false), 600);
+}
+
+  });
+
+  setLastFetched(res.notifications[0].created_at);
+}
+
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  }
+
+// async function fetchNotification() {
+//   try {
+//     const response = await fetch(`${BASE_URL}/AfficherNotification.php`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({
+//         user_id: localStorage.getItem("user_id"),
+//         date: lastFetched,
+//       })
+//     });
+
+//     const res = await response.json();
+//     console.log("response :", res);
+
+//     if (res.success && res.notifications.length > 0) {
+//       let newOnes = [];
+
+//       setNotifications(prev => {
+//         const existingIds = new Set(prev.map(n => n.notification_id));
+
+//         newOnes = res.notifications.filter(
+//           n => !existingIds.has(n.notification_id)
+//         );
+
+//         return [...newOnes, ...prev];
+//       });
+
+//       // 🔔 trigger bell animation ONLY if new notifications arrived
+//       if (newOnes.length > 0) {
+//         setHasNewNotification(true);
+//         setTimeout(() => setHasNewNotification(false), 4000);
+//       }
+
+//       // update timestamp
+//       setLastFetched(res.notifications[0].created_at);
+//     }
+
+//   } catch (err) {
+//     console.error("Error fetching notifications:", err);
+//   }
+// }
+
+
   
  async function fetchEncadrantProfile(user_id) {
  
@@ -424,7 +565,7 @@ async function fetchAffectation(user_id) {
       setUserId(user_id);
       // setenterpriseId(user_id)
       
-      
+    
       // fetchCandidatures(OffreId)
   
       if (user_id) {
@@ -433,6 +574,17 @@ async function fetchAffectation(user_id) {
         // FetchEncadrantfunction(user_id);
       }
     }, []);
+
+
+     useEffect(() => {
+    fetchNotification(); // initial fetch
+
+    const interval = setInterval(() => {
+      fetchNotification(); // poll every 10 seconds
+    }, 10000);
+
+    return () => clearInterval(interval); // cleanup on unmount
+  }, []); // empty dependency → run once on mount
 
   const handleClickMenu = () => {
     setmenuActive(true);
@@ -541,7 +693,54 @@ useEffect(() => {
               <MessageSquare size={24} className="EncadrantDashboard_nav_icons" />
             
             </li>
-            <li className="EncadrantDashboard_nav_list"><Bell size={24} className="EncadrantDashboard_nav_icons" /></li>
+            {/* <li className="EncadrantDashboard_nav_list" onClick={() => SliderContentHandler("ED_CB_notifications")}>
+              <Bell size={24} className="EncadrantDashboard_nav_icons" />
+               
+
+              </li> */}
+
+              {/* <li
+  className="EncadrantDashboard_nav_list"
+  onClick={() => SliderContentHandler("ED_CB_notifications")}
+>
+  <div className="bell-wrapper">
+    <Bell size={24} className="EncadrantDashboard_nav_icons" />
+
+    {notifications.length > 0 && (
+      <span className="bell-badge">
+        {notifications.length}
+      </span>
+    )}
+  </div>
+</li> */}
+
+<li
+  className="EncadrantDashboard_nav_list"
+  onClick={() => {
+    SliderContentHandler("ED_CB_notifications");
+    setHasNewNotification(false); // stop shake when opened
+  }}
+>
+  <div className={`bell-wrapper ${hasNewNotification ? "new" : ""}`}>
+    <Bell size={24} className="EncadrantDashboard_nav_icons" />
+
+    {notifications.length > 0 && (
+      <span className="bell-badge">
+        {notifications.length}
+      </span>
+    )}
+  </div>
+</li>
+
+
+
+{/* <div className={`bell-wrapper ${hasNewNotification ? "new" : ""}`}>
+  <Bell size={24} className="EncadrantDashboard_nav_icons" />
+  {notifications.length > 0 && (
+    <span className="bell-badge">{notifications.length}</span>
+  )}
+</div> */}
+
               
               <li
                 className="EncadrantDashboard_nav_list"
@@ -620,9 +819,43 @@ useEffect(() => {
             }`}
           >
             Content 2: chercher stage
-
+              
 
           </span> */}
+
+          <span
+            className={`EncadrantDashboard_contentAbout ED_CB_notifications ${
+              ActiveSlider === "ED_CB_notifications" ? "Active" : ""
+            }`}
+          >
+              content notification
+
+             
+
+
+<div className="notifications-panel">
+  <h4 className="notifications-title">Notifications</h4>
+
+  {notifications.length === 0 && (
+    <p className="no-notifications">No notifications</p>
+  )}
+
+  {notifications.map((notif) => (
+    <div key={notif.notification_id} className="notification-card">
+      <p className="notification-text">
+        {notif.notification_content}
+      </p>
+      <span className="notification-time">
+        {new Date(notif.created_at).toLocaleString()}
+      </span>
+    </div>
+  ))}
+</div>
+
+
+
+
+          </span>
           <span
             className={`EncadrantDashboard_contentAbout ED_CB_Stages ${
               ActiveSlider === "ED_CB_Stages" ? "Active" : ""
@@ -630,43 +863,7 @@ useEffect(() => {
           >
             Content 3: affectation
 
-              {/* {Affectation && Affectation.length > 0 ? (
-  <div>
-    {Affectation.map((affect, index) => (
-      <div key={affect.affectation_id} className="affectation-card">
-        <p><strong>Affectation ID:</strong> {affect.affectation_id}</p>
-        <p><strong>Encadrant ID:</strong> {affect.encadrant_id}</p>
-        <p><strong>Offre ID:</strong> {affect.offre_id || "Non assignée"}</p>
-        <p><strong>Status:</strong> {affect.affectation_status}</p>
-        <p><strong>Créée le:</strong> {affect.created_at}</p>
-        <p><strong>Dernière mise à jour:</strong> {affect.updated_at}</p>
-      </div>
-    ))}
-  </div>
-) : (
-  <p>Il n’y a pas d’affectation pour le moment.</p>
-)} */}
-
-{/* {Affectation && Affectation.length > 0 ? (
-  <div>
-    {Affectation.map(affect => (
-      <div
-        key={affect.affectation_id}
-        className={`affectation-card ${
-          selectedAffectation?.affectation_id === affect.affectation_id ? "active" : ""
-        }`}
-        onClick={() => handleAffectationClick(affect)}
-      >
-        <p><strong>Affectation ID:</strong> {affect.affectation_id}</p>
-        <p><strong>Encadrant ID:</strong> {affect.encadrant_id}</p>
-        <p><strong>Offre ID:</strong> {affect.offre_id || "Non assignée"}</p>
-        <p><strong>Status:</strong> {affect.affectation_status}</p>
-      </div>
-    ))}
-  </div>
-) : (
-  <p>Il n’y a pas d’affectation pour le moment.</p>
-)} */}
+             
 
 
 {Affectation && Affectation.length > 0 ? (
@@ -691,8 +888,8 @@ useEffect(() => {
          
 
 {Candidatures && Candidatures.length > 0 ? (
-  <table>
-    <thead>
+  <table className="table table-bordered">
+    <thead >
       <tr>
         <th>Stagiaire ID</th>
         <th>Offre ID</th>
@@ -739,83 +936,7 @@ useEffect(() => {
 ) : (
   <p>Il n'y a pas de candidature pour cette offre {OffreId}</p>
 )}
-        {/* {Affectation && Affectation.length > 0 ? (
-  <div>
-    {Affectation.map((affect) => (
-      <div key={affect.affectation_id} className="affectation-card">
-        <p><strong>Affectation ID:</strong> {affect.affectation_id}</p>
-        <p><strong>Encadrant ID:</strong> {affect.encadrant_id}</p>
-        <p><strong>Offre ID:</strong> {affect.offre_id || "Non assignée"}</p>
-        <p><strong>Status:</strong> {affect.affectation_status}</p>
-        <p><strong>Créée le:</strong> {affect.created_at}</p>
-        <p><strong>Dernière mise à jour:</strong> {affect.updated_at}</p>
-
-        
-        <button
-          className="show_candidatures_btn"
-          onClick={() => setExpandedAffectation(prev => prev === affect.affectation_id ? null : affect.affectation_id)}
-        >
-          {expandedAffectation === affect.affectation_id ? "Cacher candidatures" : "Voir candidatures"}
-        </button>
-
-        
-        {expandedAffectation === affect.affectation_id && Candidatures[affect.affectation_id] && Candidatures[affect.affectation_id].length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Stagiaire ID</th>
-                <th>Offre ID</th>
-                <th>Statut</th>
-                <th>Message</th>
-                <th>CV</th>
-                <th>Créée le</th>
-                <th>Mise à jour</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Candidatures[affect.affectation_id].map(cand => (
-                <tr key={cand.candidature_id}>
-                  <td>{cand.stagiaire_id}</td>
-                  <td>{cand.offre_id}</td>
-                  <td>{cand.statut}</td>
-                  <td>{cand.message_motivation || "Aucun"}</td>
-                  <td>
-                    {cand.cv_path ? (
-                      <a 
-                        href={`http://localhost:8000/${cand.cv_path}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                      >
-                        Voir CV
-                      </a>
-                    ) : "Aucun"}
-                  </td>
-                  <td>{cand.created_at}</td>
-                  <td>{cand.updated_at}</td>
-                  <td>
-                    <button 
-                      className="btn_rapport_encadrant" 
-                      onClick={() => rapportEncadrant(cand.candidature_id)}
-                    >
-                      rapport
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : expandedAffectation === affect.affectation_id ? (
-          <p>Il n'y a pas de candidature pour cette affectation</p>
-        ) : null}
-
-      </div>
-    ))}
-  </div>
-) : (
-  <p>Il n’y a pas d’affectation pour le moment.</p>
-)} */}
-
+      
 
 
           </span>
@@ -829,190 +950,7 @@ useEffect(() => {
             }`}
           >
             Content 4: Profile
-            {/* {Fetchuser && (
-  
-              <div className="profile_card">
-                <div className="profile_form_group">
-                  <label className="profile_form_label">User ID:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="text" 
-                    value={Fetchuser.user_id} 
-                    readOnly 
-                  />
-                </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Email:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="email" 
-                    value={Fetchuser.email} 
-                  />
-                </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Telephone:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="tel" 
-                    value={Fetchuser.telephone} 
-                  />
-                </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Role:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="text" 
-                    value={Fetchuser.role} 
-                    readOnly
-                  />
-                </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Account Status:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="text" 
-                    value={Fetchuser.account_status} 
-                    readOnly
-                  />
-                </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Created At:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="text" 
-                    value={Fetchuser.created_at} 
-                    readOnly
-                  />
-                </div>
-                <div className="profile_form_group">
-                <label className="profile_form_label">password:</label>
-                <input 
-                  className="profile_form_control" 
-                  type="password" 
-                  value={Fetchuser.hashed_password} 
-                />
-              </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Updated At:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="text" 
-                    value={Fetchuser.updated_at} 
-                    readOnly
-                  />
-                </div>
-
-                <div className="profile_form_group">
-                  <label className="profile_form_label">Username:</label>
-                  <input 
-                    className="profile_form_control" 
-                    type="text" 
-                    value={Fetchuser.username} 
-                  />
-                </div>
-
-                <div className="Candidatprofile_btn_actions">
-                  <button className="modifier profile_actions_btn" onClick={modifierPassword}>modifier</button>
-                </div>
-              </div>
-
-
-              )}
-
-
-{FetchEncadrant && (
-  <div className="profile_card_1">
-    
-    <div className="profile_form_group"> 
-      <label className="profile_form_label">Nom:</label>
-      <input
-        type="text"
-        value={FetchEncadrant.nom || ""}
-        placeholder="Entrez votre nom"
-        onChange={(e) =>
-          setFetchEncadrant(prev => ({ ...prev, nom: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Prénom:</label>
-      <input
-        type="text"
-        value={FetchEncadrant.prenom || ""}
-        placeholder="Entrez votre prénom"
-        onChange={(e) =>
-          setFetchEncadrant(prev => ({ ...prev, prenom: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
-
-    
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Agence ID:</label>
-      <input
-        type="text"
-        value={FetchEncadrant.agence_id || ""}
-        placeholder="Entrez votre agence_id"
-        onChange={(e) =>
-          setFetchEncadrant(prev => ({ ...prev, agence_id: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Nom d'agence:</label>
-      <input
-        type="text"
-        value={FetchEncadrant.nom_d_agence || ""}
-        placeholder="Entrez votre nom_d_agence"
-        onChange={(e) =>
-          setFetchEncadrant(prev => ({ ...prev, nom_d_agence: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
-
-    <div className="profile_form_group">
-      <label className="profile_form_label">Département:</label>
-      <input
-        type="text"
-        value={FetchEncadrant.departement || ""}
-        placeholder="Entrez votre departement"
-        onChange={(e) =>
-          setFetchEncadrant(prev => ({ ...prev, departement: e.target.value }))
-        }
-        className="profile_form_control"
-      />
-    </div>
-
-    <button
-      className="submit profile_actions_btn"
-      onClick={() => updateEncadrantdata(UserId)}
-    >
-      Update Encadrant Data
-    </button>
-
-        <button
-  type="button"
-  className="delete_profile_actions_btn"
-  onClick={handleDelete}
->
-  Delete Account
-</button>
-
-  </div>
-)}  */}
+            
 
 
           <div className="profile_container">
@@ -1027,8 +965,7 @@ useEffect(() => {
           <img
             src={`${BASE_URL}/${Fetchuser.photo_path}`}
             alt="Encadrant"
-            width="120"
-            style={{ borderRadius: "8px" }}
+                     className="photo-class"
           />
         )}
 
@@ -1043,7 +980,7 @@ useEffect(() => {
       </div>
 
       {/* User ID */}
-      <div className="profile_form_group">
+      {/* <div className="profile_form_group">
         <label className="profile_form_label">User ID:</label>
         <input
           type="text"
@@ -1051,7 +988,7 @@ useEffect(() => {
           value={Fetchuser.user_id}
           readOnly
         />
-      </div>
+      </div> */}
 
       {/* Encadrant ID */}
       <div className="profile_form_group">
@@ -1251,8 +1188,8 @@ useEffect(() => {
     </div>
   )}
           <img
-  width="48"
-  height="48"
+  width="25"
+  height="25"
   src="https://img.icons8.com/color/48/minus.png"
   alt="remove"
   onClick={handleDelete}

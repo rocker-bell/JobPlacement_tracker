@@ -401,6 +401,15 @@
   color: #2d2d2d;
 }
 
+.bookmark-star {
+  color: grey;
+  background-color: red;
+}
+
+.job-bookmark-star-actions {
+  background-color: #e4e2e0;
+}
+
 .btn-icon:hover {
   background-color: #e4e2e0;
 }
@@ -527,7 +536,7 @@
     border-radius: 6px;
     border: 1px solid #333;
     background: white;
-    color: white;
+    color: black;
     width: 100%;
     height: 40px;
 }

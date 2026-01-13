@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User, Mail, Phone, MessageSquare, Send } from "lucide-react";
 import "../Styles/contactUs.css";
+import { useNavigate } from "react-router-dom";
 
 const ContactUs = () => {
   const [form, setForm] = useState({
@@ -10,50 +11,94 @@ const ContactUs = () => {
     contact: "",
     subject: "",
   });
+  const [Msg, setMsg] = useState(null)
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const formData = new FormData();
+  //   Object.entries(form).forEach(([key, value]) =>
+  //     formData.append(key, value)
+  //   );
+
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:8000/contact_request.php",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (data.success) {
+  //       alert("Message sent successfully!");
+  //       setForm({
+  //         first_name: "",
+  //         last_name: "",
+  //         email: "",
+  //         contact: "",
+  //         subject: "",
+  //       });
+  //     } else {
+  //       alert(data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Server error, please try again.");
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
+  try {
+    const response = await fetch("http://localhost:8000/contact_request.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form), // send as JSON
+    });
 
-    try {
-      const response = await fetch(
-        "http://localhost:8000/contact_request.php",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    const data = await response.json();
 
-      const data = await response.json();
+    if (data.success) {
+      setMsg(
+        <>
+          <p className="contact-msg-style">You message was sent successfully</p>
+        </>
+      )
+      setForm({
+        first_name: "",
+        last_name: "",
+        email: "",
+        contact: "",
+        subject: "",
+      });
+      setTimeout(() => {
+          navigate("/")
+      }, 3000)
+    } else {
 
-      if (data.success) {
-        alert("Message sent successfully!");
-        setForm({
-          first_name: "",
-          last_name: "",
-          email: "",
-          contact: "",
-          subject: "",
-        });
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server error, please try again.");
+      alert(data.message);
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Server error, please try again.");
+  }
+};
 
   return (
     <div className="contact-container">
+      {Msg}
       <h2 className="contact-title">Contact Us</h2>
 
       <form className="contact-form" onSubmit={handleSubmit}>

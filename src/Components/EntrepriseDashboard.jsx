@@ -1248,8 +1248,7 @@ useEffect(() => {
           <img
             src={`${BASE_URL}/${Fetchuser.logo_path}`}
             alt="Entreprise Logo"
-            width="120"
-            style={{ borderRadius: "8px" }}
+                              className="photo-class"
           />
         )}
 
@@ -1433,15 +1432,7 @@ useEffect(() => {
 
     </div>
   )}
-          <img
-  width="48"
-  height="48"
-  src="https://img.icons8.com/color/48/minus.png"
-  alt="remove"
-  onClick={handleDelete}
-  className="remove_account_btn"
-  title="Remove account"
-/>
+        
 
 </div>
 

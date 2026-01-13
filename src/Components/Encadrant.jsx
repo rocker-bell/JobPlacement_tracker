@@ -245,23 +245,59 @@ useEffect(() => {
 //   }
 // };
 
+// const affecterEncadrant = async (encadrantId) => {
+//   if (!encadrantId || !stageId) {
+//     return alert("Encadrant ID or Stage ID is missing");
+//   }
+//   const encadrant_data = {
+//     encadrantId,
+//     stageId
+//   }
+//   console.log(encadrant_data)
+//   const user_id = localStorage.getItem("user_id");
+//   try {
+//     const response = await fetch(`${BASE_URL}/AffecterEncadrant.php`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         entreprise_id:user_id,
+//         encadrant_id: encadrantId,
+//         stage_id: stageId, // You should ensure you’re sending the stage ID
+//         affectation_status: "Active" // Optional field (defaults to "Active")
+//       }),
+//     });
+
+//     const res = await response.json();
+//     console.log(res);
+
+//     if (res.success) {
+//       alert("Encadrant assigned to stage successfully!");
+//     } else {
+//       alert("Failed to assign encadrant: " + res.message);
+//     }
+//   } catch (err) {
+//     console.error("Error assigning encadrant:", err);
+//     alert("Error assigning encadrant, please try again.");
+//   }
+// };
+
+
 const affecterEncadrant = async (encadrantId) => {
-  if (!encadrantId || !stageId) {
-    return alert("Encadrant ID or Stage ID is missing");
+  const senderId = localStorage.getItem("user_id");
+
+  if (!encadrantId || !stageId || !senderId) {
+    return alert("Missing encadrant ID, stage ID, or user ID");
   }
-  const encadrant_data = {
-    encadrantId,
-    stageId
-  }
-  console.log(encadrant_data)
+
   try {
     const response = await fetch(`${BASE_URL}/AffecterEncadrant.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         encadrant_id: encadrantId,
-        stage_id: stageId, // You should ensure you’re sending the stage ID
-        affectation_status: "Active" // Optional field (defaults to "Active")
+        stage_id: stageId,
+        affectation_status: "Active",
+        sender_id: senderId
       }),
     });
 
@@ -269,15 +305,28 @@ const affecterEncadrant = async (encadrantId) => {
     console.log(res);
 
     if (res.success) {
-      alert("Encadrant assigned to stage successfully!");
+      alert(res.message);
+      
+      // Update notifications state immediately
+      // setNotifications(prev => [
+      //   {
+      //     id: uuidv4(), // local temporary UUID
+      //     content: `You have been affected to stage ${stageId}`,
+      //     sender_id: senderId,
+      //     receiver_id: encadrantId,
+      //     created_at: new Date().toISOString()
+      //   },
+      //   ...prev
+      // ]);
     } else {
-      alert("Failed to assign encadrant: " + res.message);
+      alert("Failed: " + res.message);
     }
   } catch (err) {
-    console.error("Error assigning encadrant:", err);
+    console.error(err);
     alert("Error assigning encadrant, please try again.");
   }
 };
+
 
 
 const demissionnerEncadrant = async (encadrantId) => {

@@ -1,86 +1,59 @@
 <?php
-header("Content-Type: application/json");
+require "./Database_init/db_connection.php"; // $db is already set
 
-// --- Database config ---
-$host = "localhost";
-$db   = "your_database_name";
-$user = "your_db_user";
-$pass = "your_db_password";
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header('Content-Type: application/json');
+
+// Turn off display errors (don’t output to client)
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
+
+$data = json_decode(file_get_contents("php://input"), true);
+
+$first_name = $data['first_name'] ?? null;
+$last_name  = $data['last_name'] ?? null;
+$email      = $data['email'] ?? null;
+$contact    = $data['contact'] ?? null;
+$subject    = $data['subject'] ?? null;
+
+if (!$first_name || !$last_name || !$email || !$subject) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'first_name, last_name, email, and subject are required'
+    ]);
+    exit;
+}
 
 try {
-    $pdo = new PDO(
-        "mysql:host=$host;dbname=$db;charset=utf8mb4",
-        $user,
-        $pass,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
-    );
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
-        "success" => false,
-        "message" => "Database connection failed"
-    ]);
-    exit;
-}
-
-// --- Read POST data ---
-$firstName = trim($_POST['first_name'] ?? '');
-$lastName  = trim($_POST['last_name'] ?? '');
-$email     = trim($_POST['email'] ?? '');
-$contact   = trim($_POST['contact'] ?? '');
-$subject   = trim($_POST['subject'] ?? '');
-
-// --- Validation ---
-if (
-    empty($firstName) ||
-    empty($lastName) ||
-    empty($email) ||
-    empty($subject)
-) {
-    http_response_code(400);
-    echo json_encode([
-        "success" => false,
-        "message" => "Missing required fields"
-    ]);
-    exit;
-}
-
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode([
-        "success" => false,
-        "message" => "Invalid email address"
-    ]);
-    exit;
-}
-
-// --- Insert into DB ---
-$sql = "INSERT INTO contact_requests 
-        (first_name, last_name, email, contact, subject)
-        VALUES (:first_name, :last_name, :email, :contact, :subject)";
-
-$stmt = $pdo->prepare($sql);
-
-try {
+    $stmt = $db->prepare("
+        INSERT INTO contact_requests (first_name, last_name, email, contact, subject)
+        VALUES (:first_name, :last_name, :email, :contact, :subject)
+    ");
     $stmt->execute([
-        ":first_name" => $firstName,
-        ":last_name"  => $lastName,
-        ":email"      => $email,
-        ":contact"    => $contact,
-        ":subject"    => $subject
+        ':first_name' => $first_name,
+        ':last_name'  => $last_name,
+        ':email'      => $email,
+        ':contact'    => $contact,
+        ':subject'    => $subject
     ]);
 
+    $contact_id = $db->lastInsertId();
+
     echo json_encode([
-        "success" => true,
-        "message" => "Contact request submitted successfully"
+        'success' => true,
+        'message' => 'Contact request saved successfully',
+        'contact_id' => $contact_id
     ]);
+
 } catch (PDOException $e) {
-    http_response_code(500);
     echo json_encode([
-        "success" => false,
-        "message" => "Failed to save contact request"
+        'success' => false,
+        'message' => 'Database error',
+        'error' => $e->getMessage()
     ]);
 }
+
+// 🔹 No closing PHP tag at all!

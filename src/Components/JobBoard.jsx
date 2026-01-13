@@ -27,10 +27,13 @@ const JobBoard = () => {
 const [jobQuery, setJobQuery] = useState("");
 const [selectedJob, setSelectedJob] = useState(null);
 const [locationQuery, setLocationQuery] = useState("");
+const [Msg, setMsg] = useState("")
 const [submittedQuery, setSubmittedQuery] = useState({
   job: "",
   location: "",
 });
+const [email, setEmail] = useState("");
+
   const [FetchedStages, setFetchedStages] = useState([])
   // const [selectedJob, setSelectedJob] = useState(jobData[0]);
   const [showTopBtn, setShowTopBtn] = useState(false);
@@ -54,6 +57,54 @@ const [submittedQuery, setSubmittedQuery] = useState({
     navigate("/ContactUs")
 }
 
+
+// const handleSubscribe = async (email) => {
+//   try {
+//     const res = await fetch("http://localhost:8000/subscribe.php", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ email }),
+//     });
+
+//     const data = await res.json();
+
+//     if (data.success) {
+//       alert("Subscribed successfully!");
+//     } else {
+//       alert(data.message);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     alert("Server error, please try again");
+//   }
+// };
+
+const handleSubscribe = async (email) => {
+    if (!email) {
+      setMsg("Please enter your email");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/subscribe_handle.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setMsg("Subscribed successfully!");
+        setEmail(""); // clear input
+      } else {
+        setMsg(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      setMsg("Server error, please try again");
+    }
+  };
 
  const scrollToTop = () => {
         window.scrollTo({
@@ -268,23 +319,33 @@ const handleapply = (id) => {
   navigate(`/Postuler/${id}`)
 }
 
-const handleBookmark = () => {
-  const user_id = localStorage.getItem("user_id");
-  if(user_id) {
-     alert("Bookmark job for user")
+// const handleBookmark = () => {
+//   const user_id = localStorage.getItem("user_id");
+//   if(user_id) {
+//      alert("Bookmark job for user")
 
-  }
-  alert("Bookmark")
-}
+//   }
+//   if(!user_id) {
+//     setMsg("you have to login to book mark this job")
+//     setTimeout(() => {
+//       navigate("/")
+//     }, 3000);
+//   }
+// }
 
-const handleStar = () => {
-    const user_id = localStorage.getItem("user_id");
-  if(user_id) {
-     alert("star job for user")
+// const handleStar = () => {
+//     const user_id = localStorage.getItem("user_id");
+//   if(user_id) {
+//      alert("star  job for user")
 
-  }
-  alert('star')
-}
+//   }
+//   if(!user_id) {
+
+//     setMsg("You have to login to review this ")
+
+//   }
+  
+// }
 
 
 
@@ -547,13 +608,13 @@ onClick={() => {
 
       <div className="action-buttons">
         <button className="btn-apply" onClick={() => handleapply(selectedJob.offre_id)}>Postuler maintenant</button>
-        <button className="btn-icon">
-          <Bookmark size={24} />
-        </button>
-        <button className="btn-icon">
-          <Ban size={24} />
-        </button>
-
+        {/* <button className="job-bookmark-star-actions">
+      <Bookmark size={20} color="blue" strokeWidth={1.5} onClick={() => handleBookmark(selectedJob.offre_id)} />
+      
+    </button> */}
+            {/* <button className="job-bookmark-star-actions">
+                  <Star size={20} color='blue' className="text-yellow-500" onClick={() => handleStar(selectedJob.offre_id)} />
+            </button> */}
       </div>
     </div>
 
@@ -576,11 +637,7 @@ onClick={() => {
       <div className="job-description-text">
         {selectedJob.competences_requises}
       </div>
-      <button className='selected_job_actions_group'>
-               <Bookmark size={20} color="blue" strokeWidth={1.5}  onClick={handleBookmark} />
-        <Star size={20} className="text-yellow-500" onClick={handleStar} />
-
-      </button>
+     
     </div>
   </div>
 )}
@@ -617,10 +674,10 @@ onClick={() => {
                             <ul className="footer-list">
                                 <Link className="footer-list-links-about" onClick={scrollToTop}>Home</Link>
                                 <Link className="footer-list-links-about" to="/About">About us</Link>
-                                <Link className="footer-list-links-about" to="/Package_services">services</Link>
+                                {/* <Link className="footer-list-links-about" to="/Package_services">services</Link> */}
                                 <Link className="footer-list-links-about" to="/ContactUs">contactus</Link>
                                
-                                <Link  className="footer-list-links-about" to="/more_projects">Projects</Link>
+                                {/* <Link  className="footer-list-links-about" to="/more_projects">Projects</Link> */}
                                 
                             </ul>
                         </div>
@@ -634,11 +691,37 @@ onClick={() => {
                         </div>
                         <div className="footer-col">
                             <h2 className="footer-heading">Stay Updated</h2>
-                            <form className="subscribe">
+                            {/* <form className="subscribe">
                                 <input type="email" placeholder="Your email" className="subscribe-input" />
-                                {/* <img src={submit} className="subscribe-btn" title="subscribe!"/> */}
-                                <img width="48" height="48" className='send-icon' src="https://img.icons8.com/fluency/48/sent.png" alt="sent"/>
-                            </form>
+                                <img width="48" height="48" className='send-icon' src="https://img.icons8.com/fluency/48/sent.png" alt="sent" onClick={handleSubscribe}/>
+                            </form> */}
+                            <form
+        className="subscribe"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubscribe(email);
+        }}
+      >
+        <input
+          type="email"
+          placeholder="Your email"
+          className="subscribe-input"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <img
+          width="48"
+          height="48"
+          className="send-icon"
+          src="https://img.icons8.com/fluency/48/sent.png"
+          alt="send"
+          onClick={() => handleSubscribe(email)}
+          style={{ cursor: "pointer" }}
+        />
+      </form>
+
+      {/* show messages */}
+      {Msg && <p className="subscribe-msg">{Msg}</p>}
                         </div>
                     </div>
 

@@ -17,12 +17,13 @@ CREATE TABLE IF NOT EXISTS bookmark (
     bookmark_id CHAR(36) NOT NULL PRIMARY KEY,
     bookmark_user CHAR(36) NOT NULL,
     offre_id CHAR(36) NOT NULL,
-    type ENUM('Bookmark', 'none') DEFAULT 'none',
+    type ENUM(\'Bookmark\', \'none\') DEFAULT \'none\',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (bookmark_user) REFERENCES Utilisateurs(user_id) ON DELETE CASCADE,
     FOREIGN KEY (offre_id) REFERENCES offres_stage(offre_id) ON DELETE CASCADE
-)';3️
+)';
+
  $Messages = '
 CREATE TABLE IF NOT EXISTS messages (
     message_id CHAR(36) NOT NULL PRIMARY KEY,
