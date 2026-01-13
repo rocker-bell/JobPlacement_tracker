@@ -1957,7 +1957,7 @@ const handleBookmark = (id) => {
         </div>
       </div>
 
-      <footer>copyrights</footer>
+      <footer></footer>
     </div>
   );
 };

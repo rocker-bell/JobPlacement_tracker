@@ -1211,7 +1211,7 @@ useEffect(() => {
         </div>
       </div>
 
-      <footer>copyrights</footer>
+      <footer></footer>
     </div>
   );
 };

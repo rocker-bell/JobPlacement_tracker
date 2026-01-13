@@ -10,8 +10,10 @@ import {MessageSquare, Bell} from "lucide-react";
 import Ajouter from "../assets/Ajouter.gif"
 import StatChart from "./StatChart";
 
+
 const Entreprise_dashboard = () => {
   // State for active slider and mobile screen size
+   const [notifications, setNotifications] = useState([]);
   const [Fetchuser, setFetchuser] = useState(null)
   const [stages, setStages] = useState([]);
   const [UserId, setUserId] = useState(null);
@@ -67,6 +69,66 @@ const [logoFile, setLogoFile] = useState(null);
 //     setTimer(newTimer);
 //   };
 
+
+const [lastFetched, setLastFetched] = useState(null); // keep track of last fetch time
+const [hasNewNotification, setHasNewNotification] = useState(false);
+
+  // Function to fetch notifications
+  async function fetchNotification() {
+    try {
+      const response = await fetch(`${BASE_URL}/AfficherNotification.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: localStorage.getItem("user_id"),
+          date: lastFetched, // fetch only new notifications
+        })
+      });
+
+      const res = await response.json();
+      console.log("response :", res)
+      // if (res.success && res.notifications.length > 0) {
+      //   // Update state with new notifications
+      //   setNotifications(prev => [...res.notifications, ...prev]);
+      //   // Update last fetched timestamp
+      //   const latestTime = res.notifications[0].created_at; 
+      //   setLastFetched(latestTime);
+      // }
+      if (res.success && res.notifications.length > 0) {
+  setNotifications(prev => {
+    const existingIds = new Set(prev.map(n => n.notification_id));
+
+    const newOnes = res.notifications.filter(
+      n => !existingIds.has(n.notification_id)
+    );
+
+    return [...newOnes, ...prev];
+
+    if (newOnes.length > 0) {
+  setHasNewNotification(true);
+  setTimeout(() => setHasNewNotification(false), 600);
+}
+
+  });
+
+  setLastFetched(res.notifications[0].created_at);
+}
+
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  }
+
+
+   useEffect(() => {
+      fetchNotification(); // initial fetch
+  
+      const interval = setInterval(() => {
+        fetchNotification(); // poll every 10 seconds
+      }, 10000);
+  
+      return () => clearInterval(interval); // cleanup on unmount
+    }, []); // empty dependency → run once on mount
  
 const [currentPage, setCurrentPage] = useState(1);
 
@@ -780,7 +842,25 @@ useEffect(() => {
               <MessageSquare size={24} className="EntrepriseDashboard_nav_icons" />
             
             </li>
-            <li className="EntrepiriseDashboard_nav_list"><Bell size={24} className="EntrepriseDashboard_nav_icons" /></li>
+            {/* <li className="EntrepiriseDashboard_nav_list"><Bell size={24} className="EntrepriseDashboard_nav_icons" /></li> */}
+                <li
+  className="EncadrantDashboard_nav_list"
+  onClick={() => {
+    SliderContentHandler("ED_CB_notifications");
+    setHasNewNotification(false); // stop shake when opened
+  }}
+>
+  <div className={`bell-wrapper ${hasNewNotification ? "new" : ""}`}>
+    <Bell size={24} className="EncadrantDashboard_nav_icons" />
+
+    {notifications.length > 0 && (
+      <span className="bell-badge">
+        {notifications.length}
+      </span>
+    )}
+  </div>
+</li>
+              
               <li
                 className="EntrepiriseDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_addStage")}
@@ -889,6 +969,41 @@ useEffect(() => {
 
 
           </span>
+
+               <span
+            className={`EncadrantDashboard_contentAbout ED_CB_notifications ${
+              ActiveSlider === "ED_CB_notifications" ? "Active" : ""
+            }`}
+          >
+              content notification
+
+             
+
+
+<div className="notifications-panel">
+  <h4 className="notifications-title">Notifications</h4>
+
+  {notifications.length === 0 && (
+    <p className="no-notifications">No notifications</p>
+  )}
+
+  {notifications.map((notif) => (
+    <div key={notif.notification_id} className="notification-card">
+      <p className="notification-text">
+        {notif.notification_content}
+      </p>
+      <span className="notification-time">
+        {new Date(notif.created_at).toLocaleString()}
+      </span>
+    </div>
+  ))}
+</div>
+
+
+
+
+          </span>
+
           <span
             className={`EntrepiriseDashboard_contentAbout ED_CB_addStage ${
               ActiveSlider === "ED_CB_addStage" ? "Active" : ""
@@ -1432,7 +1547,15 @@ useEffect(() => {
 
     </div>
   )}
-        
+         <img
+  width="48"
+  height="48"
+  src="https://img.icons8.com/color/48/minus.png"
+  alt="remove"
+  onClick={handleDelete}
+  className="remove_account_btn"
+  title="Remove account"
+/>
 
 </div>
 
@@ -1452,7 +1575,9 @@ useEffect(() => {
         </div>
       </div>
 
-      <footer>copyrights</footer>
+      <footer>
+
+      </footer>
     </div>
   );
 };

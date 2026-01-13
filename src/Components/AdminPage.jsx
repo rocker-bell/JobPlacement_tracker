@@ -736,6 +736,61 @@ const [dashboardStats, setDashboardStats] = useState({
   }
 
 
+  // const handlesubmitanonce = () => {
+  //   console.log("submit anonce")
+  // }
+
+   const [title, setTitle] = useState("");
+  const [subject, setSubject] = useState("");
+
+  const handleSubmitAnonce = async (e) => {
+  e.preventDefault();
+
+  const data = {
+    title,
+    subject,
+  };
+
+  console.log(data)
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/handle_anonce.php`, // 🔁 adapte le chemin exact
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error(result.message);
+      return;
+    }
+
+    console.log("Success:", result);
+
+    // reset form
+    setTitle("");
+    setSubject("");
+    SliderContentHandler("ED_CB_Stages")
+   
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+};
+ const [anonces, setAnonces] = useState([]);
+
+ useEffect(() => {
+    fetch("http://localhost:8000/fetchAnonce.php")
+      .then((res) => res.json())
+      .then((data) => setAnonces(data))
+      .catch((err) => console.error(err));
+  }, []);
 
 
   return (
@@ -771,7 +826,7 @@ const [dashboardStats, setDashboardStats] = useState({
                 className="AdminDashboard_nav_list"
                 onClick={() => SliderContentHandler("ED_CB_Stages")}
               >
-                <img className="AdminDashboard_nav_icons" src="https://img.icons8.com/wired/64/lawyer.png" alt="lawyer"/>
+                <img className="AdminDashboard_nav_icons" src="https://img.icons8.com/color-glass/48/commercial--v1.png" alt="commercial--v1"/>
               </li>
               <li
                 className="AdminDashboard_nav_list"
@@ -896,6 +951,46 @@ const [dashboardStats, setDashboardStats] = useState({
           >
             Ajouter anonce
 
+
+            {/* <form action="" className="anonce_form" onSubmit={handlesubmitanonce}> 
+              <div className="form_group_anonce">
+                  <label htmlFor="" className="form_label_anonce">anonce titre</label>
+                  <input type="text" className="form_control_anonce" />
+              </div>
+
+               <div className="form_group_anonce">
+                  <label htmlFor="" className="form_label_anonce">anonce subject</label>
+                  <textarea type="text" className="form_control_anonce" ></textarea>
+              </div>
+              <button type="submit">submit anouncement</button>
+            </form> */}
+
+            <form className="anonce_form" onSubmit={handleSubmitAnonce}>
+  <div className="form_group_anonce">
+    <label className="form_label_anonce">Annonce titre</label>
+    <input
+      type="text"
+      className="form_control_anonce"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      required
+    />
+  </div>
+
+  <div className="form_group_anonce">
+    <label className="form_label_anonce">Annonce subject</label>
+    <textarea
+      className="form_control_anonce"
+      value={subject}
+      onChange={(e) => setSubject(e.target.value)}
+      required
+    />
+  </div>
+
+  <button type="submit">Submit announcement</button>
+</form>
+
+
                     {/* <div className={`ED_stage_form_wrapper ${CancelAddStage ? "cancel" : ""}`}>
   <form className="ED_stage_form" onSubmit={handleSubmitStage}>
 
@@ -962,7 +1057,40 @@ const [dashboardStats, setDashboardStats] = useState({
             }`}
           >
            
-              Contente : 
+              {/* Contente :  */}
+
+
+              {/* <div>
+      <h2>Annonces</h2>
+      {anonces.length === 0 && <p>Aucune annonce</p>}
+
+      {anonces.map((a) => (
+        <div key={a.anonce_id} className="anonce_card">
+          <h3>{a.title}</h3>
+          <p>{a.subject}</p>
+          <small>{a.created_at}</small>
+        </div>
+      ))}
+    </div> */}
+        <div className="anonce_container">
+  <h2 className="anonce_title">Annonces</h2>
+
+  {anonces.length === 0 ? (
+    <p className="anonce_empty">Aucune annonce disponible</p>
+  ) : (
+    <div className="anonce_list">
+      {anonces.map((a) => (
+        <div key={a.anonce_id} className="anonce_card">
+          <h3 className="anonce_card_title">{a.title}</h3>
+          <p className="anonce_card_subject">{a.subject}</p>
+          <div className="anonce_card_footer">
+            <span className="anonce_date">{a.created_at}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
                             
           </span>
@@ -1278,7 +1406,7 @@ const [dashboardStats, setDashboardStats] = useState({
         </div>
       </div>
 
-      <footer>copyrights</footer>
+      <footer></footer>
     </div>
   );
 };

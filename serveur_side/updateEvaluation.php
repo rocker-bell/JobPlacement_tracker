@@ -122,6 +122,19 @@ try {
     $stmt->execute([':candidature_id' => $candidature_id]);
     $evaluation = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // $notification_id = uuidv4();
+    //     $content = "evalatuion submitted or modified by  $stage_id";
+    //     $stmtNotif = $db->prepare("
+    //         INSERT INTO notifications (notification_id, notification_content, sender_id, receiver_id)
+    //         VALUES (:notification_id, :content, :sender_id, :receiver_id)
+    //     ");
+    //     $stmtNotif->execute([
+    //         ':notification_id' => $notification_id,
+    //         ':content' => $content,
+    //         ':sender_id' => $sender_id,
+    //         ':receiver_id' => $encadrant_id
+    //     ]);
+
     echo json_encode([
         'success' => true,
         'message' => 'Evaluation created successfully',

@@ -276,7 +276,7 @@ footer {
 .table-bordered, 
 .table-bordered th, 
 .table-bordered td {
-  border: 1px solid black;   /* adds border to table and cells */
+  border: 1px solid black;   
   border-collapse: collapse;  /* optional: removes double borders */
   padding: 8px;               /* optional: spacing inside cells */
 }

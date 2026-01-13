@@ -23,7 +23,7 @@
 
 /* --- NAVIGATION BAR --- */
 .navbar {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   background-color: white;
   border-bottom: 1px solid #ececec;
   padding: 0 16px;
@@ -81,7 +81,7 @@
 }
 
 .nav-icon-group {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;
   gap: 20px;
   align-items: center;
@@ -202,7 +202,7 @@
 } */
 
 .main-grid {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;            
   flex-wrap: wrap;          
   gap: 20px;

@@ -1,7 +1,7 @@
 .Encadrant_dasboard_ref_entreprise {
     width: 100%;
     min-height: 100vh;
-    border: 10px solid black;
+    /* border: 10px solid black; */
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,4 +1,54 @@
 <?php
+
+
+// Ce script PHP constitue le moteur d'initialisation de la base de données pour votre plateforme de gestion des stages. 
+// Voici une description objective de ses fonctionnalités et de sa structure :
+
+// ### 1. Initialisation et Sécurité
+
+// * **Configuration API** : Le script définit des en-têtes (Headers) pour autoriser les requêtes cross-origin (CORS) depuis `localhost:5173` 
+// (généralement une application React/Vite), ce qui est essentiel pour une architecture découplée (Frontend/Backend).
+// * **Connexion** : Il s'appuie sur une connexion PDO (`db_connection.php`) pour interagir de manière sécurisée avec le serveur MySQL.
+
+// ### 2. Architecture des Données
+
+// Le script automatise la création d'un schéma relationnel complet comprenant 12 tables clés. 
+// L'utilisation systématique de `CHAR(36)` indique une gestion moderne des identifiants via des **UUID** (identifiants uniques universels).
+
+// | Catégorie | Tables incluses |
+// | --- | --- |
+// | **Utilisateurs** | `utilisateurs`, `stagiaire_accounts`, `entreprise_account`, `encadrant_account`. |
+// | **Cœur de métier** | `offres_stage`, `candidatures`, `affectation`, `evaluations`. |
+// | **Interaction** | `notifications`, `bookmark`, `contact_request`, `subscribe`. |
+// | **Sécurité/Audit** | `userconnections`. |
+
+// ### 3. Logique de Gestion des Stages
+
+// * 
+// **Gestion des Rôles** : Le script utilise des types `ENUM` pour définir strictement les rôles (Stagiaire, Entreprise, Encadrant, Admin)  et les statuts des comptes (Pending, Active, Blocked).
+
+
+// * **Traçabilité** : Chaque table inclut des horodatages (`created_at`, `updated_at`) pour un suivi temporel précis.
+// * **Contraintes Relationnelles** : Le script intègre des clés étrangères (`FOREIGN KEY`) avec l'option `ON DELETE CASCADE` pour les tables `bookmark` et `notifications`, garantissant l'intégrité des données lors de la suppression d'un utilisateur.
+
+// ### 4. Automatisation de l'Installation
+
+// * **Idempotence** : L'utilisation de `CREATE TABLE IF NOT EXISTS` permet d'exécuter le script plusieurs fois sans écraser les données existantes ni générer d'erreurs.
+// * **Test d'Intégrité** : Le script se termine par une fonction de génération d'UUID personnalisée et une insertion de test pour confirmer que la base de données est opérationnelle et prête à l'emploi.
+
+
+// Function : Calcul_note_final | stage_expire | stage_complet | nombre_des_candidates 
+// Procedure : suprimer_offre_exprire |   sync_account_status_from_utilisateurs |  tg_check_expiration_after_insert |  trg_after_candidature_accepted | transfer deleted_acccounts_into_hold |  tg_check_expiration_after_insert | trg_after_candidature_accepted | trg_before_update_evaluation |  trg_sync_account_status_after_update | after_insert_subscribe | after_inset_notification _ after_insert_anonce
+
+
+
+// function uuidv4() {
+//     $data = random_bytes(16);
+//     $data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
+//     $data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
+//     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+// }
+
 require "./Database_init/db_connection.php"; 
 
 
@@ -195,24 +245,37 @@ $Subscribe = "
     subscribe_id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(150) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+)";
 
-
-"
+$Anonce = "
+    CREATE TABLE IF NOT EXISTS anonce (
+    anonce_id CHAR(36) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    subject TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP 
+        ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (anonce_id)
+)";
 
 // --- EXECUTION ---
 $tables = [
+    $utilisateurs,
+    $stagiaire_accounts,
+    $encadrant_account,
+    $entreprise_account,
+    $offres_stage,
     $affectation,
     $candidatures,
     $contact_request,
-    $encadrant_account,
-    $entreprise_account,
     $evaluations,
     $offres_stage,
     $stagiaire_accounts,
     $userconnections,
-    $utilisateurs,
-    $Notifications
+    $bookmark,
+    $Notifications,
+    $Subscribe,
+    $Anonce
 ];
 
 try {

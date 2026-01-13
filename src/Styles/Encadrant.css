@@ -6,7 +6,7 @@
   justify-content: flex-start;
   align-items: flex-start; /* Changed to 'flex-start' for better alignment */
   flex-direction: column;
-  border: 5px solid green;
+  /* border: 5px solid green; */
   padding: 20px;
 }
 
@@ -17,7 +17,7 @@
   justify-content: flex-end;
   align-items: center;
   flex-direction: row;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   list-style: none;
   padding: 10px;
   margin-bottom: 20px; /* Added margin for spacing */
@@ -48,7 +48,7 @@
 .main_encadrant_container {
   width: 100%;
   min-height: 500px; /* Ensures there's a min height */
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin-top: 20px;
   display: flex;
   flex-direction: column; /* Ensures child elements stack vertically */
@@ -104,7 +104,7 @@
 
 /* Profile Card */
 .entrepriseEncadrants_profileCard {
-  border: 3px solid black;
+  /* border: 3px solid black; */
   width: 100%;
   max-width: 100%;
   display: flex;
@@ -119,7 +119,7 @@
 
 /* Form Group */
 .entrepriseEncadrants_formGroup {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 100%;
   margin-bottom: 15px;
   display: flex;
